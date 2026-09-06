@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+:root {
+  /* Parent S•42 Palette: Monochrome / Brutal / Elegant */
+  --bg: #050505;
+  --fg: #f1f1ed;
+  --muted: #898989;
+  --border: rgba(241, 241, 237, 0.12);
+  --border-strong: rgba(241, 241, 237, 0.25);
+
+  /* Spacing Scale */
+  --space-xs: 0.5rem;
+  --space-sm: 1rem;
+  --space-md: 2rem;
+  --space-lg: 4rem;
+  --space-xl: 8rem;
+
+  /* Film Worlds Accents */
+  --film-01-accent: #00f0ff;
+  --film-01-bg: #070c10;
+  --film-02-accent: #ff2a2a;
+  --film-02-bg: #0c0808;
+  --film-03-accent: #e5a93b;
+  --film-03-bg: #0c0a07;
+
+  /* Fonts */
+  --font-display: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
+/* Lenis Recommended CSS */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-display);
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  selection-background-color: var(--fg);
+  selection-color: var(--bg);
+}
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Utility aesthetics */
+.font-mono-code {
+  font-family: var(--font-mono);
+}
+
+.border-subtle {
+  border-color: var(--border);
+}
+
+.border-strong {
+  border-color: var(--border-strong);
+}
+
+/* Film World Scopes */
+[data-theme="insane-aisylum"] {
+  --accent: var(--film-01-accent);
+  --theme-bg: var(--film-01-bg);
+}
+
+[data-theme="suicide-train"] {
+  --accent: var(--film-02-accent);
+  --theme-bg: var(--film-02-bg);
+}
+
+[data-theme="life-is"] {
+  --accent: var(--film-03-accent);
+  --theme-bg: var(--film-03-bg);
+}
