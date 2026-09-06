@@ -178,19 +178,20 @@ export default function EntrySequence({ onComplete }: EntrySequenceProps) {
         {/* Official S•42 Metallic Logo Crossfade */}
         <div
           ref={logoWrapperRef}
-          className="relative w-64 h-24 sm:w-80 sm:h-32 -mt-16 sm:-mt-20 opacity-0"
+          className="relative w-[88vw] max-w-[360px] sm:max-w-[480px] md:max-w-[620px] lg:max-w-[760px] aspect-[1024/358] flex items-center justify-center opacity-0"
         >
           <Image
-            src="/images/brand/logo.png"
+            src="/images/brand/s42-films-official.png"
             alt="S•42 FILMS"
             fill
-            sizes="320px"
+            sizes="(max-width: 640px) 88vw, (max-width: 1024px) 620px, 760px"
             className="object-contain"
             priority
+            unoptimized
           />
         </div>
 
-        {/* Tagline */}
+        {/* Tagline positioned right below the logo */}
         <p
           ref={taglineRef}
           className="mt-6 text-xs md:text-sm font-mono tracking-[0.3em] uppercase text-[#898989] translate-y-4 opacity-0 text-center px-4"

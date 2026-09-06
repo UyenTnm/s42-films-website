@@ -73,7 +73,7 @@ export default function Hero() {
         {/* Official S•42 Metallic Logo Showcase */}
         <div className="hero-logo relative w-64 h-24 sm:w-80 sm:h-28 md:w-96 md:h-32">
           <Image
-            src="/images/brand/logo.png"
+            src="/images/brand/s42-films-official.png"
             alt="S•42 FILMS"
             fill
             sizes="(max-width: 768px) 256px, 384px"

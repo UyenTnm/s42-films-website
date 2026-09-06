@@ -7,398 +7,283 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { films } from "@/data/films";
 
-// Register GSAP plugins on client
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// ─────────────────────────────────────────────
-// Perlin-style turbulence noise for the smoke
-// Seeded from a simple permutation table
-// ─────────────────────────────────────────────
-function fade(t: number) {
-  return t * t * t * (t * (t * 6 - 15) + 10);
-}
-function lerp(a: number, b: number, t: number) {
-  return a + t * (b - a);
-}
-function grad(hash: number, x: number, y: number) {
-  const h = hash & 3;
-  const u = h < 2 ? x : y;
-  const v = h < 2 ? y : x;
-  return ((h & 1) ? -u : u) + ((h & 2) ? -v : v);
+// ══════════════════════════════════════════════════════════════
+//  Volumetric Smoke Particle System
+//  30 soft radial-gradient ellipses across 3 depth layers.
+//  Canvas uses "screen" blend mode → luminous white on dark bg.
+// ══════════════════════════════════════════════════════════════
+
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  r: number;
+  sx: number; // ellipse x-scale
+  sy: number; // ellipse y-scale
+  rot: number;
+  rotV: number;
+  alpha: number;
+  lum: number; // 0–1 lightness
 }
 
-const P: number[] = [];
-(function buildPermTable() {
-  const src = Array.from({ length: 256 }, (_, i) => i);
-  for (let i = 255; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [src[i], src[j]] = [src[j], src[i]];
-  }
-  for (let i = 0; i < 512; i++) P[i] = src[i & 255];
-})();
+const LAYER_CONFIGS = [
+  { rMin: 380, rMax: 720, aMin: 0.055, aMax: 0.10,  vyMin: -0.28, vyMax: -0.14, vxMax: 0.12 },
+  { rMin: 210, rMax: 430, aMin: 0.09,  aMax: 0.17,  vyMin: -0.55, vyMax: -0.30, vxMax: 0.20 },
+  { rMin: 120, rMax: 270, aMin: 0.15,  aMax: 0.27,  vyMin: -0.92, vyMax: -0.52, vxMax: 0.30 },
+] as const;
 
-function noise2D(x: number, y: number): number {
-  const X = Math.floor(x) & 255;
-  const Y = Math.floor(y) & 255;
-  const xf = x - Math.floor(x);
-  const yf = y - Math.floor(y);
-  const u = fade(xf);
-  const v = fade(yf);
-  const a = P[X] + Y;
-  const b = P[X + 1] + Y;
-  return lerp(
-    lerp(grad(P[a], xf, yf), grad(P[b], xf - 1, yf), u),
-    lerp(grad(P[a + 1], xf, yf - 1), grad(P[b + 1], xf - 1, yf - 1), u),
-    v
-  );
+function makeParticle(W: number, H: number, layer: 0 | 1 | 2): Particle {
+  const L = LAYER_CONFIGS[layer];
+  const r = L.rMin + Math.random() * (L.rMax - L.rMin);
+  return {
+    x: Math.random() * (W + r * 2) - r,
+    y: Math.random() * (H + r * 2) - r,
+    vx: (Math.random() - 0.5) * 2 * L.vxMax,
+    vy: L.vyMin + Math.random() * (L.vyMax - L.vyMin),
+    r,
+    sx: 0.80 + Math.random() * 0.75,
+    sy: 0.60 + Math.random() * 0.60,
+    rot: Math.random() * Math.PI * 2,
+    rotV: (Math.random() - 0.5) * 0.0045,
+    alpha: L.aMin + Math.random() * (L.aMax - L.aMin),
+    lum: 0.70 + Math.random() * 0.24,
+  };
 }
 
-// Fractal Brownian Motion — gives the "wispy organic" feel
-function fbm(x: number, y: number, octaves = 5): number {
-  let val = 0;
-  let amp = 0.5;
-  let freq = 1.0;
-  for (let i = 0; i < octaves; i++) {
-    val += noise2D(x * freq, y * freq) * amp;
-    amp *= 0.5;
-    freq *= 2.1;
-  }
-  return val;
+function drawParticle(ctx: CanvasRenderingContext2D, p: Particle, gAlpha: number) {
+  ctx.save();
+  ctx.globalAlpha = p.alpha * gAlpha;
+  ctx.translate(p.x, p.y);
+  ctx.rotate(p.rot);
+  ctx.scale(p.sx, p.sy);
+  const l = Math.round(p.lum * 100);
+  const g = ctx.createRadialGradient(0, 0, 0, 0, 0, p.r);
+  g.addColorStop(0,    `hsl(218,20%,${l}%)`);
+  g.addColorStop(0.45, `hsla(216,16%,${Math.round(l * 0.52)}%,0.42)`);
+  g.addColorStop(1,    `hsla(212,12%,22%,0)`);
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
 }
 
-// ─────────────────────────────────────────────
-// Main Component
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════════════════════
+//  Component
+// ══════════════════════════════════════════════════════════════
 export default function SmokeHero() {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
+  const wrapperRef    = useRef<HTMLDivElement>(null);
+  const canvasRef     = useRef<HTMLCanvasElement>(null);
   const smokeLayerRef = useRef<HTMLDivElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const logoRef = useRef<HTMLDivElement>(null);
-  const overlayTextRef = useRef<HTMLDivElement>(null);
-  const postersRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number>(0);
-  const timeRef = useRef<number>(0);
-  const globalOpacityRef = useRef<number>(1);
+  const logoRef       = useRef<HTMLDivElement>(null);
+  const posterRef     = useRef<HTMLDivElement>(null);
+  const hintRef       = useRef<HTMLDivElement>(null);
+  const particlesRef  = useRef<Particle[]>([]);
+  const smokeAlpha    = useRef(1);
 
-  // ── Canvas smoke render loop ──────────────────
+  // Canvas smoke render loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animId = 0;
-
-    function resize() {
+    function init() {
       if (!canvas) return;
-      canvas.width = canvas.offsetWidth;
+      canvas.width  = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
-    }
-    resize();
-    window.addEventListener("resize", resize);
-
-    function drawSmoke(t: number) {
-      if (!canvas || !ctx) return;
-
       const W = canvas.width;
       const H = canvas.height;
-      const globalAlpha = globalOpacityRef.current;
+      const ps: Particle[] = [];
+      for (let i = 0; i < 10; i++) ps.push(makeParticle(W, H, 0));
+      for (let i = 0; i < 12; i++) ps.push(makeParticle(W, H, 1));
+      for (let i = 0; i < 8;  i++) ps.push(makeParticle(W, H, 2));
+      particlesRef.current = ps;
+    }
+
+    init();
+
+    let animId = 0;
+    function tick() {
+      if (!canvas || !ctx) return;
+      const W = canvas.offsetWidth;
+      const H = canvas.offsetHeight;
+      const gA = smokeAlpha.current;
 
       ctx.clearRect(0, 0, W, H);
 
-      if (globalAlpha <= 0.005) return;
-
-      // Resolution scale — lower = cheaper but still gorgeous
-      const scale = Math.max(1, Math.floor(window.devicePixelRatio));
-      const stepX = Math.ceil(W / 160);
-      const stepY = Math.ceil(H / 110);
-
-      const imageData = ctx.createImageData(W, H);
-      const data = imageData.data;
-
-      const slowT = t * 0.00008;
-      const driftX = slowT * 0.3;
-      const driftY = slowT * 0.12;
-
-      for (let py = 0; py < H; py += stepY) {
-        for (let px = 0; px < W; px += stepX) {
-          // UV from 0..1, with slight distortion for the "billow"
-          const u = px / W;
-          const v = py / H;
-
-          // Double-domain warp — gives the churning cloud look
-          const warpX = fbm(u * 2.4 + driftX, v * 2.4 + driftY + 1.7, 4) * 0.6;
-          const warpY = fbm(u * 2.4 + driftX + 3.2, v * 2.4 + driftY, 4) * 0.6;
-
-          const n = fbm(u * 3.0 + warpX + driftX, v * 3.0 + warpY + driftY, 5);
-
-          // Map noise to smoke density: push below 0 → transparent, above → bright
-          const density = Math.max(0, n * 1.8 + 0.05);
-
-          // Vignette: edges fade away
-          const edgeDist = Math.min(u, 1 - u, v, 1 - v) * 4;
-          const vignette = Math.min(1, edgeDist);
-
-          // Color: off-white cold smoke (#e8e8e0 range → tinted grey-blue)
-          const raw = Math.min(1, density * vignette);
-          const smoke = raw * raw; // gamma-compress for depth
-
-          // Smoke tint palette: cold pale white → slightly blue
-          const r = 220 + smoke * 30;
-          const g = 220 + smoke * 30;
-          const b = 230 + smoke * 20;
-          const a = smoke * 0.78 * globalAlpha;
-
-          // Fill block pixels (cheaper than per-pixel)
-          for (let dy = 0; dy < stepY && py + dy < H; dy++) {
-            for (let dx = 0; dx < stepX && px + dx < W; dx++) {
-              const idx = ((py + dy) * W + (px + dx)) * 4;
-              data[idx] = r;
-              data[idx + 1] = g;
-              data[idx + 2] = b;
-              data[idx + 3] = a * 255;
-            }
+      if (gA > 0.005) {
+        ctx.globalCompositeOperation = "screen";
+        for (const p of particlesRef.current) {
+          drawParticle(ctx, p, gA);
+          p.x   += p.vx;
+          p.y   += p.vy;
+          p.rot += p.rotV;
+          if (p.y + p.r * p.sy < -10) {
+            p.y = H + p.r * p.sy + 10;
+            p.x = Math.random() * (W + p.r * 2) - p.r;
           }
+          const ov = p.r * p.sx + 60;
+          if (p.x - ov > W) p.x = -ov;
+          if (p.x + ov < 0) p.x =  W + ov;
         }
+        ctx.globalCompositeOperation = "source-over";
       }
-
-      ctx.putImageData(imageData, 0, 0);
-      void scale;
-    }
-
-    function tick(timestamp: number) {
-      timeRef.current = timestamp;
-      drawSmoke(timestamp);
       animId = requestAnimationFrame(tick);
     }
 
     animId = requestAnimationFrame(tick);
-    rafRef.current = animId;
-
-    return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
-    };
+    const ro = new ResizeObserver(init);
+    ro.observe(canvas);
+    return () => { cancelAnimationFrame(animId); ro.disconnect(); };
   }, []);
 
-  // ── GSAP scroll-triggered dissolve ───────────
+  // GSAP entry + scroll dissolve
   useEffect(() => {
-    const wrapper = wrapperRef.current;
-    const smokeLayer = smokeLayerRef.current;
-    const logo = logoRef.current;
-    const overlayText = overlayTextRef.current;
-    const posters = postersRef.current;
+    const el = {
+      wrapper: wrapperRef.current,
+      smoke:   smokeLayerRef.current,
+      logo:    logoRef.current,
+      poster:  posterRef.current,
+      hint:    hintRef.current,
+    };
+    if (Object.values(el).some(v => !v)) return;
 
-    if (!wrapper || !smokeLayer || !logo || !overlayText || !posters) return;
+    const entry = gsap.timeline({ delay: 0.55 });
+    entry
+      .fromTo(el.logo,
+        { opacity: 0, y: 38, scale: 0.97 },
+        { opacity: 1, y: 0,  scale: 1, duration: 2.0, ease: "power4.out" }
+      )
+      .fromTo(el.hint,
+        { opacity: 0 },
+        { opacity: 1, duration: 1.1, ease: "power2.out" },
+        "-=0.9"
+      );
 
     const ctx = gsap.context(() => {
-      // Entry: logo drifts up, overlay text fades in
-      const tl = gsap.timeline({ delay: 0.3 });
-      tl.fromTo(logo, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 1.4, ease: "power4.out" })
-        .fromTo(overlayText, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1.0, ease: "power3.out" }, "-=0.7");
-
-      // Scroll: smoke dissolves — ScrollTrigger scrubs globalOpacityRef and CSS opacity
       ScrollTrigger.create({
-        trigger: wrapper,
+        trigger: el.wrapper,
         start: "top top",
-        end: "70% top",
-        scrub: 1.2,
+        end: "62% top",
+        scrub: 1.4,
         onUpdate: (self) => {
-          // Drive canvas opacity via ref (picked up by render loop)
-          globalOpacityRef.current = 1 - self.progress;
-
-          // GSAP-control the smoke layer DOM opacity for blending
-          gsap.set(smokeLayer, { opacity: 1 - self.progress });
-
-          // Posters reveal — counter-fade
-          const posterProgress = Math.max(0, (self.progress - 0.25) / 0.75);
-          gsap.set(posters, { opacity: posterProgress });
+          const p = self.progress;
+          smokeAlpha.current = Math.max(0, 1 - p * 1.55);
+          gsap.set(el.smoke,  { opacity: Math.max(0, 1 - p * 1.25), scale: 1 + p * 0.24, yPercent: p * -8 });
+          gsap.set(el.logo,   { opacity: Math.max(0, 1 - p * 3.2), y: p * -55 });
+          gsap.set(el.poster, { opacity: Math.max(0, (p - 0.28) / 0.72) });
+          gsap.set(el.hint,   { opacity: Math.max(0, 1 - p * 12) });
         },
       });
+    }, el.wrapper!);
 
-      // Smoke layer: also translate up slightly as it dissolves (blown-away)
-      gsap.to(smokeLayer, {
-        y: "-12%",
-        ease: "none",
-        scrollTrigger: {
-          trigger: wrapper,
-          start: "top top",
-          end: "70% top",
-          scrub: 1.5,
-        },
-      });
-
-      // Logo: pin on dissolve, then slide up
-      gsap.to(logo, {
-        y: "-30%",
-        opacity: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: wrapper,
-          start: "15% top",
-          end: "55% top",
-          scrub: 1,
-        },
-      });
-
-      // Poster cards stagger reveal
-      gsap.fromTo(
-        ".smoke-poster-card",
-        { y: 50, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          stagger: 0.12,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: posters,
-            start: "top 80%",
-          },
-        }
-      );
-    }, wrapper);
-
-    return () => ctx.revert();
+    return () => { entry.kill(); ctx.revert(); };
   }, []);
 
   return (
-    // Tall wrapper creates the scroll distance for the dissolve
-    <div ref={wrapperRef} className="relative" style={{ height: "250vh" }}>
-      {/* ── Sticky container — stays fixed during scroll ── */}
-      <div
-        ref={stickyRef}
-        className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]"
-      >
-        {/* ─── Poster Grid — revealed from behind smoke ─── */}
-        <div
-          ref={postersRef}
-          className="absolute inset-0 z-10 opacity-0"
-        >
-          {/* Ambient dark atmosphere */}
-          <div className="absolute inset-0 bg-[#050505]/60 z-10" />
+    <div ref={wrapperRef} style={{ height: "260vh" }} className="relative">
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
 
-          {/* Posters — 3-column spread with depth offsets */}
-          <div className="absolute inset-0 flex items-end justify-center gap-0 px-8 pb-0 z-20">
+        {/* 0 ─ Poster reveal layer */}
+        <div ref={posterRef} className="absolute inset-0 z-0 opacity-0">
+          <div className="absolute inset-0 bg-[#050505]/42 z-10" />
+          <div className="absolute inset-0 flex items-end justify-center px-4 md:px-10 z-0">
             {films.map((film, i) => {
-              const offsets = ["translate-y-12", "translate-y-0", "translate-y-20"];
-              const scales = ["scale-[0.88]", "scale-100", "scale-[0.84]"];
-              const rotations = ["-rotate-2", "rotate-0", "rotate-1"];
+              const layout = [
+                { dy: "14%", sc: "0.86", rot: "-3deg",  zi: 0  },
+                { dy: "0%",  sc: "1.00", rot: "0deg",   zi: 20 },
+                { dy: "18%", sc: "0.84", rot: "2.5deg", zi: 0  },
+              ][i];
               return (
                 <div
                   key={film.slug}
-                  className={`smoke-poster-card relative flex-1 max-w-[340px] aspect-[2/3] ${offsets[i]} ${scales[i]} ${rotations[i]} origin-bottom`}
+                  className="relative flex-1 max-w-[300px] sm:max-w-[340px] md:max-w-[380px]"
+                  style={{ transform: `translateY(${layout.dy}) scale(${layout.sc}) rotate(${layout.rot})`, transformOrigin: "bottom center", zIndex: layout.zi }}
                 >
-                  {/* Poster glow */}
-                  <div
-                    className="absolute -inset-4 rounded-2xl blur-3xl opacity-30"
-                    style={{ backgroundColor: film.palette.accent }}
-                  />
-                  <div className="relative w-full h-full rounded-xl overflow-hidden border border-white/10 shadow-2xl">
-                    <Image
-                      src={film.posterImage}
-                      alt={film.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
-                      className="object-cover"
-                      priority={i === 1}
-                    />
-                    {/* Poster gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                    {/* Film number badge */}
-                    <div
-                      className="absolute top-3 left-3 font-mono text-[10px] tracking-widest px-2 py-1 rounded border"
-                      style={{ color: film.palette.accent, borderColor: film.palette.accent }}
-                    >
-                      {film.number}
-                    </div>
-                  </div>
+                  <div className="absolute -inset-6 rounded-2xl blur-3xl opacity-20" style={{ background: film.palette.accent }} />
+                  <Link href={`/films/${film.slug}`} className="relative block aspect-[2/3] rounded-xl overflow-hidden shadow-[0_50px_120px_rgba(0,0,0,0.95)] border border-white/[0.08] group">
+                    <Image src={film.posterImage} alt={film.title} fill sizes="380px" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                    <span className="absolute top-3 left-3 font-mono text-[10px] tracking-widest border px-2 py-0.5 rounded" style={{ color: film.palette.accent, borderColor: `${film.palette.accent}55` }}>{film.number}</span>
+                    <div className="absolute bottom-0 left-0 right-0 px-4 py-3 font-mono text-[10px] tracking-wider uppercase text-white/55 border-t border-white/[0.05]">{film.title}</div>
+                  </Link>
                 </div>
               );
             })}
           </div>
-
-          {/* Bottom gradient to merge with content below */}
-          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#050505] to-transparent z-30" />
+          <div className="absolute bottom-0 inset-x-0 h-56 bg-gradient-to-t from-[#050505] via-[#050505]/75 to-transparent z-20" />
         </div>
 
-        {/* ─── Smoke Layer ─── */}
+        {/* 1 ─ Smoke canvas */}
+        <div ref={smokeLayerRef} className="absolute inset-0 z-10 pointer-events-none" style={{ transformOrigin: "center 38%" }}>
+          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 88% 82% at 50% 50%, transparent 32%, rgba(5,5,5,0.72) 100%)" }} />
+        </div>
+
+        {/* 1.5 ─ Center contrast darkening */}
         <div
-          ref={smokeLayerRef}
-          className="absolute inset-0 z-20 pointer-events-none"
-        >
-          {/* The turbulence canvas */}
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full"
-            style={{ mixBlendMode: "screen" }}
-          />
+          className="absolute inset-0 z-[15] pointer-events-none"
+          style={{ background: "radial-gradient(ellipse 58% 44% at 50% 50%, rgba(5,5,5,0.48) 0%, transparent 100%)" }}
+        />
 
-          {/* Radial dark core so smoke reads against the bg */}
-          <div className="absolute inset-0 bg-radial-[ellipse_at_center] from-transparent via-[#050505]/30 to-[#050505]/60" />
-        </div>
+        {/* 2 ─ Logo + subtext */}
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none select-none">
+          <div ref={logoRef} className="opacity-0 flex flex-col items-center gap-5">
+            <div className="relative flex flex-col items-center gap-5">
+              {/* Logo with clean luminous presentation */}
+              <div className="relative flex items-center justify-center">
+                {/* Soft cinematic ambient illumination behind the logo */}
+                <div
+                  className="absolute inset-0 pointer-events-none -z-10"
+                  style={{
+                    background: "radial-gradient(ellipse 65% 55% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 45%, transparent 75%)",
+                    transform: "scale(1.5)",
+                  }}
+                />
 
-        {/* ─── Logo + Hero Text overlay (above smoke) ─── */}
-        <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none">
-          {/* Logo */}
-          <div ref={logoRef} className="flex flex-col items-center gap-6 opacity-0">
-            <div className="relative w-56 h-20 sm:w-72 sm:h-24 md:w-80 md:h-28">
-              <Image
-                src="/images/brand/logo.png"
-                alt="S•42 FILMS"
-                fill
-                sizes="320px"
-                className="object-contain"
-                priority
-              />
-            </div>
-
-            {/* Tagline */}
-            <div
-              ref={overlayTextRef}
-              className="text-center space-y-2 opacity-0"
-            >
-              <p className="font-mono text-[11px] sm:text-xs tracking-[0.3em] uppercase text-[#898989]">
-                42 Great Stories Worth Remembering
-              </p>
-              <div className="flex items-center justify-center gap-3">
-                <span className="h-px w-12 bg-[#f1f1ed]/20" />
-                <span className="w-1.5 h-1.5 rounded-full bg-[#f1f1ed]/40 animate-pulse" />
-                <span className="h-px w-12 bg-[#f1f1ed]/20" />
+                {/* Full original metallic logo: zero cropping, 100% visible on all sides */}
+                <div className="relative w-[88vw] max-w-[360px] sm:max-w-[500px] md:max-w-[640px] lg:max-w-[760px] xl:max-w-[860px] aspect-[1024/358] flex items-center justify-center">
+                  <Image
+                    src="/images/brand/s42-films-official.png"
+                    alt="S•42 FILMS"
+                    fill
+                    sizes="(max-width: 640px) 88vw, (max-width: 768px) 500px, (max-width: 1024px) 760px, 860px"
+                    className="object-contain"
+                    priority
+                    unoptimized
+                  />
+                </div>
+              </div>
+              {/* Divider + subtext positioned cleanly below the logo graphic */}
+              <div className="flex flex-col items-center gap-3 mt-4 sm:mt-6 relative z-10">
+                <div className="flex items-center gap-5">
+                  <span className="block h-px w-16 sm:w-28 md:w-36 bg-gradient-to-r from-transparent to-[#f1f1ed]/38" />
+                  <span className="block w-1.5 h-1.5 rounded-full bg-[#f1f1ed]/60" />
+                  <span className="block h-px w-16 sm:w-28 md:w-36 bg-gradient-to-l from-transparent to-[#f1f1ed]/38" />
+                </div>
+                <p className="font-mono text-[10px] sm:text-xs md:text-sm tracking-[0.45em] uppercase text-[#888885] whitespace-nowrap">
+                  42 Great Stories Worth Remembering
+                </p>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Scroll hint */}
-          <div className="absolute bottom-8 flex flex-col items-center gap-2 pointer-events-auto">
-            <span className="font-mono text-[10px] tracking-widest uppercase text-[#555]">
-              Scroll to Reveal
-            </span>
-            <div className="w-px h-8 bg-gradient-to-b from-[#555] to-transparent animate-pulse" />
+        {/* 3 ─ Scroll hint */}
+        <div ref={hintRef} className="absolute bottom-8 inset-x-0 z-30 flex flex-col items-center gap-2 opacity-0 pointer-events-none">
+          <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.40em] uppercase text-[#4a4a4a]">Scroll to Reveal</p>
+          <div className="flex flex-col items-center gap-0.5 smoke-bounce-arrow">
+            <span className="block w-px h-5 bg-gradient-to-b from-[#4a4a4a] to-transparent" />
+            <span className="text-[#424242] text-xs leading-none">↓</span>
           </div>
         </div>
 
-        {/* ─── Content visible AFTER smoke dissolves ─── */}
-        <div className="absolute bottom-0 left-0 right-0 z-40 px-6 md:px-16 pb-10">
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            {/* Left: section label */}
-            <div className="font-mono text-[11px] tracking-widest uppercase text-[#898989]">
-              <span className="text-[#f1f1ed]">01 //</span> Active Film Roster
-            </div>
-
-            {/* Right: CTA */}
-            <Link
-              href="#films"
-              className="group inline-flex items-center gap-3 px-5 py-2.5 rounded border border-[#f1f1ed]/20 bg-[#050505]/80 backdrop-blur hover:bg-[#f1f1ed] hover:text-[#050505] text-[#f1f1ed] transition-all duration-300 font-mono text-xs tracking-widest uppercase"
-            >
-              <span>View 3 Film Projects</span>
-              <span className="group-hover:translate-x-0.5 transition-transform duration-300">↓</span>
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
   );

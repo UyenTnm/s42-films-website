@@ -21,13 +21,14 @@ export default function Footer() {
         {/* Top Footer Bar */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-10 border-b border-[#f1f1ed]/10 font-mono text-xs">
           <div className="space-y-2">
-            <div className="relative w-28 h-9">
+            <div className="relative w-28 h-10 flex items-center justify-start">
               <Image
-                src="/images/brand/logo.png"
+                src="/images/brand/s42-films-official.png"
                 alt="S•42 FILMS"
                 fill
-                sizes="112px"
+                sizes="120px"
                 className="object-contain object-left"
+                unoptimized
               />
             </div>
             <p className="text-[#666]">
