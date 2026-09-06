@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useLenis } from "@/hooks/useLenis";
@@ -20,18 +21,22 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 backdrop-blur-md bg-[#050505]/80 border-b border-[#f1f1ed]/10 transition-all duration-300">
-      {/* Studio Brand */}
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 md:px-12 backdrop-blur-md bg-[#050505]/85 border-b border-[#f1f1ed]/10 transition-all duration-300">
+      {/* Studio Brand with Official S•42 Logo */}
       <Link
         href="/"
-        className="group flex items-center gap-2 font-mono text-sm tracking-widest text-[#f1f1ed] hover:opacity-80 transition-opacity"
+        className="group flex items-center gap-3 hover:opacity-90 transition-opacity"
       >
-        <span className="font-bold tracking-tighter text-base">S</span>
-        <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#f1f1ed] group-hover:scale-125 group-hover:bg-[#00f0ff] transition-all duration-300 animate-pulse" />
-        <span className="font-bold tracking-tighter text-base">42</span>
-        <span className="hidden sm:inline-block ml-3 pl-3 border-l border-[#f1f1ed]/20 text-[11px] text-[#898989] tracking-widest uppercase">
-          Films
-        </span>
+        <div className="relative w-28 h-9 md:w-32 md:h-10">
+          <Image
+            src="/images/brand/logo.png"
+            alt="S•42 FILMS"
+            fill
+            sizes="128px"
+            className="object-contain"
+            priority
+          />
+        </div>
       </Link>
 
       {/* Nav Actions */}
@@ -68,10 +73,10 @@ export default function Header() {
           </>
         )}
 
-        {/* Transmission Status */}
+        {/* 42 Protocol Indicator */}
         <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded border border-[#f1f1ed]/15 bg-[#f1f1ed]/5 text-[10px] text-[#898989]">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-          <span>SYS ON AIR</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-[#f1f1ed] animate-pulse" />
+          <span>42 INITIATIVE</span>
         </div>
       </nav>
     </header>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 
 interface EntrySequenceProps {
@@ -26,6 +27,7 @@ export default function EntrySequence({ onComplete }: EntrySequenceProps) {
   const letterSRef = useRef<HTMLSpanElement>(null);
   const dotRef = useRef<HTMLSpanElement>(null);
   const number42Ref = useRef<HTMLSpanElement>(null);
+  const logoWrapperRef = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLParagraphElement>(null);
   const curtainRef = useRef<HTMLDivElement>(null);
 
@@ -48,22 +50,31 @@ export default function EntrySequence({ onComplete }: EntrySequenceProps) {
       });
 
       // 1. Initial state
-      tl.set([letterSRef.current, dotRef.current, number42Ref.current, taglineRef.current], {
-        opacity: 0,
-        scale: 0.8,
-      });
+      tl.set(
+        [
+          letterSRef.current,
+          dotRef.current,
+          number42Ref.current,
+          logoWrapperRef.current,
+          taglineRef.current,
+        ],
+        {
+          opacity: 0,
+          scale: 0.9,
+        }
+      );
 
       // 2. Tiny signal pulse
       tl.to(signalRef.current, {
         scale: 1.5,
         opacity: 1,
-        duration: 0.8,
+        duration: 0.6,
         ease: "power2.out",
       });
       tl.to(signalRef.current, {
         scale: 0,
         opacity: 0,
-        duration: 0.4,
+        duration: 0.3,
         ease: "power2.in",
       });
 
@@ -71,7 +82,7 @@ export default function EntrySequence({ onComplete }: EntrySequenceProps) {
       tl.to(letterSRef.current, {
         opacity: 1,
         scale: 1,
-        duration: 0.35,
+        duration: 0.3,
         ease: "back.out(2)",
       });
 
@@ -79,7 +90,7 @@ export default function EntrySequence({ onComplete }: EntrySequenceProps) {
       tl.to(dotRef.current, {
         opacity: 1,
         scale: 1,
-        duration: 0.3,
+        duration: 0.25,
         ease: "back.out(3)",
       });
 
@@ -87,29 +98,44 @@ export default function EntrySequence({ onComplete }: EntrySequenceProps) {
       tl.to(number42Ref.current, {
         opacity: 1,
         scale: 1,
-        duration: 0.4,
+        duration: 0.35,
         ease: "back.out(2)",
       });
 
-      // 6. Subline reveals
+      // 6. Crossfade into official metallic S•42 logo
+      tl.to([letterSRef.current, dotRef.current, number42Ref.current], {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.3,
+        ease: "power2.in",
+      }, "+=0.2");
+
+      tl.to(logoWrapperRef.current, {
+        opacity: 1,
+        scale: 1,
+        duration: 0.5,
+        ease: "power3.out",
+      }, "-=0.15");
+
+      // 7. Subline reveals
       tl.to(taglineRef.current, {
         opacity: 1,
         y: 0,
-        duration: 0.7,
+        duration: 0.6,
         ease: "power3.out",
-      }, "+=0.2");
+      }, "+=0.1");
 
-      // 7. Screen opens
-      tl.to([letterSRef.current, dotRef.current, number42Ref.current, taglineRef.current], {
+      // 8. Curtain reveals page
+      tl.to([logoWrapperRef.current, taglineRef.current], {
         opacity: 0,
-        y: -30,
-        duration: 0.5,
+        y: -20,
+        duration: 0.4,
         ease: "power3.in",
-      }, "+=0.8");
+      }, "+=0.6");
 
       tl.to(curtainRef.current, {
         yPercent: -100,
-        duration: 0.9,
+        duration: 0.8,
         ease: "power4.inOut",
       });
     }, containerRef);
@@ -127,15 +153,15 @@ export default function EntrySequence({ onComplete }: EntrySequenceProps) {
       {/* Curtain Layer */}
       <div
         ref={curtainRef}
-        className="absolute inset-0 bg-[#050505] flex flex-col items-center justify-center"
+        className="absolute inset-0 bg-[#050505] flex flex-col items-center justify-center p-6"
       >
         {/* Signal indicator */}
         <div
           ref={signalRef}
-          className="w-3 h-3 rounded-full bg-[#00f0ff] opacity-0 shadow-[0_0_20px_#00f0ff]"
+          className="w-3 h-3 rounded-full bg-[#f1f1ed] opacity-0 shadow-[0_0_20px_#f1f1ed]"
         />
 
-        {/* Brand S•42 Reveal */}
+        {/* Initial glyph reveal */}
         <div className="flex items-center text-5xl md:text-7xl lg:text-8xl font-black font-mono tracking-tighter text-[#f1f1ed]">
           <span ref={letterSRef} className="inline-block">
             S
@@ -147,6 +173,21 @@ export default function EntrySequence({ onComplete }: EntrySequenceProps) {
           <span ref={number42Ref} className="inline-block">
             42
           </span>
+        </div>
+
+        {/* Official S•42 Metallic Logo Crossfade */}
+        <div
+          ref={logoWrapperRef}
+          className="relative w-64 h-24 sm:w-80 sm:h-32 -mt-16 sm:-mt-20 opacity-0"
+        >
+          <Image
+            src="/images/brand/logo.png"
+            alt="S•42 FILMS"
+            fill
+            sizes="320px"
+            className="object-contain"
+            priority
+          />
         </div>
 
         {/* Tagline */}
