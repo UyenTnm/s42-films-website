@@ -3,79 +3,94 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useLenis } from "@/hooks/useLenis";
 
 export default function Header() {
   const pathname = usePathname();
   const lenis = useLenis();
+  const [scrolled, setScrolled] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
-  const handleScrollTo = (id: string) => {
-    if (pathname === "/") {
-      if (lenis) {
-        lenis.scrollTo(id, { offset: -60 });
-      } else {
-        const el = document.querySelector(id);
-        el?.scrollIntoView({ behavior: "smooth" });
-      }
+  // Watch native scroll to toggle the scrolled state
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.18);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll(); // run once on mount
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollTo = (id: string) => {
+    if (pathname !== "/") return;
+    if (lenis) {
+      lenis.scrollTo(id, { offset: -60 });
+    } else {
+      document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 md:px-12 backdrop-blur-md bg-[#050505]/85 border-b border-[#f1f1ed]/10 transition-all duration-300">
-      {/* Studio Brand with Official S•42 Logo */}
+    <header
+      ref={headerRef}
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 transition-all duration-700 ease-out ${
+        scrolled
+          ? "bg-[#050505]/88 backdrop-blur-lg border-b border-[#f1f1ed]/[0.07]"
+          : "bg-transparent border-b border-transparent"
+      }`}
+    >
+      {/* Logo — hidden until scrolled past hero */}
       <Link
         href="/"
-        className="group flex items-center gap-3 hover:opacity-90 transition-opacity"
+        className={`transition-all duration-500 ${scrolled ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        aria-label="S•42 Films — Home"
       >
-        <div className="relative w-28 h-9 md:w-32 md:h-10">
+        <div className="relative w-28 h-10 md:w-36 md:h-12 flex items-center justify-center">
           <Image
-            src="/images/brand/logo.png"
+            src="/images/brand/s42-films-official.png"
             alt="S•42 FILMS"
             fill
-            sizes="128px"
+            sizes="160px"
             className="object-contain"
             priority
+            unoptimized
           />
         </div>
       </Link>
 
-      {/* Nav Actions */}
-      <nav className="flex items-center gap-6 md:gap-10 font-mono text-xs uppercase tracking-widest">
+      {/* Nav — hidden until scrolled past hero */}
+      <nav
+        className={`flex items-center gap-5 md:gap-9 font-mono text-[11px] uppercase tracking-widest transition-all duration-500 ${
+          scrolled ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+      >
         {pathname === "/" ? (
           <>
             <button
-              onClick={() => handleScrollTo("#films")}
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors cursor-pointer"
+              onClick={() => scrollTo("#films")}
+              className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 cursor-pointer"
             >
               Films [03]
             </button>
             <button
-              onClick={() => handleScrollTo("#manifesto")}
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors cursor-pointer"
+              onClick={() => scrollTo("#manifesto")}
+              className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 cursor-pointer"
             >
               Manifesto
             </button>
           </>
         ) : (
           <>
-            <Link
-              href="/#films"
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors"
-            >
+            <Link href="/#films" className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200">
               Films Index
             </Link>
-            <Link
-              href="/"
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors"
-            >
-              Return S•42
+            <Link href="/" className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200">
+              S•42 Home
             </Link>
           </>
         )}
 
-        {/* 42 Protocol Indicator */}
-        <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded border border-[#f1f1ed]/15 bg-[#f1f1ed]/5 text-[10px] text-[#898989]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#f1f1ed] animate-pulse" />
+        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded border border-[#f1f1ed]/[0.13] bg-[#f1f1ed]/[0.04] text-[10px] text-[#636360]">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#f1f1ed]/50 animate-pulse" />
           <span>42 INITIATIVE</span>
         </div>
       </nav>
