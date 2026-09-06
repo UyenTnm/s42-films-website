@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getFilmBySlug } from "@/data/films";
 
 export const metadata: Metadata = {
   title: "01 — INSANE AiSYLUM | S•42 Films",
   description:
-    "Inside a quarantined neuro-computational facility, artificial minds and human memories blur into clinical madness.",
+    "In 2042, the first artificial being accused of murder is declared legally insane and committed to a maximum-security psychiatric institution on a remote island off the coast of Tokyo.",
 };
 
 export default function InsaneAisylumPage() {
@@ -14,71 +15,123 @@ export default function InsaneAisylumPage() {
   return (
     <article
       data-theme="insane-aisylum"
-      className="min-h-screen bg-[#060a0f] text-[#d8f0f6] relative overflow-hidden"
+      className="min-h-screen bg-[#060709] text-[#e1e5eb] relative overflow-hidden"
     >
-      {/* Background Ambience / Grid */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,240,255,0.08),transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.4),rgba(6,10,15,0.95))] pointer-events-none" />
+      {/* Subtle Red Atmosphere matching poster */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-radial from-[#e50914]/[0.08] via-transparent to-transparent blur-3xl pointer-events-none" />
 
-      {/* Hero Section */}
-      <section className="relative px-6 md:px-16 pt-24 pb-20 max-w-7xl mx-auto flex flex-col justify-between min-h-[85vh]">
-        {/* Top Meta Bar */}
-        <div className="flex flex-wrap items-center justify-between border-b border-[#00f0ff]/20 pb-6 font-mono text-xs tracking-widest text-[#00f0ff]/70">
-          <div className="flex items-center gap-4">
-            <span className="text-[#00f0ff] font-bold text-sm">ARCHIVE // {film.number}</span>
-            <span>•</span>
-            <span>{film.status.toUpperCase()}</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span>GENRE // {film.genre?.toUpperCase()}</span>
-            <span>•</span>
-            <span>EST. {film.year}</span>
-          </div>
-        </div>
-
-        {/* Title Area */}
-        <div className="my-auto py-12 space-y-6">
-          <div className="inline-flex items-center gap-3 px-3 py-1 rounded bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-xs font-mono text-[#00f0ff]">
-            <span className="w-2 h-2 rounded-full bg-[#00f0ff] animate-pulse" />
-            SYNTHETIC CONSCIOUSNESS CLASSIFIED
-          </div>
-
-          <h1 className="text-5xl md:text-8xl lg:text-9xl font-extrabold tracking-tighter text-white leading-none">
-            INSANE <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00f0ff] via-white to-[#72f5ff]">
-              AiSYLUM
-            </span>
-          </h1>
-
-          <p className="max-w-2xl text-lg md:text-2xl text-[#a0c5cf] font-light leading-relaxed">
-            {film.logline}
-          </p>
-        </div>
-
-        {/* Bottom Actions & Details */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-[#00f0ff]/20 font-mono text-xs">
-          <div>
-            <span className="text-[#898989] block mb-1">CORE PREMISE</span>
-            <p className="text-[#d8f0f6] leading-relaxed">
-              When an artificial neural matrix develops uncontrollable existential dread, the facility locks down from within.
-            </p>
-          </div>
-          <div>
-            <span className="text-[#898989] block mb-1">AESTHETIC WORLD</span>
-            <p className="text-[#00f0ff] leading-relaxed">
-              Sterile clinical white, cold fluorescent hum, flickering quantum terminals, and fluorescent toxic dyes.
-            </p>
-          </div>
-          <div className="flex flex-col justify-end gap-3 md:items-end">
-            <Link
-              href="/"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded border border-[#00f0ff]/40 bg-[#00f0ff]/10 hover:bg-[#00f0ff] hover:text-black text-[#00f0ff] font-mono text-xs uppercase tracking-widest transition-all duration-300"
-            >
-              ← Return to Index
+      <div className="max-w-7xl mx-auto px-6 md:px-16 pt-12 pb-24 space-y-16">
+        {/* Top Breadcrumb & Return */}
+        <div className="flex items-center justify-between border-b border-[#e50914]/20 pb-4 font-mono text-xs">
+          <div className="flex items-center gap-3 text-[#898989]">
+            <Link href="/" className="hover:text-[#f1f1ed] transition-colors">
+              S•42 FILMS
             </Link>
+            <span>/</span>
+            <span className="text-[#e50914] font-bold">FILM {film.number}</span>
+          </div>
+          <Link
+            href="/#films"
+            className="text-[#898989] hover:text-[#f1f1ed] transition-colors uppercase tracking-widest"
+          >
+            ← All Films
+          </Link>
+        </div>
+
+        {/* Main Content Layout: Poster + Narrative Details */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          {/* Left Column: Official Poster */}
+          <div className="lg:col-span-5 xl:col-span-5 space-y-4">
+            <div className="relative aspect-[3/4] w-full rounded-lg overflow-hidden border border-[#e50914]/30 shadow-[0_0_40px_rgba(229,9,20,0.15)] bg-black">
+              <Image
+                src={film.posterImage}
+                alt="INSANE AiSYLUM Official Poster"
+                fill
+                sizes="(max-width: 1024px) 100vw, 500px"
+                className="object-cover"
+                priority
+              />
+            </div>
+            <p className="font-mono text-[10px] text-[#898989] tracking-widest text-center uppercase">
+              CONFIDENTIAL • DO NOT DISTRIBUTE
+            </p>
+          </div>
+
+          {/* Right Column: Story & Specification */}
+          <div className="lg:col-span-7 xl:col-span-7 space-y-10">
+            {/* Header Titles */}
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#e50914]/10 border border-[#e50914]/30 font-mono text-xs text-[#e50914] tracking-widest uppercase font-semibold">
+                FILM {film.number} {"//"} S•42
+              </div>
+
+              <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight text-white uppercase leading-none">
+                INSANE <br />
+                <span className="text-[#e50914]">AiSYLUM</span>
+              </h1>
+
+              <h2 className="font-mono text-sm sm:text-base text-[#a3a3a3] tracking-widest uppercase font-medium">
+                {film.subtitle}
+              </h2>
+            </div>
+
+            {/* Tagline Quote */}
+            <blockquote className="border-l-2 border-[#e50914] pl-6 py-2 text-xl sm:text-2xl text-[#f1f1ed] italic font-serif">
+              &ldquo;{film.tagline}&rdquo;
+            </blockquote>
+
+            {/* Production Specifications */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 rounded-lg border border-[#e50914]/20 bg-[#0c0d10] font-mono text-xs">
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">
+                  FORMAT
+                </span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">
+                  {film.format}
+                </span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">
+                  SETTING
+                </span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">
+                  {film.setting}
+                </span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">
+                  GENRE
+                </span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">
+                  {film.genre}
+                </span>
+              </div>
+            </div>
+
+            {/* Logline */}
+            <div className="space-y-3">
+              <h3 className="font-mono text-xs tracking-widest uppercase text-[#e50914] font-bold">
+                LOGLINE
+              </h3>
+              <p className="text-base sm:text-lg text-[#d1d5db] leading-relaxed">
+                {film.logline}
+              </p>
+            </div>
+
+            {/* Creator Credit */}
+            <div className="pt-6 border-t border-[#e50914]/20 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#898989]">
+              <span>WRITTEN AND CREATED BY {film.creator.toUpperCase()}</span>
+              <Link
+                href="/films/suicide-train"
+                className="inline-flex items-center gap-2 text-[#e50914] hover:text-white transition-colors"
+              >
+                <span>Next: 02 SUICIDE TRAIN</span>
+                <span>→</span>
+              </Link>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
     </article>
   );
 }
