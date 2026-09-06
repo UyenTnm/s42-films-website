@@ -40,7 +40,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-[#050505] text-[#f1f1ed] selection:bg-[#f1f1ed] selection:text-[#050505]">
         <SmoothScroll>
           <Header />
-          <main className="flex-1 pt-20">{children}</main>
+          <main className="flex-1">{children}</main>
         </SmoothScroll>
       </body>
     </html>
