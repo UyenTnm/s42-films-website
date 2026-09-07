@@ -3,22 +3,36 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useLenis } from "@/hooks/useLenis";
 
 export default function Header() {
   const pathname = usePathname();
   const lenis = useLenis();
   const [scrolled, setScrolled] = useState(false);
-  const headerRef = useRef<HTMLElement>(null);
+  const [instant, setInstant] = useState(false);
+  const prevPathname = useRef(pathname);
 
   // Watch native scroll to toggle the scrolled state
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.18);
+    const onScroll = () =>
+      setScrolled(window.scrollY > window.innerHeight * 0.18);
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll(); // run once on mount
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Khi đổi route: nhảy về đúng trạng thái NGAY LẬP TỨC, không cho transition chạy lóe lên
+  useLayoutEffect(() => {
+    if (prevPathname.current !== pathname) {
+      prevPathname.current = pathname;
+      setInstant(true);
+      setScrolled(window.scrollY > window.innerHeight * 0.18);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setInstant(false));
+      });
+    }
+  }, [pathname]);
 
   const scrollTo = (id: string) => {
     if (pathname !== "/") return;
@@ -31,17 +45,22 @@ export default function Header() {
 
   return (
     <header
-      ref={headerRef}
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 transition-all duration-700 ease-out ${
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 ease-out ${
+        instant ? "transition-none" : "transition-all duration-700"
+      } ${
         scrolled
           ? "bg-[#050505]/88 backdrop-blur-lg border-b border-[#f1f1ed]/[0.07]"
           : "bg-transparent border-b border-transparent"
       }`}
     >
-      {/* Logo — hidden until scrolled past hero */}
+      {/* Logo */}
       <Link
         href="/"
-        className={`transition-all duration-500 ${scrolled ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        className={`${instant ? "transition-none" : "transition-all duration-500"} ${
+          scrolled
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
         aria-label="S•42 Films — Home"
       >
         <div className="relative w-28 h-10 md:w-36 md:h-12 flex items-center justify-center">
@@ -57,11 +76,11 @@ export default function Header() {
         </div>
       </Link>
 
-      {/* Nav — hidden until scrolled past hero */}
+      {/* Nav */}
       <nav
-        className={`flex items-center gap-5 md:gap-9 font-mono text-[11px] uppercase tracking-widest transition-all duration-500 ${
-          scrolled ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
+        className={`flex items-center gap-5 md:gap-9 font-mono text-[11px] uppercase tracking-widest ${
+          instant ? "transition-none" : "transition-all duration-500"
+        } ${scrolled ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       >
         {pathname === "/" ? (
           <>
@@ -80,10 +99,16 @@ export default function Header() {
           </>
         ) : (
           <>
-            <Link href="/#films" className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200">
+            <Link
+              href="/#films"
+              className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200"
+            >
               Films Index
             </Link>
-            <Link href="/" className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200">
+            <Link
+              href="/"
+              className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200"
+            >
               S•42 Home
             </Link>
           </>
