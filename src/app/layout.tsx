@@ -18,9 +18,16 @@ export const metadata: Metadata = {
   title: "S•42 — 42 Great Stories Worth Remembering",
   description:
     "An independent cinematic house producing forty-two seminal films across sci-fi, neo-noir, and human drama.",
-  keywords: ["S•42", "S42 Films", "Cinema", "Insane AiSylum", "Suicide Train", "Life Is"],
+  keywords: [
+    "S•42",
+    "S42 Films",
+    "Cinema",
+    "Insane AiSylum",
+    "Suicide Train",
+    "Life Is",
+  ],
   openGraph: {
-    title: "S•42 — 42 Great Stories Worth Remembering",
+    title: "S•42 Films",
     description:
       "An independent cinematic house producing forty-two seminal films.",
     type: "website",
