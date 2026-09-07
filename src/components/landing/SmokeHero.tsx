@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -32,9 +32,33 @@ interface Particle {
 }
 
 const LAYER_CONFIGS = [
-  { rMin: 380, rMax: 720, aMin: 0.055, aMax: 0.10,  vyMin: -0.28, vyMax: -0.14, vxMax: 0.12 },
-  { rMin: 210, rMax: 430, aMin: 0.09,  aMax: 0.17,  vyMin: -0.55, vyMax: -0.30, vxMax: 0.20 },
-  { rMin: 120, rMax: 270, aMin: 0.15,  aMax: 0.27,  vyMin: -0.92, vyMax: -0.52, vxMax: 0.30 },
+  {
+    rMin: 380,
+    rMax: 720,
+    aMin: 0.055,
+    aMax: 0.1,
+    vyMin: -0.28,
+    vyMax: -0.14,
+    vxMax: 0.12,
+  },
+  {
+    rMin: 210,
+    rMax: 430,
+    aMin: 0.09,
+    aMax: 0.17,
+    vyMin: -0.55,
+    vyMax: -0.3,
+    vxMax: 0.2,
+  },
+  {
+    rMin: 120,
+    rMax: 270,
+    aMin: 0.15,
+    aMax: 0.27,
+    vyMin: -0.92,
+    vyMax: -0.52,
+    vxMax: 0.3,
+  },
 ] as const;
 
 function makeParticle(W: number, H: number, layer: 0 | 1 | 2): Particle {
@@ -46,16 +70,20 @@ function makeParticle(W: number, H: number, layer: 0 | 1 | 2): Particle {
     vx: (Math.random() - 0.5) * 2 * L.vxMax,
     vy: L.vyMin + Math.random() * (L.vyMax - L.vyMin),
     r,
-    sx: 0.80 + Math.random() * 0.75,
-    sy: 0.60 + Math.random() * 0.60,
+    sx: 0.8 + Math.random() * 0.75,
+    sy: 0.6 + Math.random() * 0.6,
     rot: Math.random() * Math.PI * 2,
     rotV: (Math.random() - 0.5) * 0.0045,
     alpha: L.aMin + Math.random() * (L.aMax - L.aMin),
-    lum: 0.70 + Math.random() * 0.24,
+    lum: 0.7 + Math.random() * 0.24,
   };
 }
 
-function drawParticle(ctx: CanvasRenderingContext2D, p: Particle, gAlpha: number) {
+function drawParticle(
+  ctx: CanvasRenderingContext2D,
+  p: Particle,
+  gAlpha: number,
+) {
   ctx.save();
   ctx.globalAlpha = p.alpha * gAlpha;
   ctx.translate(p.x, p.y);
@@ -63,9 +91,9 @@ function drawParticle(ctx: CanvasRenderingContext2D, p: Particle, gAlpha: number
   ctx.scale(p.sx, p.sy);
   const l = Math.round(p.lum * 100);
   const g = ctx.createRadialGradient(0, 0, 0, 0, 0, p.r);
-  g.addColorStop(0,    `hsl(218,20%,${l}%)`);
+  g.addColorStop(0, `hsl(218,20%,${l}%)`);
   g.addColorStop(0.45, `hsla(216,16%,${Math.round(l * 0.52)}%,0.42)`);
-  g.addColorStop(1,    `hsla(212,12%,22%,0)`);
+  g.addColorStop(1, `hsla(212,12%,22%,0)`);
   ctx.fillStyle = g;
   ctx.beginPath();
   ctx.arc(0, 0, p.r, 0, Math.PI * 2);
@@ -77,14 +105,15 @@ function drawParticle(ctx: CanvasRenderingContext2D, p: Particle, gAlpha: number
 //  Component
 // ══════════════════════════════════════════════════════════════
 export default function SmokeHero() {
-  const wrapperRef    = useRef<HTMLDivElement>(null);
-  const canvasRef     = useRef<HTMLCanvasElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const smokeLayerRef = useRef<HTMLDivElement>(null);
-  const logoRef       = useRef<HTMLDivElement>(null);
-  const posterRef     = useRef<HTMLDivElement>(null);
-  const hintRef       = useRef<HTMLDivElement>(null);
-  const particlesRef  = useRef<Particle[]>([]);
-  const smokeAlpha    = useRef(1);
+  const logoRef = useRef<HTMLDivElement>(null);
+  const posterRef = useRef<HTMLDivElement>(null);
+  const hintRef = useRef<HTMLDivElement>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const smokeAlpha = useRef(1);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   // Canvas smoke render loop
   useEffect(() => {
@@ -95,14 +124,14 @@ export default function SmokeHero() {
 
     function init() {
       if (!canvas) return;
-      canvas.width  = canvas.offsetWidth;
+      canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
       const W = canvas.width;
       const H = canvas.height;
       const ps: Particle[] = [];
       for (let i = 0; i < 10; i++) ps.push(makeParticle(W, H, 0));
       for (let i = 0; i < 12; i++) ps.push(makeParticle(W, H, 1));
-      for (let i = 0; i < 8;  i++) ps.push(makeParticle(W, H, 2));
+      for (let i = 0; i < 8; i++) ps.push(makeParticle(W, H, 2));
       particlesRef.current = ps;
     }
 
@@ -121,8 +150,8 @@ export default function SmokeHero() {
         ctx.globalCompositeOperation = "screen";
         for (const p of particlesRef.current) {
           drawParticle(ctx, p, gA);
-          p.x   += p.vx;
-          p.y   += p.vy;
+          p.x += p.vx;
+          p.y += p.vy;
           p.rot += p.rotV;
           if (p.y + p.r * p.sy < -10) {
             p.y = H + p.r * p.sy + 10;
@@ -130,7 +159,7 @@ export default function SmokeHero() {
           }
           const ov = p.r * p.sx + 60;
           if (p.x - ov > W) p.x = -ov;
-          if (p.x + ov < 0) p.x =  W + ov;
+          if (p.x + ov < 0) p.x = W + ov;
         }
         ctx.globalCompositeOperation = "source-over";
       }
@@ -140,30 +169,39 @@ export default function SmokeHero() {
     animId = requestAnimationFrame(tick);
     const ro = new ResizeObserver(init);
     ro.observe(canvas);
-    return () => { cancelAnimationFrame(animId); ro.disconnect(); };
+    return () => {
+      cancelAnimationFrame(animId);
+      ro.disconnect();
+    };
   }, []);
 
   // GSAP entry + scroll dissolve
-  useEffect(() => {
+  useLayoutEffect(() => {
     const el = {
       wrapper: wrapperRef.current,
-      smoke:   smokeLayerRef.current,
-      logo:    logoRef.current,
-      poster:  posterRef.current,
-      hint:    hintRef.current,
+      smoke: smokeLayerRef.current,
+      logo: logoRef.current,
+      poster: posterRef.current,
+      hint: hintRef.current,
+      overlay: overlayRef.current,
     };
-    if (Object.values(el).some(v => !v)) return;
+    if (Object.values(el).some((v) => !v)) return;
 
-    const entry = gsap.timeline({ delay: 0.55 });
+    const entry = gsap.timeline({ delay: 0.15 });
+
     entry
-      .fromTo(el.logo,
-        { opacity: 0, y: 38, scale: 0.97 },
-        { opacity: 1, y: 0,  scale: 1, duration: 2.0, ease: "power4.out" }
+      .set(el.logo, { opacity: 0, y: 38, scale: 0.97 }) // đảm bảo state ban đầu chắc chắn
+      .to(el.overlay, { opacity: 0, duration: 0.3, ease: "power1.out" })
+      .to(
+        el.logo,
+        { opacity: 1, y: 0, scale: 1, duration: 2.0, ease: "power4.out" },
+        "-=0.15",
       )
-      .fromTo(el.hint,
+      .fromTo(
+        el.hint,
         { opacity: 0 },
         { opacity: 1, duration: 1.1, ease: "power2.out" },
-        "-=0.9"
+        "-=0.9",
       );
 
     const ctx = gsap.context(() => {
@@ -175,20 +213,32 @@ export default function SmokeHero() {
         onUpdate: (self) => {
           const p = self.progress;
           smokeAlpha.current = Math.max(0, 1 - p * 1.55);
-          gsap.set(el.smoke,  { opacity: Math.max(0, 1 - p * 1.25), scale: 1 + p * 0.24, yPercent: p * -8 });
-          gsap.set(el.logo,   { opacity: Math.max(0, 1 - p * 3.2), y: p * -55 });
+          gsap.set(el.smoke, {
+            opacity: Math.max(0, 1 - p * 1.25),
+            scale: 1 + p * 0.24,
+            yPercent: p * -8,
+          });
+          gsap.set(el.logo, { opacity: Math.max(0, 1 - p * 3.2), y: p * -55 });
           gsap.set(el.poster, { opacity: Math.max(0, (p - 0.28) / 0.72) });
-          gsap.set(el.hint,   { opacity: Math.max(0, 1 - p * 12) });
+          gsap.set(el.hint, { opacity: Math.max(0, 1 - p * 12) });
         },
       });
     }, el.wrapper!);
 
-    return () => { entry.kill(); ctx.revert(); };
+    return () => {
+      entry.kill();
+      ctx.revert();
+    };
   }, []);
 
   return (
     <div ref={wrapperRef} style={{ height: "260vh" }} className="relative">
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
+        <div
+          ref={overlayRef}
+          className="absolute inset-0 z-[999] bg-[#050505] pointer-events-none"
+          style={{ opacity: 1 }}
+        />
 
         {/* 0 ─ Poster reveal layer */}
         <div ref={posterRef} className="absolute inset-0 z-0 opacity-0">
@@ -196,22 +246,48 @@ export default function SmokeHero() {
           <div className="absolute inset-0 flex items-end justify-center px-4 md:px-10 z-0">
             {films.map((film, i) => {
               const layout = [
-                { dy: "14%", sc: "0.86", rot: "-3deg",  zi: 0  },
-                { dy: "0%",  sc: "1.00", rot: "0deg",   zi: 20 },
-                { dy: "18%", sc: "0.84", rot: "2.5deg", zi: 0  },
+                { dy: "14%", sc: "0.86", rot: "-3deg", zi: 0 },
+                { dy: "0%", sc: "1.00", rot: "0deg", zi: 20 },
+                { dy: "18%", sc: "0.84", rot: "2.5deg", zi: 0 },
               ][i];
               return (
                 <div
                   key={film.slug}
                   className="relative flex-1 max-w-[300px] sm:max-w-[340px] md:max-w-[380px]"
-                  style={{ transform: `translateY(${layout.dy}) scale(${layout.sc}) rotate(${layout.rot})`, transformOrigin: "bottom center", zIndex: layout.zi }}
+                  style={{
+                    transform: `translateY(${layout.dy}) scale(${layout.sc}) rotate(${layout.rot})`,
+                    transformOrigin: "bottom center",
+                    zIndex: layout.zi,
+                  }}
                 >
-                  <div className="absolute -inset-6 rounded-2xl blur-3xl opacity-20" style={{ background: film.palette.accent }} />
-                  <Link href={`/films/${film.slug}`} className="relative block aspect-[2/3] rounded-xl overflow-hidden shadow-[0_50px_120px_rgba(0,0,0,0.95)] border border-white/[0.08] group">
-                    <Image src={film.posterImage} alt={film.title} fill sizes="380px" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <div
+                    className="absolute -inset-6 rounded-2xl blur-3xl opacity-20"
+                    style={{ background: film.palette.accent }}
+                  />
+                  <Link
+                    href={`/films/${film.slug}`}
+                    className="relative block aspect-[2/3] rounded-xl overflow-hidden shadow-[0_50px_120px_rgba(0,0,0,0.95)] border border-white/[0.08] group"
+                  >
+                    <Image
+                      src={film.posterImage}
+                      alt={film.title}
+                      fill
+                      sizes="380px"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                    <span className="absolute top-3 left-3 font-mono text-[10px] tracking-widest border px-2 py-0.5 rounded" style={{ color: film.palette.accent, borderColor: `${film.palette.accent}55` }}>{film.number}</span>
-                    <div className="absolute bottom-0 left-0 right-0 px-4 py-3 font-mono text-[10px] tracking-wider uppercase text-white/55 border-t border-white/[0.05]">{film.title}</div>
+                    <span
+                      className="absolute top-3 left-3 font-mono text-[10px] tracking-widest border px-2 py-0.5 rounded"
+                      style={{
+                        color: film.palette.accent,
+                        borderColor: `${film.palette.accent}55`,
+                      }}
+                    >
+                      {film.number}
+                    </span>
+                    <div className="absolute bottom-0 left-0 right-0 px-4 py-3 font-mono text-[10px] tracking-wider uppercase text-white/55 border-t border-white/[0.05]">
+                      {film.title}
+                    </div>
                   </Link>
                 </div>
               );
@@ -221,20 +297,37 @@ export default function SmokeHero() {
         </div>
 
         {/* 1 ─ Smoke canvas */}
-        <div ref={smokeLayerRef} className="absolute inset-0 z-10 pointer-events-none" style={{ transformOrigin: "center 38%" }}>
+        <div
+          ref={smokeLayerRef}
+          className="absolute inset-0 z-10 pointer-events-none"
+          style={{ transformOrigin: "center 38%" }}
+        >
           <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
-          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 88% 82% at 50% 50%, transparent 32%, rgba(5,5,5,0.72) 100%)" }} />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 88% 82% at 50% 50%, transparent 32%, rgba(5,5,5,0.72) 100%)",
+            }}
+          />
         </div>
 
         {/* 1.5 ─ Center contrast darkening */}
         <div
           className="absolute inset-0 z-[15] pointer-events-none"
-          style={{ background: "radial-gradient(ellipse 58% 44% at 50% 50%, rgba(5,5,5,0.48) 0%, transparent 100%)" }}
+          style={{
+            background:
+              "radial-gradient(ellipse 58% 44% at 50% 50%, rgba(5,5,5,0.48) 0%, transparent 100%)",
+          }}
         />
 
         {/* 2 ─ Logo + subtext */}
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none select-none">
-          <div ref={logoRef} className="opacity-0 flex flex-col items-center gap-5">
+          <div
+            ref={logoRef}
+            className="opacity-0 flex flex-col items-center gap-5"
+            style={{ opacity: 0 }}
+          >
             <div className="relative flex flex-col items-center gap-5">
               {/* Logo with clean luminous presentation */}
               <div className="relative flex items-center justify-center">
@@ -242,7 +335,8 @@ export default function SmokeHero() {
                 <div
                   className="absolute inset-0 pointer-events-none -z-10"
                   style={{
-                    background: "radial-gradient(ellipse 65% 55% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 45%, transparent 75%)",
+                    background:
+                      "radial-gradient(ellipse 65% 55% at 50% 50%, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 45%, transparent 75%)",
                     transform: "scale(1.5)",
                   }}
                 />
@@ -276,14 +370,19 @@ export default function SmokeHero() {
         </div>
 
         {/* 3 ─ Scroll hint */}
-        <div ref={hintRef} className="absolute bottom-8 inset-x-0 z-30 flex flex-col items-center gap-2 opacity-0 pointer-events-none">
-          <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.40em] uppercase text-[#4a4a4a]">Scroll to Reveal</p>
+        <div
+          ref={hintRef}
+          className="absolute bottom-8 inset-x-0 z-30 flex flex-col items-center gap-2 opacity-0 pointer-events-none"
+          style={{ opacity: 0 }}
+        >
+          <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.40em] uppercase text-[#4a4a4a]">
+            Scroll to Reveal
+          </p>
           <div className="flex flex-col items-center gap-0.5 smoke-bounce-arrow">
             <span className="block w-px h-5 bg-gradient-to-b from-[#4a4a4a] to-transparent" />
             <span className="text-[#424242] text-xs leading-none">↓</span>
           </div>
         </div>
-
       </div>
     </div>
   );
