@@ -32,7 +32,7 @@ export default function InsaneAisylumPage() {
           </div>
           <Link
             href="/#films"
-            className="text-[#898989] hover:text-[#f1f1ed] transition-colors uppercase tracking-widest"
+            className="relative z-[60] pointer-events-auto cursor-pointer text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 uppercase tracking-widest"
           >
             ← All Films
           </Link>

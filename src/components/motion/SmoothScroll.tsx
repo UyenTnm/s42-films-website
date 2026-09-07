@@ -57,14 +57,47 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
   }, []);
 
   // On page route change, reset scroll position and recalculate ScrollTriggers
+  // useEffect(() => {
+  //   const lenis = getGlobalLenis();
+  //   if (lenis) {
+  //     lenis.scrollTo(0, { immediate: true });
+  //     setTimeout(() => {
+  //       ScrollTrigger.refresh();
+  //     }, 100);
+  //   }
+  // }, [pathname]);
+
   useEffect(() => {
     const lenis = getGlobalLenis();
-    if (lenis) {
-      lenis.scrollTo(0, { immediate: true });
-      setTimeout(() => {
-        ScrollTrigger.refresh();
-      }, 100);
+
+    if (!lenis) return;
+
+    const fromFilm =
+      pathname === "/" &&
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("s42-film-to-home") === "1";
+
+    if (fromFilm) {
+      requestAnimationFrame(() => {
+        lenis.scrollTo(0, { immediate: true });
+
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh();
+        });
+      });
+
+      return;
     }
+
+    lenis.scrollTo(0, { immediate: true });
+
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 100);
+
+    return () => {
+      clearTimeout(refreshTimer);
+    };
   }, [pathname]);
 
   return <>{children}</>;

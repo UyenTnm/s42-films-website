@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getFilmBySlug } from "@/data/films";
+import BackToHomeLink from "@/components/navigation/BackToHomeLink";
 
 export const metadata: Metadata = {
   title: "02 — SUICIDE TRAIN | S•42 Films",
@@ -30,12 +31,16 @@ export default function SuicideTrainPage() {
             <span>/</span>
             <span className="text-[#e52222] font-bold">FILM {film.number}</span>
           </div>
-          <Link
+
+          {/* <Link
             href="/#films"
-            className="text-[#898989] hover:text-[#f1f1ed] transition-colors uppercase tracking-widest"
+            className="relative z-[60] pointer-events-auto cursor-pointer text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 uppercase tracking-widest"
           >
             ← All Films
-          </Link>
+          </Link> */}
+          <BackToHomeLink className="relative z-[60] pointer-events-auto cursor-pointer text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 uppercase tracking-widest">
+            ← All Films
+          </BackToHomeLink>
         </div>
 
         {/* Main Content Layout: Poster + Narrative Details */}

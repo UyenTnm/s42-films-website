@@ -32,7 +32,7 @@ export default function LifeIsPage() {
           </div>
           <Link
             href="/#films"
-            className="text-[#898989] hover:text-[#f1f1ed] transition-colors uppercase tracking-widest"
+            className="relative z-[60] pointer-events-auto cursor-pointer text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 uppercase tracking-widest"
           >
             ← All Films
           </Link>
@@ -53,7 +53,8 @@ export default function LifeIsPage() {
               />
             </div>
             <p className="font-mono text-[10px] text-[#898989] tracking-widest text-center uppercase">
-              CONFIDENTIAL — PRIVATE DEVELOPMENT MATERIAL • 42 CROSSROADS CRESCENT
+              CONFIDENTIAL — PRIVATE DEVELOPMENT MATERIAL • 42 CROSSROADS
+              CRESCENT
             </p>
           </div>
 
@@ -77,10 +78,12 @@ export default function LifeIsPage() {
 
             {/* Core Hook Quote */}
             <blockquote className="border-l-2 border-[#f5a623] pl-6 py-2 text-xl sm:text-2xl text-[#f1f1ed] italic font-serif">
-              &ldquo;SAME FAMILY. SAME ACTORS. SAME HOUSE. SAME FAMILIAR SETTINGS. <br />
+              &ldquo;SAME FAMILY. SAME ACTORS. SAME HOUSE. SAME FAMILIAR
+              SETTINGS. <br />
               <span className="text-[#f5a623] font-sans font-bold not-italic text-lg sm:text-xl">
                 SAME WEEKEND. DIFFERENT MOVIE.
-              </span>&rdquo;
+              </span>
+              &rdquo;
             </blockquote>
 
             {/* The Proposition */}
@@ -108,7 +111,9 @@ export default function LifeIsPage() {
                   <h3 className="font-mono text-xs tracking-widest uppercase text-[#f5a623] font-bold">
                     4 GENRES. ONE FAMILY. MULTIPLE TRUTHS.
                   </h3>
-                  <span className="font-mono text-[11px] text-[#898989]">24 POSSIBLE VIEWING ORDERS</span>
+                  <span className="font-mono text-[11px] text-[#898989]">
+                    24 POSSIBLE VIEWING ORDERS
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
@@ -162,7 +167,7 @@ export default function LifeIsPage() {
                   href="/#films"
                   className="text-[#f5a623] hover:text-white transition-colors"
                 >
-                  Return to Index ↑
+                  Return to S•42 ↑
                 </Link>
               </div>
             </div>
