@@ -168,19 +168,19 @@ export default function FilmIndex() {
                   </div>
 
                   {/* Official Film Title Graphic */}
-                  <div className="relative h-10 sm:h-14 md:h-16 w-full max-w-[360px] sm:max-w-[480px] group-hover:translate-x-1.5 transition-transform duration-300">
+                  <div className="relative h-14 sm:h-20 md:h-28 w-full max-w-[420px] sm:max-w-[600px] md:max-w-[720px] group-hover:translate-x-1.5 transition-transform duration-300">
                     <Image
                       src={film.titleImage}
                       alt={film.title}
                       fill
-                      sizes="(max-width: 640px) 300px, 480px"
+                      sizes="(max-width: 640px) 380px, (max-width: 1024px) 600px, 720px"
                       className="object-contain object-left drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
                     />
                   </div>
 
                   {film.subtitle && (
                     <p
-                      className="font-sans text-xs tracking-wider uppercase font-medium"
+                      className="font-sans text-sm sm:text-base tracking-wider uppercase font-medium"
                       style={{ color: film.palette.accent }}
                     >
                       {film.subtitle}
@@ -188,12 +188,12 @@ export default function FilmIndex() {
                   )}
 
                   {film.tagline && (
-                    <p className="font-sans text-base md:text-lg italic text-[#e0e0dc] font-light">
+                    <p className="font-sans text-lg md:text-xl lg:text-2xl italic text-[#e0e0dc] font-light">
                       &ldquo;{film.tagline}&rdquo;
                     </p>
                   )}
 
-                  <p className="font-sans text-sm md:text-base text-[#9a9a94] leading-relaxed max-w-3xl font-light">
+                  <p className="font-sans text-base md:text-lg text-[#9a9a94] leading-relaxed max-w-3xl font-light">
                     {film.logline}
                   </p>
 

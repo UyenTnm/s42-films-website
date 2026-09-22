@@ -304,18 +304,18 @@ export default function SmokeHero() {
             </div>
 
             {/* Official Film Title Logo Graphic */}
-            <div className="relative h-12 sm:h-16 md:h-20 w-64 sm:w-80 md:w-[440px] my-1">
+            <div className="relative h-16 sm:h-24 md:h-28 w-[85vw] sm:w-[60vw] md:w-[700px] lg:w-[800px] my-1 max-w-[820px]">
               <Image
                 src={films[activeIndex].titleImage}
                 alt={films[activeIndex].title}
                 fill
-                sizes="(max-width: 640px) 260px, 440px"
+                sizes="(max-width: 640px) 85vw, (max-width: 1024px) 60vw, 800px"
                 className="object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]"
                 priority
               />
             </div>
 
-            <p className="font-sans text-xs sm:text-sm text-[#b0b0a8] font-light max-w-xl line-clamp-1 italic">
+            <p className="font-sans text-sm sm:text-base text-[#b0b0a8] font-light max-w-2xl italic px-4">
               &ldquo;{films[activeIndex].tagline}&rdquo;
             </p>
           </div>
@@ -347,7 +347,8 @@ export default function SmokeHero() {
             </button>
 
             {/* Carousel Track with 7 Posters */}
-            <div className="relative flex items-center justify-center">
+            <div className="relative w-full overflow-hidden flex items-center justify-center" style={{ perspective: "1200px" }}>
+              <div className="relative flex items-center justify-center w-full">
               {films.map((film, i) => {
                 const n = films.length;
                 let offset = (i - activeIndex) % n;
@@ -383,17 +384,18 @@ export default function SmokeHero() {
                   zIndex = 10;
                 }
 
+                // On mobile (< sm), hide posters beyond ±1 to prevent layout overflow
+                const isMobileHidden = absOffset >= 3;
+
                 return (
                   <div
                     key={film.slug}
                     onClick={() => {
                       if (!isCenter) setActiveIndex(i);
                     }}
-                    className={`relative cursor-pointer -mx-5 sm:-mx-8 md:-mx-12 lg:-mx-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                      isCenter ? "cursor-pointer" : "cursor-pointer"
-                    }`}
+                    className={`relative cursor-pointer flex-shrink-0 -mx-4 sm:-mx-8 md:-mx-12 lg:-mx-16 xl:-mx-20 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMobileHidden ? "hidden sm:block" : ""}`}
                     style={{
-                      transform: `translateY(${translateY}px) scale(${scale}) rotate(${rotateY}deg)`,
+                      transform: `translateY(${translateY}px) scale(${scale}) rotateY(${rotateY}deg)`,
                       transformOrigin: "bottom center",
                       zIndex,
                       opacity,
@@ -418,7 +420,7 @@ export default function SmokeHero() {
                           setActiveIndex(i);
                         }
                       }}
-                      className={`relative block w-[170px] sm:w-[210px] md:w-[250px] lg:w-[285px] xl:w-[310px] aspect-[2/3] rounded-2xl overflow-hidden transition-all duration-500 bg-[#0d0d0d] ${
+                      className={`relative block w-[190px] sm:w-[230px] md:w-[280px] lg:w-[320px] xl:w-[360px] aspect-[2/3] rounded-2xl overflow-hidden transition-all duration-500 bg-[#0d0d0d] ${
                         isCenter
                           ? "shadow-[0_40px_100px_rgba(0,0,0,0.98)] ring-1 ring-white/10"
                           : "shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
@@ -466,6 +468,7 @@ export default function SmokeHero() {
                   </div>
                 );
               })}
+              </div>
             </div>
           </div>
 
@@ -528,7 +531,7 @@ export default function SmokeHero() {
             /* ── VIDEO MODE: fullscreen autoplay video runs ONCE (no loop) ── */
             <div
               ref={logoRef}
-              className="opacity-0 absolute inset-0"
+              className="opacity-0 absolute inset-0 bg-black"
               style={{ opacity: 0 }}
             >
               <video
@@ -537,7 +540,7 @@ export default function SmokeHero() {
                 muted
                 playsInline
                 preload="auto"
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain"
               >
                 <source src="/video/s42-hero-h264.mp4" type="video/mp4" />
                 <source src="/video/s42-hero.mp4" type="video/mp4" />
