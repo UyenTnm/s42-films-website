@@ -296,15 +296,25 @@ export default function SmokeHero() {
           onMouseLeave={() => setIsPaused(false)}
         >
           {/* Active Film Header info */}
-          <div className="relative z-30 flex flex-col items-center text-center gap-1.5 pt-4 sm:pt-6 pointer-events-auto">
+          <div className="relative z-30 flex flex-col items-center text-center gap-2 pt-3 sm:pt-5 pointer-events-auto">
             <div className="flex items-center gap-3">
               <span className="font-heading font-ethnocentric text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[#f1f1ed]/80 bg-black/60 px-3.5 py-1 rounded-full border border-white/15 backdrop-blur-md">
                 FEATURED REVEAL // {films[activeIndex].number} OF 07
               </span>
             </div>
-            <h2 className="font-heading font-ethnocentric text-lg sm:text-2xl md:text-3xl text-white tracking-wider drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] transition-all duration-500">
-              {films[activeIndex].title}
-            </h2>
+
+            {/* Official Film Title Logo Graphic */}
+            <div className="relative h-12 sm:h-16 md:h-20 w-64 sm:w-80 md:w-[440px] my-1">
+              <Image
+                src={films[activeIndex].titleImage}
+                alt={films[activeIndex].title}
+                fill
+                sizes="(max-width: 640px) 260px, 440px"
+                className="object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]"
+                priority
+              />
+            </div>
+
             <p className="font-sans text-xs sm:text-sm text-[#b0b0a8] font-light max-w-xl line-clamp-1 italic">
               &ldquo;{films[activeIndex].tagline}&rdquo;
             </p>
@@ -399,7 +409,7 @@ export default function SmokeHero() {
                       style={{ background: film.palette.accent }}
                     />
 
-                    {/* Poster Card Container */}
+                    {/* Poster Card Container — BORDERLESS for seamless cinematic poster look */}
                     <Link
                       href={`/films/${film.slug}`}
                       onClick={(e) => {
@@ -408,10 +418,10 @@ export default function SmokeHero() {
                           setActiveIndex(i);
                         }
                       }}
-                      className={`relative block w-[170px] sm:w-[210px] md:w-[250px] lg:w-[285px] xl:w-[310px] aspect-[2/3] rounded-2xl overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.95)] transition-all duration-500 bg-[#0d0d0d] ${
+                      className={`relative block w-[170px] sm:w-[210px] md:w-[250px] lg:w-[285px] xl:w-[310px] aspect-[2/3] rounded-2xl overflow-hidden transition-all duration-500 bg-[#0d0d0d] ${
                         isCenter
-                          ? "border-2 border-white/60 shadow-[0_35px_100px_rgba(0,0,0,0.98)]"
-                          : "border border-white/15 hover:border-white/40"
+                          ? "shadow-[0_40px_100px_rgba(0,0,0,0.98)] ring-1 ring-white/10"
+                          : "shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
                       }`}
                     >
                       {/* High-Resolution Poster Image */}
@@ -429,22 +439,28 @@ export default function SmokeHero() {
                       />
 
                       {/* Subtle Bottom Scrim for Title Legibility */}
-                      <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+                      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
 
                       {/* Film Number Badge */}
                       <span
-                        className="absolute top-3 left-3 font-heading font-ethnocentric text-[9px] sm:text-[10px] tracking-widest border px-2 py-0.5 rounded font-bold shadow-lg bg-black/60 backdrop-blur-md"
+                        className="absolute top-3 left-3 font-heading font-ethnocentric text-[9px] sm:text-[10px] tracking-widest px-2 py-0.5 rounded font-bold shadow-lg bg-black/70 backdrop-blur-md"
                         style={{
                           color: film.palette.accent,
-                          borderColor: `${film.palette.accent}99`,
                         }}
                       >
                         {film.number}
                       </span>
 
-                      {/* Film Title on Poster */}
-                      <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 font-heading font-ethnocentric text-[9px] sm:text-[11px] tracking-wider uppercase text-white font-medium truncate drop-shadow-md">
-                        {film.title}
+                      {/* Official Film Title Graphic on Poster */}
+                      <div className="absolute bottom-2 inset-x-0 px-3 flex justify-center pointer-events-none">
+                        <div className="relative h-8 sm:h-10 w-full max-w-[200px]">
+                          <Image
+                            src={film.titleImage}
+                            alt={film.title}
+                            fill
+                            className="object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                          />
+                        </div>
                       </div>
                     </Link>
                   </div>

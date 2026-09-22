@@ -42,7 +42,7 @@ export default function EveryoneThinkImDeadPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Left Column: Official Poster */}
           <div className="lg:col-span-5 xl:col-span-5 space-y-4">
-            <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden border border-[#e8c44a]/30 shadow-[0_0_60px_rgba(232,196,74,0.14)] bg-black">
+            <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden shadow-[0_0_60px_rgba(232,196,74,0.14)] bg-black">
               <Image
                 src={film.posterImage}
                 alt="EVERYONE THINKS I'M DEAD Official Poster"
@@ -61,15 +61,21 @@ export default function EveryoneThinkImDeadPage() {
           <div className="lg:col-span-7 xl:col-span-7 space-y-10">
             {/* Header Titles */}
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#e8c44a]/10 border border-[#e8c44a]/30 font-mono text-xs text-[#e8c44a] tracking-widest uppercase font-semibold">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#e8c44a]/10 font-mono text-xs text-[#e8c44a] tracking-widest uppercase font-semibold">
                 FILM {film.number} {"//"}  S•42
               </div>
 
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white uppercase leading-none">
-                EVERYONE<br />
-                THINKS<br />
-                <span className="text-[#e8c44a]">I&apos;M DEAD</span>
-              </h1>
+              {/* Official Film Title Graphic */}
+              <div className="relative h-16 sm:h-20 md:h-24 w-full max-w-[480px] sm:max-w-[600px]">
+                <Image
+                  src={film.titleImage}
+                  alt={film.title}
+                  fill
+                  sizes="(max-width: 640px) 400px, 600px"
+                  className="object-contain object-left drop-shadow-[0_4px_20px_rgba(0,0,0,0.95)]"
+                  priority
+                />
+              </div>
 
               <h2 className="font-mono text-sm sm:text-base text-[#a3a3a3] tracking-widest uppercase font-medium">
                 {film.subtitle}

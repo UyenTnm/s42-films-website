@@ -121,7 +121,7 @@ export default function FilmIndex() {
               <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
                 {/* Film Poster Thumbnail */}
                 <div className="lg:col-span-4 xl:col-span-3">
-                  <div className="relative w-full max-w-[280px] aspect-[2/3] rounded-xl overflow-hidden border border-white/15 group-hover:border-white/50 shadow-2xl bg-[#090909] group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.8)] transition-all duration-500">
+                  <div className="relative w-full max-w-[280px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl bg-[#090909] group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.8)] transition-all duration-500">
                     <Image
                       src={film.posterImage}
                       alt={`${film.title} Poster`}
@@ -167,10 +167,16 @@ export default function FilmIndex() {
                     )}
                   </div>
 
-                  {/* Film Title in Ethnocentric */}
-                  <h3 className="font-heading font-ethnocentric text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white tracking-wide group-hover:translate-x-1.5 transition-transform duration-300">
-                    {film.title}
-                  </h3>
+                  {/* Official Film Title Graphic */}
+                  <div className="relative h-10 sm:h-14 md:h-16 w-full max-w-[360px] sm:max-w-[480px] group-hover:translate-x-1.5 transition-transform duration-300">
+                    <Image
+                      src={film.titleImage}
+                      alt={film.title}
+                      fill
+                      sizes="(max-width: 640px) 300px, 480px"
+                      className="object-contain object-left drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                    />
+                  </div>
 
                   {film.subtitle && (
                     <p
