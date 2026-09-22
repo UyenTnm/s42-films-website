@@ -62,31 +62,31 @@ export default function L4206Page() {
           <div className="lg:col-span-7 xl:col-span-7 space-y-10">
             {/* Header Titles */}
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#c0392b]/10 border border-[#c0392b]/30 font-mono text-xs text-[#c0392b] tracking-widest uppercase font-semibold">
-                FILM {film.number} {"//"}  S•42
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#c0392b]/10 border border-[#c0392b]/30 font-heading font-ethnocentric text-xs text-[#c0392b] tracking-wider uppercase font-semibold">
+                FILM {film.number} {"//"} S•42
               </div>
 
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight text-white uppercase leading-none">
+              <h1 className="font-heading font-ethnocentric text-3xl sm:text-5xl md:text-6xl text-white tracking-wide uppercase leading-none">
                 L.<span className="text-[#c0392b]">42</span>.06
               </h1>
 
-              <h2 className="font-mono text-sm sm:text-base text-[#a3a3a3] tracking-widest uppercase font-medium">
+              <h2 className="font-sans text-xs sm:text-sm text-[#a3a3a3] tracking-widest uppercase font-medium">
                 {film.subtitle}
               </h2>
             </div>
 
             {/* Tagline Quote */}
-            <blockquote className="border-l-2 border-[#c0392b] pl-6 py-2 text-xl sm:text-2xl text-[#f1f1ed] italic font-serif">
+            <blockquote className="border-l-2 border-[#c0392b] pl-6 py-2 text-xl sm:text-2xl text-[#f1f1ed] italic font-light font-sans">
               &ldquo;{film.tagline}&rdquo;
             </blockquote>
 
             {/* Production Specifications */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 rounded-lg border border-[#c0392b]/20 bg-[#0d0909] font-mono text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 rounded-lg border border-[#c0392b]/20 bg-[#0d0909] font-sans text-xs">
               <div>
                 <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">
                   FORMAT
                 </span>
-                <span className="text-[#f1f1ed] font-semibold text-sm">
+                <span className="text-[#f1f1ed] font-medium text-sm">
                   {film.format}
                 </span>
               </div>
@@ -94,7 +94,7 @@ export default function L4206Page() {
                 <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">
                   GENRE
                 </span>
-                <span className="text-[#f1f1ed] font-semibold text-sm">
+                <span className="text-[#f1f1ed] font-medium text-sm">
                   {film.genre}
                 </span>
               </div>
@@ -102,10 +102,10 @@ export default function L4206Page() {
 
             {/* Logline */}
             <div className="space-y-3">
-              <h3 className="font-mono text-xs tracking-widest uppercase text-[#c0392b] font-bold">
+              <h3 className="font-heading font-ethnocentric text-xs tracking-wider uppercase text-[#c0392b] font-bold">
                 LOGLINE
               </h3>
-              <p className="text-base sm:text-lg text-[#d1d5db] leading-relaxed">
+              <p className="font-sans text-base sm:text-lg text-[#d1d5db] leading-relaxed font-light">
                 {film.logline}
               </p>
             </div>

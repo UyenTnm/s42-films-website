@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -266,6 +266,18 @@ export default function SmokeHero() {
     };
   }, []);
 
+  const [activeIndex, setActiveIndex] = useState(3);
+  const [isPaused, setIsPaused] = useState(false);
+
+  // Auto-flow carousel effect
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % films.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, [isPaused]);
+
   return (
     <div ref={wrapperRef} style={{ height: "260vh" }} className="relative">
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
@@ -275,69 +287,153 @@ export default function SmokeHero() {
           style={{ opacity: 1 }}
         />
 
-        {/* 0 ─ Poster reveal layer: ALL 7 POSTERS IN BRIGHT VIBRANT PRESENTATION */}
+        {/* 0 ─ Poster reveal layer: ANIMATED 3D FLOWING COVERFLOW */}
         <div
           ref={posterRef}
-          className="absolute inset-0 z-25 opacity-0 pointer-events-none"
+          className="absolute inset-0 z-25 opacity-0 pointer-events-none flex flex-col justify-between py-6 sm:py-10 px-4 select-none"
           style={{ zIndex: 25 }}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
         >
-          {/* Subtle header badge */}
-          <div className="absolute top-12 sm:top-16 inset-x-0 flex flex-col items-center gap-2 pointer-events-none z-30">
-            <span className="font-mono text-[10px] sm:text-xs tracking-[0.45em] uppercase text-[#f1f1ed] bg-black/70 px-4 py-1.5 rounded-full border border-white/15 backdrop-blur-md shadow-lg">
-              All 07 Active Productions · S•42
-            </span>
+          {/* Active Film Header info */}
+          <div className="relative z-30 flex flex-col items-center text-center gap-1.5 pt-4 sm:pt-6 pointer-events-auto">
+            <div className="flex items-center gap-3">
+              <span className="font-heading font-ethnocentric text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[#f1f1ed]/80 bg-black/60 px-3.5 py-1 rounded-full border border-white/15 backdrop-blur-md">
+                FEATURED REVEAL // {films[activeIndex].number} OF 07
+              </span>
+            </div>
+            <h2 className="font-heading font-ethnocentric text-lg sm:text-2xl md:text-3xl text-white tracking-wider drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)] transition-all duration-500">
+              {films[activeIndex].title}
+            </h2>
+            <p className="font-sans text-xs sm:text-sm text-[#b0b0a8] font-light max-w-xl line-clamp-1 italic">
+              &ldquo;{films[activeIndex].tagline}&rdquo;
+            </p>
           </div>
 
-          {/* 7-Poster Fan Showcase */}
-          <div className="absolute inset-0 flex items-end justify-center px-2 sm:px-4 md:px-8 pb-8 sm:pb-12 z-20 overflow-x-auto lg:overflow-visible">
-            <div className="flex items-end justify-center min-w-max lg:min-w-0">
+          {/* 3D Flowing Coverflow Stage */}
+          <div className="relative w-full flex-1 flex items-center justify-center my-auto pointer-events-auto">
+            {/* Left Prev Arrow Button */}
+            <button
+              onClick={() =>
+                setActiveIndex((prev) => (prev - 1 + films.length) % films.length)
+              }
+              aria-label="Previous film"
+              className="absolute left-2 sm:left-6 md:left-12 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/70 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
+            >
+              <span className="font-heading font-ethnocentric text-sm sm:text-base group-hover:-translate-x-0.5 transition-transform">
+                ←
+              </span>
+            </button>
+
+            {/* Right Next Arrow Button */}
+            <button
+              onClick={() => setActiveIndex((prev) => (prev + 1) % films.length)}
+              aria-label="Next film"
+              className="absolute right-2 sm:right-6 md:right-12 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/70 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
+            >
+              <span className="font-heading font-ethnocentric text-sm sm:text-base group-hover:translate-x-0.5 transition-transform">
+                →
+              </span>
+            </button>
+
+            {/* Carousel Track with 7 Posters */}
+            <div className="relative flex items-center justify-center">
               {films.map((film, i) => {
-                const fanLayouts = [
-                  { dy: "16%", sc: "0.84", rot: "-7.5deg", zi: 1 },
-                  { dy: "10%", sc: "0.89", rot: "-5deg", zi: 2 },
-                  { dy: "5%", sc: "0.95", rot: "-2.5deg", zi: 3 },
-                  { dy: "0%", sc: "1.02", rot: "0deg", zi: 10 },
-                  { dy: "5%", sc: "0.95", rot: "2.5deg", zi: 3 },
-                  { dy: "10%", sc: "0.89", rot: "5deg", zi: 2 },
-                  { dy: "16%", sc: "0.84", rot: "7.5deg", zi: 1 },
-                ];
-                const layout = fanLayouts[i] || {
-                  dy: "0%",
-                  sc: "1",
-                  rot: "0deg",
-                  zi: 5,
-                };
+                const n = films.length;
+                let offset = (i - activeIndex) % n;
+                if (offset > n / 2) offset -= n;
+                if (offset < -n / 2) offset += n;
+                const isCenter = offset === 0;
+                const absOffset = Math.abs(offset);
+
+                // Calculate 3D coverflow styling dynamically
+                let scale = 1.15;
+                let translateY = 0;
+                let rotateY = 0;
+                let opacity = 1;
+                let zIndex = 30;
+
+                if (absOffset === 1) {
+                  scale = 0.92;
+                  translateY = 14;
+                  rotateY = offset * 5;
+                  opacity = 0.88;
+                  zIndex = 22;
+                } else if (absOffset === 2) {
+                  scale = 0.78;
+                  translateY = 28;
+                  rotateY = offset * 9;
+                  opacity = 0.65;
+                  zIndex = 16;
+                } else if (absOffset >= 3) {
+                  scale = 0.65;
+                  translateY = 42;
+                  rotateY = offset * 13;
+                  opacity = 0.45;
+                  zIndex = 10;
+                }
+
                 return (
                   <div
                     key={film.slug}
-                    className="relative w-[13.5vw] min-w-[130px] max-w-[205px] -mx-1.5 sm:-mx-2.5 md:-mx-3.5 lg:-mx-4 transition-all duration-300 hover:z-30 group"
+                    onClick={() => {
+                      if (!isCenter) setActiveIndex(i);
+                    }}
+                    className={`relative cursor-pointer -mx-5 sm:-mx-8 md:-mx-12 lg:-mx-16 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                      isCenter ? "cursor-pointer" : "cursor-pointer"
+                    }`}
                     style={{
-                      transform: `translateY(${layout.dy}) scale(${layout.sc}) rotate(${layout.rot})`,
+                      transform: `translateY(${translateY}px) scale(${scale}) rotate(${rotateY}deg)`,
                       transformOrigin: "bottom center",
-                      zIndex: layout.zi,
+                      zIndex,
+                      opacity,
                     }}
                   >
-                    {/* Vibrant Ambient Backlight Glow */}
+                    {/* Ambient Backlit Glow for Active & Flanking Posters */}
                     <div
-                      className="absolute -inset-3 rounded-2xl blur-xl opacity-45 group-hover:opacity-90 transition-opacity duration-300"
+                      className={`absolute -inset-4 rounded-3xl blur-2xl transition-opacity duration-700 pointer-events-none ${
+                        isCenter
+                          ? "opacity-90 scale-105"
+                          : "opacity-30 group-hover:opacity-60"
+                      }`}
                       style={{ background: film.palette.accent }}
                     />
+
+                    {/* Poster Card Container */}
                     <Link
                       href={`/films/${film.slug}`}
-                      className="relative block aspect-[2/3] rounded-xl overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.95)] border border-white/20 group-hover:border-white/70 group-hover:scale-105 group-hover:-translate-y-3 transition-all duration-400 bg-[#101010]"
+                      onClick={(e) => {
+                        if (!isCenter) {
+                          e.preventDefault();
+                          setActiveIndex(i);
+                        }
+                      }}
+                      className={`relative block w-[170px] sm:w-[210px] md:w-[250px] lg:w-[285px] xl:w-[310px] aspect-[2/3] rounded-2xl overflow-hidden shadow-[0_30px_90px_rgba(0,0,0,0.95)] transition-all duration-500 bg-[#0d0d0d] ${
+                        isCenter
+                          ? "border-2 border-white/60 shadow-[0_35px_100px_rgba(0,0,0,0.98)]"
+                          : "border border-white/15 hover:border-white/40"
+                      }`}
                     >
-                      {/* Bright, high-contrast poster artwork */}
+                      {/* High-Resolution Poster Image */}
                       <Image
                         src={film.posterImage}
                         alt={film.title}
                         fill
-                        sizes="(max-width: 768px) 150px, 220px"
-                        className="object-cover brightness-105 contrast-105 transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 640px) 180px, (max-width: 1024px) 260px, 320px"
+                        className={`object-cover transition-transform duration-700 ${
+                          isCenter
+                            ? "brightness-110 contrast-105 scale-100"
+                            : "brightness-95 hover:brightness-105"
+                        }`}
+                        priority
                       />
-                      {/* Minimal bottom gradient for title legibility only */}
-                      <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+
+                      {/* Subtle Bottom Scrim for Title Legibility */}
+                      <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+
+                      {/* Film Number Badge */}
                       <span
-                        className="absolute top-2.5 left-2.5 font-mono text-[9px] sm:text-[10px] tracking-widest border px-1.5 py-0.5 rounded font-bold shadow-md bg-black/60 backdrop-blur-sm"
+                        className="absolute top-3 left-3 font-heading font-ethnocentric text-[9px] sm:text-[10px] tracking-widest border px-2 py-0.5 rounded font-bold shadow-lg bg-black/60 backdrop-blur-md"
                         style={{
                           color: film.palette.accent,
                           borderColor: `${film.palette.accent}99`,
@@ -345,7 +441,9 @@ export default function SmokeHero() {
                       >
                         {film.number}
                       </span>
-                      <div className="absolute bottom-0 left-0 right-0 px-2.5 py-2 font-mono text-[9px] sm:text-[10px] tracking-wider uppercase text-white font-medium truncate drop-shadow-md">
+
+                      {/* Film Title on Poster */}
+                      <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 font-heading font-ethnocentric text-[9px] sm:text-[11px] tracking-wider uppercase text-white font-medium truncate drop-shadow-md">
                         {film.title}
                       </div>
                     </Link>
@@ -354,8 +452,42 @@ export default function SmokeHero() {
               })}
             </div>
           </div>
-          {/* Subtle bottom transition scrim into the next section */}
-          <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-[#050505] to-transparent z-30 pointer-events-none" />
+
+          {/* Bottom Pagination Dots & Explore CTA */}
+          <div className="relative z-30 flex flex-col sm:flex-row items-center justify-between gap-4 px-4 max-w-4xl mx-auto w-full pointer-events-auto pb-2">
+            {/* Film dots selector */}
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {films.map((film, i) => (
+                <button
+                  key={film.slug}
+                  onClick={() => setActiveIndex(i)}
+                  aria-label={`Select ${film.title}`}
+                  className={`h-2 sm:h-2.5 rounded-full transition-all duration-400 cursor-pointer ${
+                    i === activeIndex
+                      ? "w-8 sm:w-10 bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)]"
+                      : "w-2 sm:w-2.5 bg-white/25 hover:bg-white/50"
+                  }`}
+                  style={
+                    i === activeIndex
+                      ? { backgroundColor: film.palette.accent }
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+
+            {/* Center film Explore Link */}
+            <Link
+              href={`/films/${films[activeIndex].slug}`}
+              className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-white/25 bg-black/60 hover:bg-white hover:text-black text-white font-heading font-ethnocentric text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 hover:scale-105 shadow-xl backdrop-blur-md"
+            >
+              <span>Explore Film Treatment</span>
+              <span>→</span>
+            </Link>
+          </div>
+
+          {/* Subtle bottom gradient to merge into manifesto */}
+          <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
         </div>
 
         {/* 1 ─ Smoke canvas */}
@@ -443,7 +575,7 @@ export default function SmokeHero() {
                     <span className="block w-1.5 h-1.5 rounded-full bg-[#f1f1ed]/60" />
                     <span className="block h-px w-16 sm:w-28 md:w-36 bg-gradient-to-l from-transparent to-[#f1f1ed]/38" />
                   </div>
-                  <p className="font-mono text-[10px] sm:text-xs md:text-sm tracking-[0.45em] uppercase text-[#888885] whitespace-nowrap">
+                  <p className="font-heading font-ethnocentric text-[8px] sm:text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#888885] whitespace-nowrap">
                     42 Great Stories Worth Remembering
                   </p>
                 </div>
@@ -458,7 +590,7 @@ export default function SmokeHero() {
           className="absolute bottom-8 inset-x-0 z-30 flex flex-col items-center gap-2 opacity-0 pointer-events-none"
           style={{ opacity: 0 }}
         >
-          <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.40em] uppercase text-[#4a4a4a]">
+          <p className="font-heading font-ethnocentric text-[8px] sm:text-[9px] tracking-[0.35em] uppercase text-[#777]">
             Scroll to Reveal
           </p>
           <div className="flex flex-col items-center gap-0.5 smoke-bounce-arrow">

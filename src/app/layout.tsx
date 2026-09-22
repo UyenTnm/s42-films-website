@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { Outfit } from "next/font/google";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import Header from "@/components/navigation/Header";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const ethnocentric = localFont({
+  src: "../../public/fonts/FC-Ethnocentric-Rg.otf",
+  variable: "--font-ethnocentric",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const outfit = Outfit({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -42,9 +46,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${ethnocentric.variable} ${outfit.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#050505] text-[#f1f1ed] selection:bg-[#f1f1ed] selection:text-[#050505]">
+      <body className="min-h-full flex flex-col bg-[#050505] text-[#f1f1ed] selection:bg-[#f1f1ed] selection:text-[#050505] font-sans">
         <SmoothScroll>
           <Header />
           <main className="flex-1">{children}</main>
