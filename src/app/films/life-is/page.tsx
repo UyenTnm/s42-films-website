@@ -164,10 +164,10 @@ export default function LifeIsPage() {
                   ← 02 SUICIDE TRAIN
                 </Link>
                 <Link
-                  href="/#films"
+                  href="/films/l-42-06"
                   className="text-[#f5a623] hover:text-white transition-colors"
                 >
-                  Return to S•42 ↑
+                  04 L.42.06 →
                 </Link>
               </div>
             </div>

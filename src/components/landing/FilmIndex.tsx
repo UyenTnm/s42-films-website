@@ -46,7 +46,7 @@ export default function FilmIndex() {
             <span>ACTIVE FILM ROSTER</span>
           </div>
           <div className="font-mono text-xs text-[#898989]">
-            SHOWING 03 OF 42 PRODUCTIONS
+            SHOWING 07 OF 42 PRODUCTIONS
           </div>
         </div>
 
@@ -145,7 +145,7 @@ export default function FilmIndex() {
           <div className="p-8 md:p-10 rounded-lg border border-dashed border-[#f1f1ed]/10 bg-[#080808]/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-mono text-xs text-[#555]">
             <div className="flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-[#333]" />
-              <span>SLOTS 04 — 42 // IN DEVELOPMENT PIPELINE</span>
+              <span>SLOTS 08 — 42 // IN DEVELOPMENT PIPELINE</span>
             </div>
             <span className="text-[11px] text-[#444] uppercase tracking-wider">
               42 GREAT STORIES WORTH REMEMBERING
