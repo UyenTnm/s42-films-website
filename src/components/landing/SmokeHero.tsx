@@ -310,7 +310,7 @@ export default function SmokeHero() {
                 alt={films[activeIndex].title}
                 fill
                 sizes="(max-width: 640px) 85vw, (max-width: 1024px) 60vw, 800px"
-                className="object-contain drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]"
+                className="object-contain [filter:drop-shadow(0_0_18px_rgba(255,255,255,0.55))_drop-shadow(0_3px_12px_rgba(0,0,0,0.98))]"
                 priority
               />
             </div>
@@ -460,7 +460,7 @@ export default function SmokeHero() {
                             src={film.titleImage}
                             alt={film.title}
                             fill
-                            className="object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]"
+                            className="object-contain [filter:drop-shadow(0_0_8px_rgba(255,255,255,0.5))_drop-shadow(0_2px_6px_rgba(0,0,0,0.95))]"
                           />
                         </div>
                       </div>

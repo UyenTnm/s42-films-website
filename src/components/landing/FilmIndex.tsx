@@ -174,7 +174,7 @@ export default function FilmIndex() {
                       alt={film.title}
                       fill
                       sizes="(max-width: 640px) 380px, (max-width: 1024px) 600px, 720px"
-                      className="object-contain object-left drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]"
+                      className="object-contain object-left [filter:drop-shadow(0_0_16px_rgba(255,255,255,0.5))_drop-shadow(0_3px_10px_rgba(0,0,0,0.98))]"
                     />
                   </div>
 
