@@ -36,7 +36,7 @@ export const films: Film[] = [
   {
     slug: "insane-aisylum",
     title: "INSANE AiSYLUM",
-    titleImage: "/images/titles/insane-aisylum.png",
+    titleImage: "/images/titles/insane-aisylum-oneline.png",
     titleImageOneLine: "/images/titles/insane-aisylum-oneline.png",
     number: "01",
     subtitle: "A JAPANESE PSYCHOLOGICAL SCIENCE-FICTION THRILLER",
@@ -57,7 +57,7 @@ export const films: Film[] = [
   {
     slug: "suicide-train",
     title: "SUICIDE TRAIN",
-    titleImage: "/images/titles/suicide-train.png",
+    titleImage: "/images/titles/suicide-train-oneline.png",
     titleImageOneLine: "/images/titles/suicide-train-oneline.png",
     number: "02",
     subtitle: "FEATURE FILM TREATMENT • PSYCHOLOGICAL SURVIVAL ACTION THRILLER",
@@ -166,7 +166,8 @@ export const films: Film[] = [
   {
     slug: "the-sum-of-me",
     title: "THE SUM OF ME",
-    titleImage: "/images/titles/the-sum-of-me.png",
+    titleImage: "/images/titles/the-sum-of-me-oneline.png",
+    titleImageOneLine: "/images/titles/the-sum-of-me-oneline.png",
     number: "05",
     subtitle: "FEATURE FILM TREATMENT · PHILOSOPHICAL SCI-FI DRAMA",
     tagline: "What if we were never meant to be judged by the one life we lived?",
@@ -217,7 +218,7 @@ export const films: Film[] = [
   {
     slug: "everyone-thinks-im-dead",
     title: "EVERYONE THINKS I'M DEAD",
-    titleImage: "/images/titles/everyone-thinks-im-dead.png",
+    titleImage: "/images/titles/everyone-thinks-im-dead-oneline.png",
     titleImageOneLine: "/images/titles/everyone-thinks-im-dead-oneline.png",
     number: "07",
     subtitle: "DARK COMEDY-DRAMA · FEATURE FILM",
