@@ -1,6 +1,8 @@
 export interface Film {
   slug: string;
   title: string;
+  titleImage: string;
+  titleImageOneLine?: string;
   number: string;
   subtitle?: string;
   tagline: string;
@@ -34,6 +36,8 @@ export const films: Film[] = [
   {
     slug: "insane-aisylum",
     title: "INSANE AiSYLUM",
+    titleImage: "/images/titles/insane-aisylum-oneline.png",
+    titleImageOneLine: "/images/titles/insane-aisylum-oneline.png",
     number: "01",
     subtitle: "A JAPANESE PSYCHOLOGICAL SCIENCE-FICTION THRILLER",
     tagline: "Humanity created the next dominant species. Then declared it insane.",
@@ -53,6 +57,8 @@ export const films: Film[] = [
   {
     slug: "suicide-train",
     title: "SUICIDE TRAIN",
+    titleImage: "/images/titles/suicide-train-oneline.png",
+    titleImageOneLine: "/images/titles/suicide-train-oneline.png",
     number: "02",
     subtitle: "FEATURE FILM TREATMENT • PSYCHOLOGICAL SURVIVAL ACTION THRILLER",
     tagline: "FOUR HOURS. ONE FINAL STOP. NO WAY OFF.",
@@ -85,6 +91,7 @@ export const films: Film[] = [
   {
     slug: "life-is",
     title: "LIFE IS...",
+    titleImage: "/images/titles/life-is.png",
     number: "03",
     subtitle: "A FOUR-FILM STREAMING EVENT",
     tagline: "4 PERSPECTIVES. 4 TRUTHS.",
@@ -140,6 +147,7 @@ export const films: Film[] = [
   {
     slug: "l-42-06",
     title: "L.42.06",
+    titleImage: "/images/titles/l-42-06.png",
     number: "04",
     subtitle: "PSYCHOLOGICAL SUPERNATURAL MYSTERY THRILLER · FEATURE FILM · APARTMENT L.42.06",
     tagline: "Some doors should stay closed. Some things shouldn't be seen.",
@@ -158,6 +166,8 @@ export const films: Film[] = [
   {
     slug: "the-sum-of-me",
     title: "THE SUM OF ME",
+    titleImage: "/images/titles/the-sum-of-me-oneline.png",
+    titleImageOneLine: "/images/titles/the-sum-of-me-oneline.png",
     number: "05",
     subtitle: "FEATURE FILM TREATMENT · PHILOSOPHICAL SCI-FI DRAMA",
     tagline: "What if we were never meant to be judged by the one life we lived?",
@@ -189,6 +199,7 @@ export const films: Film[] = [
   {
     slug: "memories-i-am",
     title: "MEMORIES I AM",
+    titleImage: "/images/titles/memories-i-am.png",
     number: "06",
     subtitle: "FEATURE FILM · PHILOSOPHICAL SCI-FI DRAMA",
     tagline: "Some things are worth more than money.",
@@ -207,6 +218,8 @@ export const films: Film[] = [
   {
     slug: "everyone-thinks-im-dead",
     title: "EVERYONE THINKS I'M DEAD",
+    titleImage: "/images/titles/everyone-thinks-im-dead-oneline.png",
+    titleImageOneLine: "/images/titles/everyone-thinks-im-dead-oneline.png",
     number: "07",
     subtitle: "DARK COMEDY-DRAMA · FEATURE FILM",
     tagline: "Everyone appreciates you more when you're dead.",

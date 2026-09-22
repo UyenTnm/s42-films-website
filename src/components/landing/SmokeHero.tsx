@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect } from "react";
+import { useRef, useEffect, useLayoutEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -266,6 +266,37 @@ export default function SmokeHero() {
     };
   }, []);
 
+  const [activeIndex, setActiveIndex] = useState(3);
+  const [isPaused, setIsPaused] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 45) {
+      // Swiped left -> Next
+      setActiveIndex((prev) => (prev + 1) % films.length);
+    } else if (diff < -45) {
+      // Swiped right -> Prev
+      setActiveIndex((prev) => (prev - 1 + films.length) % films.length);
+    }
+    setTouchStartX(null);
+  };
+
+  // Auto-flow carousel effect
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % films.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, [isPaused]);
+
   return (
     <div ref={wrapperRef} style={{ height: "260vh" }} className="relative">
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
@@ -275,87 +306,224 @@ export default function SmokeHero() {
           style={{ opacity: 1 }}
         />
 
-        {/* 0 ─ Poster reveal layer: ALL 7 POSTERS IN BRIGHT VIBRANT PRESENTATION */}
+        {/* 0 ─ Poster reveal layer: ANIMATED 3D FLOWING COVERFLOW */}
         <div
           ref={posterRef}
-          className="absolute inset-0 z-25 opacity-0 pointer-events-none"
+          className="absolute inset-0 z-25 opacity-0 pointer-events-none flex flex-col justify-between py-6 sm:py-10 px-4 select-none"
           style={{ zIndex: 25 }}
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
         >
-          {/* Subtle header badge */}
-          <div className="absolute top-12 sm:top-16 inset-x-0 flex flex-col items-center gap-2 pointer-events-none z-30">
-            <span className="font-mono text-[10px] sm:text-xs tracking-[0.45em] uppercase text-[#f1f1ed] bg-black/70 px-4 py-1.5 rounded-full border border-white/15 backdrop-blur-md shadow-lg">
-              All 07 Active Productions · S•42
-            </span>
+          {/* Active Film Header info */}
+          <div className="relative z-30 flex flex-col items-center text-center gap-2 pt-2 sm:pt-4 pointer-events-auto">
+            <div className="flex items-center gap-3">
+              <span className="font-heading font-ethnocentric text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[#f1f1ed]/80 bg-black/60 px-3.5 py-1 rounded-full border border-white/15 backdrop-blur-md">
+                FEATURED REVEAL // {films[activeIndex].number} OF 07
+              </span>
+            </div>
+
+            {/* Official Film Title Logo Graphic - Extra Large & Prominent */}
+            <div className="relative h-20 sm:h-28 md:h-36 lg:h-40 w-[92vw] sm:w-[85vw] md:w-[850px] lg:w-[950px] my-1 sm:my-2 max-w-[1000px]">
+              <Image
+                key={films[activeIndex].slug}
+                src={films[activeIndex].titleImage}
+                alt={films[activeIndex].title}
+                fill
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 85vw, 950px"
+                className="object-contain [filter:drop-shadow(0_0_20px_rgba(255,255,255,0.65))_drop-shadow(0_3px_14px_rgba(0,0,0,0.98))] transition-opacity duration-300"
+                priority
+              />
+            </div>
+
+            <p className="font-sans text-sm sm:text-base md:text-lg text-[#c5c5be] font-light max-w-2xl italic px-4">
+              &ldquo;{films[activeIndex].tagline}&rdquo;
+            </p>
           </div>
 
-          {/* 7-Poster Fan Showcase */}
-          <div className="absolute inset-0 flex items-end justify-center px-2 sm:px-4 md:px-8 pb-8 sm:pb-12 z-20 overflow-x-auto lg:overflow-visible">
-            <div className="flex items-end justify-center min-w-max lg:min-w-0">
+          {/* 3D Flowing Coverflow Stage - Active poster ALWAYS flows to middle position */}
+          <div
+            className="relative w-full flex-1 flex items-center justify-center my-auto pointer-events-auto min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px]"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* Left Prev Arrow Button */}
+            <button
+              onClick={() =>
+                setActiveIndex((prev) => (prev - 1 + films.length) % films.length)
+              }
+              aria-label="Previous film"
+              className="absolute left-2 sm:left-6 md:left-12 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/75 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
+            >
+              <span className="font-heading font-ethnocentric text-sm sm:text-base group-hover:-translate-x-0.5 transition-transform">
+                ←
+              </span>
+            </button>
+
+            {/* Right Next Arrow Button */}
+            <button
+              onClick={() => setActiveIndex((prev) => (prev + 1) % films.length)}
+              aria-label="Next film"
+              className="absolute right-2 sm:right-6 md:right-12 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/75 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
+            >
+              <span className="font-heading font-ethnocentric text-sm sm:text-base group-hover:translate-x-0.5 transition-transform">
+                →
+              </span>
+            </button>
+
+            {/* Carousel Stage - All posters positioned relative to center */}
+            <div
+              className="relative w-full h-[290px] sm:h-[370px] md:h-[450px] lg:h-[510px] flex items-center justify-center [--step:110px] sm:[--step:165px] md:[--step:220px] lg:[--step:275px] xl:[--step:315px]"
+              style={{ perspective: "1200px", overflowX: "clip" }}
+            >
               {films.map((film, i) => {
-                const fanLayouts = [
-                  { dy: "16%", sc: "0.84", rot: "-7.5deg", zi: 1 },
-                  { dy: "10%", sc: "0.89", rot: "-5deg", zi: 2 },
-                  { dy: "5%", sc: "0.95", rot: "-2.5deg", zi: 3 },
-                  { dy: "0%", sc: "1.02", rot: "0deg", zi: 10 },
-                  { dy: "5%", sc: "0.95", rot: "2.5deg", zi: 3 },
-                  { dy: "10%", sc: "0.89", rot: "5deg", zi: 2 },
-                  { dy: "16%", sc: "0.84", rot: "7.5deg", zi: 1 },
-                ];
-                const layout = fanLayouts[i] || {
-                  dy: "0%",
-                  sc: "1",
-                  rot: "0deg",
-                  zi: 5,
-                };
+                const n = films.length;
+                let offset = (i - activeIndex) % n;
+                if (offset > n / 2) offset -= n;
+                if (offset < -n / 2) offset += n;
+                const isCenter = offset === 0;
+                const absOffset = Math.abs(offset);
+
+                // Calculate 3D coverflow styling dynamically
+                let xMult = 0;
+                let scale = 1.06;
+                let translateY = 0;
+                let rotateY = 0;
+                let opacity = 1;
+                let zIndex = 30;
+
+                if (absOffset === 0) {
+                  xMult = 0;
+                  scale = 1.06;
+                  translateY = 0;
+                  rotateY = 0;
+                  opacity = 1;
+                  zIndex = 30;
+                } else if (absOffset === 1) {
+                  xMult = offset; // ±1
+                  scale = 0.88;
+                  translateY = 12;
+                  rotateY = offset * -8;
+                  opacity = 0.85;
+                  zIndex = 20;
+                } else if (absOffset === 2) {
+                  xMult = offset * 1.8;
+                  scale = 0.72;
+                  translateY = 24;
+                  rotateY = offset * -14;
+                  opacity = 0.6;
+                  zIndex = 10;
+                } else {
+                  // In wings (absOffset >= 3)
+                  xMult = offset * 2.4;
+                  scale = 0.58;
+                  translateY = 36;
+                  rotateY = offset * -20;
+                  opacity = 0; // Fully invisible in wings for clean wrap
+                  zIndex = 5;
+                }
+
+                // On small mobile screens, hide offset >= 2 to keep center poster prominent
+                const isMobileHidden = absOffset >= 2;
+
                 return (
                   <div
                     key={film.slug}
-                    className="relative w-[13.5vw] min-w-[130px] max-w-[205px] -mx-1.5 sm:-mx-2.5 md:-mx-3.5 lg:-mx-4 transition-all duration-300 hover:z-30 group"
+                    onClick={() => {
+                      if (!isCenter) setActiveIndex(i);
+                    }}
+                    className={`absolute left-1/2 top-1/2 cursor-pointer flex-shrink-0 select-none ${
+                      isMobileHidden ? "max-sm:hidden" : ""
+                    }`}
                     style={{
-                      transform: `translateY(${layout.dy}) scale(${layout.sc}) rotate(${layout.rot})`,
-                      transformOrigin: "bottom center",
-                      zIndex: layout.zi,
+                      transform: `translate(-50%, -50%) translateX(calc(${xMult} * var(--step, 240px))) translateY(${translateY}px) scale(${scale}) rotateY(${rotateY}deg)`,
+                      transformOrigin: "center center",
+                      zIndex,
+                      opacity,
+                      pointerEvents: opacity === 0 ? "none" : "auto",
+                      transition:
+                        "transform 650ms cubic-bezier(0.16, 1, 0.3, 1), opacity 650ms cubic-bezier(0.16, 1, 0.3, 1)",
                     }}
                   >
-                    {/* Vibrant Ambient Backlight Glow */}
+                    {/* Ambient Backlit Glow for Active & Flanking Posters */}
                     <div
-                      className="absolute -inset-3 rounded-2xl blur-xl opacity-45 group-hover:opacity-90 transition-opacity duration-300"
+                      className={`absolute -inset-4 rounded-3xl blur-2xl transition-opacity duration-700 pointer-events-none ${
+                        isCenter
+                          ? "opacity-90 scale-105"
+                          : "opacity-25 group-hover:opacity-50"
+                      }`}
                       style={{ background: film.palette.accent }}
                     />
+
+                    {/* Poster Card Container — Clean Cinema Artwork (No numbers, no title overlay) */}
                     <Link
                       href={`/films/${film.slug}`}
-                      className="relative block aspect-[2/3] rounded-xl overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.95)] border border-white/20 group-hover:border-white/70 group-hover:scale-105 group-hover:-translate-y-3 transition-all duration-400 bg-[#101010]"
+                      onClick={(e) => {
+                        if (!isCenter) {
+                          e.preventDefault();
+                          setActiveIndex(i);
+                        }
+                      }}
+                      className={`relative block w-[170px] sm:w-[210px] md:w-[260px] lg:w-[300px] xl:w-[340px] aspect-[2/3] rounded-2xl overflow-hidden transition-all duration-500 bg-[#0d0d0d] ${
+                        isCenter
+                          ? "shadow-[0_35px_90px_rgba(0,0,0,0.98)] ring-1 ring-white/15"
+                          : "shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+                      }`}
                     >
-                      {/* Bright, high-contrast poster artwork */}
+                      {/* High-Resolution Poster Image */}
                       <Image
                         src={film.posterImage}
                         alt={film.title}
                         fill
-                        sizes="(max-width: 768px) 150px, 220px"
-                        className="object-cover brightness-105 contrast-105 transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 640px) 170px, (max-width: 1024px) 260px, 340px"
+                        className={`object-cover transition-transform duration-700 ${
+                          isCenter
+                            ? "brightness-110 contrast-105 scale-100"
+                            : "brightness-90 hover:brightness-105"
+                        }`}
+                        priority
                       />
-                      {/* Minimal bottom gradient for title legibility only */}
-                      <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-                      <span
-                        className="absolute top-2.5 left-2.5 font-mono text-[9px] sm:text-[10px] tracking-widest border px-1.5 py-0.5 rounded font-bold shadow-md bg-black/60 backdrop-blur-sm"
-                        style={{
-                          color: film.palette.accent,
-                          borderColor: `${film.palette.accent}99`,
-                        }}
-                      >
-                        {film.number}
-                      </span>
-                      <div className="absolute bottom-0 left-0 right-0 px-2.5 py-2 font-mono text-[9px] sm:text-[10px] tracking-wider uppercase text-white font-medium truncate drop-shadow-md">
-                        {film.title}
-                      </div>
                     </Link>
                   </div>
                 );
               })}
             </div>
           </div>
-          {/* Subtle bottom transition scrim into the next section */}
-          <div className="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-[#050505] to-transparent z-30 pointer-events-none" />
+
+          {/* Bottom Pagination Dots & Explore CTA */}
+          <div className="relative z-30 flex flex-col sm:flex-row items-center justify-between gap-4 px-4 max-w-4xl mx-auto w-full pointer-events-auto pb-2">
+            {/* Film dots selector */}
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {films.map((film, i) => (
+                <button
+                  key={film.slug}
+                  onClick={() => setActiveIndex(i)}
+                  aria-label={`Select ${film.title}`}
+                  className={`h-2 sm:h-2.5 rounded-full transition-all duration-400 cursor-pointer ${
+                    i === activeIndex
+                      ? "w-8 sm:w-10 bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)]"
+                      : "w-2 sm:w-2.5 bg-white/25 hover:bg-white/50"
+                  }`}
+                  style={
+                    i === activeIndex
+                      ? { backgroundColor: film.palette.accent }
+                      : undefined
+                  }
+                />
+              ))}
+            </div>
+
+            {/* Center film Explore Link */}
+            <Link
+              href={`/films/${films[activeIndex].slug}`}
+              className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-white/25 bg-black/60 hover:bg-white hover:text-black text-white font-heading font-ethnocentric text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 hover:scale-105 shadow-xl backdrop-blur-md"
+            >
+              <span>Explore Film Treatment</span>
+              <span>→</span>
+            </Link>
+          </div>
+
+          {/* Subtle bottom gradient to merge into manifesto */}
+          <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
         </div>
 
         {/* 1 ─ Smoke canvas */}
@@ -380,7 +548,7 @@ export default function SmokeHero() {
             /* ── VIDEO MODE: fullscreen autoplay video runs ONCE (no loop) ── */
             <div
               ref={logoRef}
-              className="opacity-0 absolute inset-0"
+              className="opacity-0 absolute inset-0 bg-black"
               style={{ opacity: 0 }}
             >
               <video
@@ -389,7 +557,7 @@ export default function SmokeHero() {
                 muted
                 playsInline
                 preload="auto"
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-contain"
               >
                 <source src="/video/s42-hero-h264.mp4" type="video/mp4" />
                 <source src="/video/s42-hero.mp4" type="video/mp4" />
@@ -443,7 +611,7 @@ export default function SmokeHero() {
                     <span className="block w-1.5 h-1.5 rounded-full bg-[#f1f1ed]/60" />
                     <span className="block h-px w-16 sm:w-28 md:w-36 bg-gradient-to-l from-transparent to-[#f1f1ed]/38" />
                   </div>
-                  <p className="font-mono text-[10px] sm:text-xs md:text-sm tracking-[0.45em] uppercase text-[#888885] whitespace-nowrap">
+                  <p className="font-heading font-ethnocentric text-[8px] sm:text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#888885] whitespace-nowrap">
                     42 Great Stories Worth Remembering
                   </p>
                 </div>
@@ -458,7 +626,7 @@ export default function SmokeHero() {
           className="absolute bottom-8 inset-x-0 z-30 flex flex-col items-center gap-2 opacity-0 pointer-events-none"
           style={{ opacity: 0 }}
         >
-          <p className="font-mono text-[9px] sm:text-[10px] tracking-[0.40em] uppercase text-[#4a4a4a]">
+          <p className="font-heading font-ethnocentric text-[8px] sm:text-[9px] tracking-[0.35em] uppercase text-[#777]">
             Scroll to Reveal
           </p>
           <div className="flex flex-col items-center gap-0.5 smoke-bounce-arrow">

@@ -42,7 +42,7 @@ export default function LifeIsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Left Column: Official Poster */}
           <div className="lg:col-span-5 xl:col-span-5 space-y-4">
-            <div className="relative aspect-[3/4] w-full rounded-lg overflow-hidden border border-[#f5a623]/30 shadow-[0_0_40px_rgba(245,166,35,0.15)] bg-black">
+            <div className="relative aspect-[3/4] w-full rounded-lg overflow-hidden shadow-[0_0_40px_rgba(245,166,35,0.15)] bg-black">
               <Image
                 src={film.posterImage}
                 alt="LIFE IS... Official Poster"
@@ -62,14 +62,21 @@ export default function LifeIsPage() {
           <div className="lg:col-span-7 xl:col-span-7 space-y-10">
             {/* Header Titles */}
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#f5a623]/10 border border-[#f5a623]/30 font-mono text-xs text-[#f5a623] tracking-widest uppercase font-semibold">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#f5a623]/10 font-mono text-xs text-[#f5a623] tracking-widest uppercase font-semibold">
                 FILM {film.number} {"//"} S•42
               </div>
 
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight text-white uppercase leading-none">
-                LIFE <br />
-                <span className="text-[#f5a623]">IS...</span>
-              </h1>
+              {/* Official Film Title Graphic */}
+              <div className="relative h-20 sm:h-28 md:h-36 lg:h-40 w-full max-w-[550px] sm:max-w-[750px] md:max-w-[900px]">
+                <Image
+                  src={film.titleImage}
+                  alt={film.title}
+                  fill
+                  sizes="(max-width: 640px) 550px, 900px"
+                  className="object-contain object-left [filter:drop-shadow(0_0_20px_rgba(255,255,255,0.55))_drop-shadow(0_4px_16px_rgba(0,0,0,0.98))]"
+                  priority
+                />
+              </div>
 
               <h2 className="font-mono text-sm sm:text-base text-[#a3a3a3] tracking-widest uppercase font-medium">
                 {film.subtitle}
@@ -144,7 +151,7 @@ export default function LifeIsPage() {
             )}
 
             {/* Central Invitation Banner */}
-            <div className="p-4 rounded border border-[#f5a623]/30 bg-[#f5a623]/5 text-center font-mono text-xs space-y-1">
+            <div className="p-4 rounded bg-[#f5a623]/5 text-center font-mono text-xs space-y-1">
               <span className="text-[#f5a623] font-bold uppercase tracking-widest block">
                 CHOOSE YOUR GENRE. START ANYWHERE. WATCH THEM ALL.
               </span>

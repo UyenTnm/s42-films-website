@@ -78,7 +78,7 @@ export default function Header() {
 
       {/* Nav */}
       <nav
-        className={`flex items-center gap-5 md:gap-9 font-mono text-[11px] uppercase tracking-widest ${
+        className={`flex items-center gap-5 md:gap-9 font-heading font-ethnocentric text-[10px] sm:text-[11px] uppercase tracking-wider ${
           instant ? "transition-none" : "transition-all duration-500"
         } ${scrolled ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       >
@@ -88,13 +88,13 @@ export default function Header() {
               onClick={() => scrollTo("#films")}
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 cursor-pointer"
             >
-              Films [03]
+              Films [07]
             </button>
             <button
               onClick={() => scrollTo("#manifesto")}
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 cursor-pointer"
             >
-              Manifesto
+              Promise
             </button>
           </>
         ) : (
