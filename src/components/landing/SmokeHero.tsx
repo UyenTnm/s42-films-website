@@ -347,7 +347,7 @@ export default function SmokeHero() {
             </button>
 
             {/* Carousel Track with 7 Posters */}
-            <div className="relative w-full overflow-hidden flex items-center justify-center" style={{ perspective: "1200px" }}>
+            <div className="relative w-full flex items-center justify-center" style={{ perspective: "1200px", overflowX: "clip" }}>
               <div className="relative flex items-center justify-center w-full">
               {films.map((film, i) => {
                 const n = films.length;
@@ -358,7 +358,7 @@ export default function SmokeHero() {
                 const absOffset = Math.abs(offset);
 
                 // Calculate 3D coverflow styling dynamically
-                let scale = 1.15;
+                let scale = 1.05;
                 let translateY = 0;
                 let rotateY = 0;
                 let opacity = 1;
@@ -396,7 +396,7 @@ export default function SmokeHero() {
                     className={`relative cursor-pointer flex-shrink-0 -mx-4 sm:-mx-8 md:-mx-12 lg:-mx-16 xl:-mx-20 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMobileHidden ? "hidden sm:block" : ""}`}
                     style={{
                       transform: `translateY(${translateY}px) scale(${scale}) rotateY(${rotateY}deg)`,
-                      transformOrigin: "bottom center",
+                      transformOrigin: "center",
                       zIndex,
                       opacity,
                     }}
