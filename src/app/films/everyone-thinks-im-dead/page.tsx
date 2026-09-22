@@ -66,13 +66,13 @@ export default function EveryoneThinkImDeadPage() {
               </div>
 
               {/* Official Film Title Graphic */}
-              <div className="relative h-20 sm:h-28 md:h-36 lg:h-40 w-full max-w-[550px] sm:max-w-[750px] md:max-w-[900px]">
+              <div className="relative h-22 sm:h-32 md:h-40 lg:h-48 w-full max-w-[620px] sm:max-w-[820px] md:max-w-[980px]">
                 <Image
                   src={film.titleImage}
                   alt={film.title}
                   fill
-                  sizes="(max-width: 640px) 550px, 900px"
-                  className="object-contain object-left [filter:drop-shadow(0_0_20px_rgba(255,255,255,0.55))_drop-shadow(0_4px_16px_rgba(0,0,0,0.98))]"
+                  sizes="(max-width: 640px) 550px, 980px"
+                  className="object-contain object-left [filter:drop-shadow(0_0_12px_rgba(255,255,255,0.4))_drop-shadow(0_3px_10px_rgba(0,0,0,0.95))]"
                   priority
                 />
               </div>

@@ -72,7 +72,7 @@ export default function InsaneAisylumPage() {
                   alt={film.title}
                   fill
                   sizes="(max-width: 640px) 550px, 900px"
-                  className="object-contain object-left [filter:drop-shadow(0_0_20px_rgba(255,255,255,0.55))_drop-shadow(0_4px_16px_rgba(0,0,0,0.98))]"
+                  className="object-contain object-left [filter:drop-shadow(0_4px_12px_rgba(0,0,0,0.75))]"
                   priority
                 />
               </div>

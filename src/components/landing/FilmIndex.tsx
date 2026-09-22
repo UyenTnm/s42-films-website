@@ -158,13 +158,23 @@ export default function FilmIndex() {
                   </div>
 
                   {/* Official Film Title Graphic */}
-                  <div className="relative h-16 sm:h-24 md:h-32 lg:h-36 w-full max-w-[480px] sm:max-w-[650px] md:max-w-[800px] group-hover:translate-x-1.5 transition-transform duration-300">
+                  <div
+                    className={`relative w-full group-hover:translate-x-1.5 transition-transform duration-300 ${
+                      film.slug === "everyone-thinks-im-dead"
+                        ? "h-18 sm:h-28 md:h-36 lg:h-40 max-w-[540px] sm:max-w-[720px] md:max-w-[880px]"
+                        : "h-16 sm:h-24 md:h-32 lg:h-36 max-w-[480px] sm:max-w-[650px] md:max-w-[800px]"
+                    }`}
+                  >
                     <Image
                       src={film.titleImage}
                       alt={film.title}
                       fill
-                      sizes="(max-width: 640px) 450px, (max-width: 1024px) 650px, 800px"
-                      className="object-contain object-left [filter:drop-shadow(0_0_16px_rgba(255,255,255,0.5))_drop-shadow(0_3px_10px_rgba(0,0,0,0.98))]"
+                      sizes="(max-width: 640px) 450px, (max-width: 1024px) 650px, 880px"
+                      className={`object-contain object-left ${
+                        film.slug === "everyone-thinks-im-dead"
+                          ? "[filter:drop-shadow(0_0_12px_rgba(255,255,255,0.4))_drop-shadow(0_2px_8px_rgba(0,0,0,0.95))]"
+                          : "[filter:drop-shadow(0_4px_12px_rgba(0,0,0,0.7))]"
+                      }`}
                     />
                   </div>
 
