@@ -323,14 +323,24 @@ export default function SmokeHero() {
             </div>
 
             {/* Official Film Title Logo Graphic - Extra Large & Prominent */}
-            <div className="relative h-20 sm:h-28 md:h-36 lg:h-40 w-[92vw] sm:w-[85vw] md:w-[850px] lg:w-[950px] my-1 sm:my-2 max-w-[1000px]">
+            <div
+              className={`relative my-1 sm:my-2 w-[92vw] sm:w-[85vw] ${
+                films[activeIndex].slug === "everyone-thinks-im-dead"
+                  ? "h-24 sm:h-32 md:h-42 lg:h-48 md:w-[920px] lg:w-[1040px] max-w-[1060px]"
+                  : "h-20 sm:h-28 md:h-36 lg:h-40 md:w-[850px] lg:w-[950px] max-w-[1000px]"
+              }`}
+            >
               <Image
                 key={films[activeIndex].slug}
                 src={films[activeIndex].titleImage}
                 alt={films[activeIndex].title}
                 fill
-                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 85vw, 950px"
-                className="object-contain [filter:drop-shadow(0_0_20px_rgba(255,255,255,0.65))_drop-shadow(0_3px_14px_rgba(0,0,0,0.98))] transition-opacity duration-300"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 85vw, 1000px"
+                className={`object-contain transition-opacity duration-300 ${
+                  films[activeIndex].slug === "everyone-thinks-im-dead"
+                    ? "[filter:drop-shadow(0_0_12px_rgba(255,255,255,0.4))_drop-shadow(0_3px_10px_rgba(0,0,0,0.95))]"
+                    : "[filter:drop-shadow(0_4px_12px_rgba(0,0,0,0.75))]"
+                }`}
                 priority
               />
             </div>
