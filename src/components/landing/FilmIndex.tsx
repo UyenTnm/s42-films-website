@@ -119,7 +119,7 @@ export default function FilmIndex() {
               />
 
               <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
-                {/* Film Poster Thumbnail */}
+                {/* Film Poster Thumbnail - Clean Cinema Art */}
                 <div className="lg:col-span-4 xl:col-span-3">
                   <div className="relative w-full max-w-[280px] aspect-[2/3] rounded-xl overflow-hidden shadow-2xl bg-[#090909] group-hover:shadow-[0_15px_40px_rgba(0,0,0,0.8)] transition-all duration-500">
                     <Image
@@ -129,16 +129,6 @@ export default function FilmIndex() {
                       sizes="(max-width: 768px) 260px, 320px"
                       className="object-cover brightness-105 contrast-105 group-hover:scale-105 transition-transform duration-700 ease-out"
                     />
-                    {/* Corner badge on poster */}
-                    <span
-                      className="absolute top-3 left-3 font-heading font-ethnocentric text-[10px] tracking-wider px-2 py-0.5 rounded border bg-black/70 backdrop-blur-md"
-                      style={{
-                        borderColor: `${film.palette.accent}99`,
-                        color: film.palette.accent,
-                      }}
-                    >
-                      {film.number}
-                    </span>
                   </div>
                 </div>
 
@@ -168,12 +158,12 @@ export default function FilmIndex() {
                   </div>
 
                   {/* Official Film Title Graphic */}
-                  <div className="relative h-14 sm:h-20 md:h-28 w-full max-w-[420px] sm:max-w-[600px] md:max-w-[720px] group-hover:translate-x-1.5 transition-transform duration-300">
+                  <div className="relative h-16 sm:h-24 md:h-32 lg:h-36 w-full max-w-[480px] sm:max-w-[650px] md:max-w-[800px] group-hover:translate-x-1.5 transition-transform duration-300">
                     <Image
                       src={film.titleImage}
                       alt={film.title}
                       fill
-                      sizes="(max-width: 640px) 380px, (max-width: 1024px) 600px, 720px"
+                      sizes="(max-width: 640px) 450px, (max-width: 1024px) 650px, 800px"
                       className="object-contain object-left [filter:drop-shadow(0_0_16px_rgba(255,255,255,0.5))_drop-shadow(0_3px_10px_rgba(0,0,0,0.98))]"
                     />
                   </div>

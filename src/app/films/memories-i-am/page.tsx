@@ -66,12 +66,12 @@ export default function MemoriesIAmPage() {
               </div>
 
               {/* Official Film Title Graphic */}
-              <div className="relative h-16 sm:h-20 md:h-24 w-full max-w-[480px] sm:max-w-[600px]">
+              <div className="relative h-20 sm:h-28 md:h-36 lg:h-40 w-full max-w-[550px] sm:max-w-[750px] md:max-w-[900px]">
                 <Image
                   src={film.titleImage}
                   alt={film.title}
                   fill
-                  sizes="(max-width: 640px) 400px, 600px"
+                  sizes="(max-width: 640px) 550px, 900px"
                   className="object-contain object-left [filter:drop-shadow(0_0_20px_rgba(255,255,255,0.55))_drop-shadow(0_4px_16px_rgba(0,0,0,0.98))]"
                   priority
                 />

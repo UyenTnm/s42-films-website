@@ -268,6 +268,25 @@ export default function SmokeHero() {
 
   const [activeIndex, setActiveIndex] = useState(3);
   const [isPaused, setIsPaused] = useState(false);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 45) {
+      // Swiped left -> Next
+      setActiveIndex((prev) => (prev + 1) % films.length);
+    } else if (diff < -45) {
+      // Swiped right -> Prev
+      setActiveIndex((prev) => (prev - 1 + films.length) % films.length);
+    }
+    setTouchStartX(null);
+  };
 
   // Auto-flow carousel effect
   useEffect(() => {
@@ -296,39 +315,44 @@ export default function SmokeHero() {
           onMouseLeave={() => setIsPaused(false)}
         >
           {/* Active Film Header info */}
-          <div className="relative z-30 flex flex-col items-center text-center gap-2 pt-3 sm:pt-5 pointer-events-auto">
+          <div className="relative z-30 flex flex-col items-center text-center gap-2 pt-2 sm:pt-4 pointer-events-auto">
             <div className="flex items-center gap-3">
               <span className="font-heading font-ethnocentric text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[#f1f1ed]/80 bg-black/60 px-3.5 py-1 rounded-full border border-white/15 backdrop-blur-md">
                 FEATURED REVEAL // {films[activeIndex].number} OF 07
               </span>
             </div>
 
-            {/* Official Film Title Logo Graphic */}
-            <div className="relative h-16 sm:h-24 md:h-28 w-[85vw] sm:w-[60vw] md:w-[700px] lg:w-[800px] my-1 max-w-[820px]">
+            {/* Official Film Title Logo Graphic - Extra Large & Prominent */}
+            <div className="relative h-20 sm:h-28 md:h-36 lg:h-40 w-[92vw] sm:w-[85vw] md:w-[850px] lg:w-[950px] my-1 sm:my-2 max-w-[1000px]">
               <Image
+                key={films[activeIndex].slug}
                 src={films[activeIndex].titleImage}
                 alt={films[activeIndex].title}
                 fill
-                sizes="(max-width: 640px) 85vw, (max-width: 1024px) 60vw, 800px"
-                className="object-contain [filter:drop-shadow(0_0_18px_rgba(255,255,255,0.55))_drop-shadow(0_3px_12px_rgba(0,0,0,0.98))]"
+                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 85vw, 950px"
+                className="object-contain [filter:drop-shadow(0_0_20px_rgba(255,255,255,0.65))_drop-shadow(0_3px_14px_rgba(0,0,0,0.98))] transition-opacity duration-300"
                 priority
               />
             </div>
 
-            <p className="font-sans text-sm sm:text-base text-[#b0b0a8] font-light max-w-2xl italic px-4">
+            <p className="font-sans text-sm sm:text-base md:text-lg text-[#c5c5be] font-light max-w-2xl italic px-4">
               &ldquo;{films[activeIndex].tagline}&rdquo;
             </p>
           </div>
 
-          {/* 3D Flowing Coverflow Stage */}
-          <div className="relative w-full flex-1 flex items-center justify-center my-auto pointer-events-auto">
+          {/* 3D Flowing Coverflow Stage - Active poster ALWAYS flows to middle position */}
+          <div
+            className="relative w-full flex-1 flex items-center justify-center my-auto pointer-events-auto min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px]"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* Left Prev Arrow Button */}
             <button
               onClick={() =>
                 setActiveIndex((prev) => (prev - 1 + films.length) % films.length)
               }
               aria-label="Previous film"
-              className="absolute left-2 sm:left-6 md:left-12 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/70 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
+              className="absolute left-2 sm:left-6 md:left-12 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/75 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
             >
               <span className="font-heading font-ethnocentric text-sm sm:text-base group-hover:-translate-x-0.5 transition-transform">
                 ←
@@ -339,16 +363,18 @@ export default function SmokeHero() {
             <button
               onClick={() => setActiveIndex((prev) => (prev + 1) % films.length)}
               aria-label="Next film"
-              className="absolute right-2 sm:right-6 md:right-12 z-40 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/70 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
+              className="absolute right-2 sm:right-6 md:right-12 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/75 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
             >
               <span className="font-heading font-ethnocentric text-sm sm:text-base group-hover:translate-x-0.5 transition-transform">
                 →
               </span>
             </button>
 
-            {/* Carousel Track with 7 Posters */}
-            <div className="relative w-full flex items-center justify-center" style={{ perspective: "1200px", overflowX: "clip" }}>
-              <div className="relative flex items-center justify-center w-full">
+            {/* Carousel Stage - All posters positioned relative to center */}
+            <div
+              className="relative w-full h-[290px] sm:h-[370px] md:h-[450px] lg:h-[510px] flex items-center justify-center [--step:110px] sm:[--step:165px] md:[--step:220px] lg:[--step:275px] xl:[--step:315px]"
+              style={{ perspective: "1200px", overflowX: "clip" }}
+            >
               {films.map((film, i) => {
                 const n = films.length;
                 let offset = (i - activeIndex) % n;
@@ -358,34 +384,46 @@ export default function SmokeHero() {
                 const absOffset = Math.abs(offset);
 
                 // Calculate 3D coverflow styling dynamically
-                let scale = 1.05;
+                let xMult = 0;
+                let scale = 1.06;
                 let translateY = 0;
                 let rotateY = 0;
                 let opacity = 1;
                 let zIndex = 30;
 
-                if (absOffset === 1) {
-                  scale = 0.92;
-                  translateY = 14;
-                  rotateY = offset * 5;
-                  opacity = 0.88;
-                  zIndex = 22;
+                if (absOffset === 0) {
+                  xMult = 0;
+                  scale = 1.06;
+                  translateY = 0;
+                  rotateY = 0;
+                  opacity = 1;
+                  zIndex = 30;
+                } else if (absOffset === 1) {
+                  xMult = offset; // ±1
+                  scale = 0.88;
+                  translateY = 12;
+                  rotateY = offset * -8;
+                  opacity = 0.85;
+                  zIndex = 20;
                 } else if (absOffset === 2) {
-                  scale = 0.78;
-                  translateY = 28;
-                  rotateY = offset * 9;
-                  opacity = 0.65;
-                  zIndex = 16;
-                } else if (absOffset >= 3) {
-                  scale = 0.65;
-                  translateY = 42;
-                  rotateY = offset * 13;
-                  opacity = 0.45;
+                  xMult = offset * 1.8;
+                  scale = 0.72;
+                  translateY = 24;
+                  rotateY = offset * -14;
+                  opacity = 0.6;
                   zIndex = 10;
+                } else {
+                  // In wings (absOffset >= 3)
+                  xMult = offset * 2.4;
+                  scale = 0.58;
+                  translateY = 36;
+                  rotateY = offset * -20;
+                  opacity = 0; // Fully invisible in wings for clean wrap
+                  zIndex = 5;
                 }
 
-                // On mobile (< sm), hide posters beyond ±1 to prevent layout overflow
-                const isMobileHidden = absOffset >= 3;
+                // On small mobile screens, hide offset >= 2 to keep center poster prominent
+                const isMobileHidden = absOffset >= 2;
 
                 return (
                   <div
@@ -393,12 +431,17 @@ export default function SmokeHero() {
                     onClick={() => {
                       if (!isCenter) setActiveIndex(i);
                     }}
-                    className={`relative cursor-pointer flex-shrink-0 -mx-4 sm:-mx-8 md:-mx-12 lg:-mx-16 xl:-mx-20 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMobileHidden ? "hidden sm:block" : ""}`}
+                    className={`absolute left-1/2 top-1/2 cursor-pointer flex-shrink-0 select-none ${
+                      isMobileHidden ? "max-sm:hidden" : ""
+                    }`}
                     style={{
-                      transform: `translateY(${translateY}px) scale(${scale}) rotateY(${rotateY}deg)`,
-                      transformOrigin: "center",
+                      transform: `translate(-50%, -50%) translateX(calc(${xMult} * var(--step, 240px))) translateY(${translateY}px) scale(${scale}) rotateY(${rotateY}deg)`,
+                      transformOrigin: "center center",
                       zIndex,
                       opacity,
+                      pointerEvents: opacity === 0 ? "none" : "auto",
+                      transition:
+                        "transform 650ms cubic-bezier(0.16, 1, 0.3, 1), opacity 650ms cubic-bezier(0.16, 1, 0.3, 1)",
                     }}
                   >
                     {/* Ambient Backlit Glow for Active & Flanking Posters */}
@@ -406,12 +449,12 @@ export default function SmokeHero() {
                       className={`absolute -inset-4 rounded-3xl blur-2xl transition-opacity duration-700 pointer-events-none ${
                         isCenter
                           ? "opacity-90 scale-105"
-                          : "opacity-30 group-hover:opacity-60"
+                          : "opacity-25 group-hover:opacity-50"
                       }`}
                       style={{ background: film.palette.accent }}
                     />
 
-                    {/* Poster Card Container — BORDERLESS for seamless cinematic poster look */}
+                    {/* Poster Card Container — Clean Cinema Artwork (No numbers, no title overlay) */}
                     <Link
                       href={`/films/${film.slug}`}
                       onClick={(e) => {
@@ -420,10 +463,10 @@ export default function SmokeHero() {
                           setActiveIndex(i);
                         }
                       }}
-                      className={`relative block w-[190px] sm:w-[230px] md:w-[280px] lg:w-[320px] xl:w-[360px] aspect-[2/3] rounded-2xl overflow-hidden transition-all duration-500 bg-[#0d0d0d] ${
+                      className={`relative block w-[170px] sm:w-[210px] md:w-[260px] lg:w-[300px] xl:w-[340px] aspect-[2/3] rounded-2xl overflow-hidden transition-all duration-500 bg-[#0d0d0d] ${
                         isCenter
-                          ? "shadow-[0_40px_100px_rgba(0,0,0,0.98)] ring-1 ring-white/10"
-                          : "shadow-[0_20px_50px_rgba(0,0,0,0.9)]"
+                          ? "shadow-[0_35px_90px_rgba(0,0,0,0.98)] ring-1 ring-white/15"
+                          : "shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
                       }`}
                     >
                       {/* High-Resolution Poster Image */}
@@ -431,44 +474,18 @@ export default function SmokeHero() {
                         src={film.posterImage}
                         alt={film.title}
                         fill
-                        sizes="(max-width: 640px) 180px, (max-width: 1024px) 260px, 320px"
+                        sizes="(max-width: 640px) 170px, (max-width: 1024px) 260px, 340px"
                         className={`object-cover transition-transform duration-700 ${
                           isCenter
                             ? "brightness-110 contrast-105 scale-100"
-                            : "brightness-95 hover:brightness-105"
+                            : "brightness-90 hover:brightness-105"
                         }`}
                         priority
                       />
-
-                      {/* Subtle Bottom Scrim for Title Legibility */}
-                      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-
-                      {/* Film Number Badge */}
-                      <span
-                        className="absolute top-3 left-3 font-heading font-ethnocentric text-[9px] sm:text-[10px] tracking-widest px-2 py-0.5 rounded font-bold shadow-lg bg-black/70 backdrop-blur-md"
-                        style={{
-                          color: film.palette.accent,
-                        }}
-                      >
-                        {film.number}
-                      </span>
-
-                      {/* Official Film Title Graphic on Poster */}
-                      <div className="absolute bottom-2 inset-x-0 px-3 flex justify-center pointer-events-none">
-                        <div className="relative h-8 sm:h-10 w-full max-w-[200px]">
-                          <Image
-                            src={film.titleImage}
-                            alt={film.title}
-                            fill
-                            className="object-contain [filter:drop-shadow(0_0_8px_rgba(255,255,255,0.5))_drop-shadow(0_2px_6px_rgba(0,0,0,0.95))]"
-                          />
-                        </div>
-                      </div>
                     </Link>
                   </div>
                 );
               })}
-              </div>
             </div>
           </div>
 
