@@ -6,6 +6,7 @@ import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { films } from "@/data/films";
+import { useLenis } from "@/hooks/useLenis";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -112,13 +113,14 @@ const HERO_VIDEO_SRC: string | null = "/video/s42-hero.mp4";
 //  Component
 // ══════════════════════════════════════════════════════════════
 export default function SmokeHero() {
+  const lenis = useLenis();
   const videoRef = useRef<HTMLVideoElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const smokeLayerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const posterRef = useRef<HTMLDivElement>(null);
-  const hintRef = useRef<HTMLDivElement>(null);
+  const hintRef = useRef<HTMLButtonElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const smokeAlpha = useRef(1);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -297,6 +299,31 @@ export default function SmokeHero() {
     return () => clearInterval(interval);
   }, [isPaused]);
 
+  const scrollToPosterReveal = () => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper) return;
+
+    const target =
+      wrapper.offsetTop + wrapper.offsetHeight - window.innerHeight;
+
+    if (lenis) {
+      lenis.scrollTo(target, { duration: 1.55 });
+    } else {
+      window.scrollTo({ top: target, behavior: "smooth" });
+    }
+  };
+
+  const scrollToManifesto = () => {
+    const target = document.querySelector<HTMLElement>("#manifesto");
+    if (!target) return;
+
+    if (lenis) {
+      lenis.scrollTo(target, { offset: -72, duration: 1.35 });
+    } else {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div ref={wrapperRef} style={{ height: "260vh" }} className="relative">
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
@@ -315,12 +342,8 @@ export default function SmokeHero() {
           onMouseLeave={() => setIsPaused(false)}
         >
           {/* Active Film Header info */}
-          <div className="relative z-30 flex flex-col items-center text-center gap-2 pt-2 sm:pt-4 pointer-events-auto">
-            <div className="flex items-center gap-3">
-              <span className="font-heading font-ethnocentric text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[#f1f1ed]/80 bg-black/60 px-3.5 py-1 rounded-full border border-white/15 backdrop-blur-md">
-                FEATURED REVEAL // {films[activeIndex].number} OF 07
-              </span>
-            </div>
+          <div className="relative z-30 flex flex-col items-center text-center gap-1 sm:gap-2 pt-[calc(5.5rem+env(safe-area-inset-top))] sm:pt-24 md:pt-28 lg:pt-24 pointer-events-auto">
+            <div aria-hidden="true" className="h-[26px] sm:h-[30px]" />
 
             {/* Official Film Title Logo Graphic - Extra Large & Prominent */}
             <div
@@ -352,7 +375,7 @@ export default function SmokeHero() {
 
           {/* 3D Flowing Coverflow Stage - Active poster ALWAYS flows to middle position */}
           <div
-            className="relative w-full flex-1 flex items-center justify-center my-auto pointer-events-auto min-h-[300px] sm:min-h-[380px] md:min-h-[460px] lg:min-h-[520px]"
+            className="relative w-full flex-1 flex items-center justify-center my-auto pointer-events-auto min-h-[250px] sm:min-h-[330px] md:min-h-[390px] lg:min-h-[440px]"
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
@@ -382,7 +405,7 @@ export default function SmokeHero() {
 
             {/* Carousel Stage - All posters positioned relative to center */}
             <div
-              className="relative w-full h-[290px] sm:h-[370px] md:h-[450px] lg:h-[510px] flex items-center justify-center [--step:110px] sm:[--step:165px] md:[--step:220px] lg:[--step:275px] xl:[--step:315px]"
+              className="relative w-full h-[270px] sm:h-[350px] md:h-[410px] lg:h-[460px] flex items-center justify-center [--step:110px] sm:[--step:165px] md:[--step:220px] lg:[--step:275px] xl:[--step:315px]"
               style={{ perspective: "1200px", overflowX: "clip" }}
             >
               {films.map((film, i) => {
@@ -500,7 +523,7 @@ export default function SmokeHero() {
           </div>
 
           {/* Bottom Pagination Dots & Explore CTA */}
-          <div className="relative z-30 flex flex-col sm:flex-row items-center justify-between gap-4 px-4 max-w-4xl mx-auto w-full pointer-events-auto pb-2">
+          <div className="relative z-30 flex flex-row flex-wrap items-center justify-center sm:justify-between gap-3 px-4 max-w-5xl mx-auto w-full pointer-events-auto pb-2">
             {/* Film dots selector */}
             <div className="flex items-center gap-2 sm:gap-2.5">
               {films.map((film, i) => (
@@ -530,6 +553,16 @@ export default function SmokeHero() {
               <span>Explore Film Treatment</span>
               <span>→</span>
             </Link>
+
+            <button
+              type="button"
+              onClick={scrollToManifesto}
+              aria-label="Go to the S•42 Promise"
+              className="group inline-flex h-10 items-center justify-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 font-heading font-ethnocentric text-[9px] tracking-widest text-white/75 uppercase shadow-xl backdrop-blur-md transition-all duration-300 hover:border-white/60 hover:text-white sm:px-4 sm:text-[10px] cursor-pointer"
+            >
+              <span className="hidden sm:inline">Next section</span>
+              <span className="transition-transform group-hover:translate-y-0.5">↓</span>
+            </button>
           </div>
 
           {/* Subtle bottom gradient to merge into manifesto */}
@@ -631,19 +664,21 @@ export default function SmokeHero() {
         </div>
 
         {/* 3 ─ Scroll hint */}
-        <div
+        <button
+          type="button"
           ref={hintRef}
-          className="absolute bottom-8 inset-x-0 z-30 flex flex-col items-center gap-2 opacity-0 pointer-events-none"
+          onClick={scrollToPosterReveal}
+          aria-label="Reveal the featured films"
+          className="group absolute bottom-7 left-1/2 z-30 -translate-x-1/2 flex cursor-pointer flex-col items-center gap-2 opacity-0"
           style={{ opacity: 0 }}
         >
-          <p className="font-heading font-ethnocentric text-[8px] sm:text-[9px] tracking-[0.35em] uppercase text-[#777]">
-            Scroll to Reveal
+          <p className="font-heading font-ethnocentric text-[8px] sm:text-[9px] tracking-[0.3em] uppercase text-white/55 transition-colors group-hover:text-white/90">
+            View featured films
           </p>
-          <div className="flex flex-col items-center gap-0.5 smoke-bounce-arrow">
-            <span className="block w-px h-5 bg-gradient-to-b from-[#4a4a4a] to-transparent" />
-            <span className="text-[#424242] text-xs leading-none">↓</span>
+          <div className="smoke-bounce-arrow flex h-9 w-9 items-center justify-center rounded-full border border-white/18 bg-black/30 text-sm text-white/55 backdrop-blur-sm transition group-hover:border-white/55 group-hover:text-white">
+            ↓
           </div>
-        </div>
+        </button>
       </div>
     </div>
   );

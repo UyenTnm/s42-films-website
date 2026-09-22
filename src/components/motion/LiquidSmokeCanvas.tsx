@@ -19,10 +19,15 @@ export default function LiquidSmokeCanvas({
   const [hasWebGL, setHasWebGL] = useState(true);
 
   const dissolveRef = useRef(dissolve);
-  dissolveRef.current = dissolve;
-
   const mouseRef = useRef(mousePos);
-  mouseRef.current = mousePos;
+
+  useEffect(() => {
+    dissolveRef.current = dissolve;
+  }, [dissolve]);
+
+  useEffect(() => {
+    mouseRef.current = mousePos;
+  }, [mousePos]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -296,7 +301,7 @@ export default function LiquidSmokeCanvas({
 
     // Render Loop
     let animationFrameId: number;
-    let startTime = performance.now();
+    const startTime = performance.now();
 
     const render = () => {
       const elapsed = (performance.now() - startTime) * 0.001;
