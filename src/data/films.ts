@@ -137,6 +137,91 @@ export const films: Film[] = [
       ],
     },
   },
+  {
+    slug: "l-42-06",
+    title: "L.42.06",
+    number: "04",
+    subtitle: "PSYCHOLOGICAL SUPERNATURAL MYSTERY THRILLER · FEATURE FILM · APARTMENT L.42.06",
+    tagline: "Some doors should stay closed. Some things shouldn't be seen.",
+    creator: "Wes Anthony · S.42 Films",
+    format: "FEATURE FILM",
+    genre: "PSYCHOLOGICAL SUPERNATURAL MYSTERY THRILLER",
+    logline:
+      "After moving into apartment L.42.06, a new tenant discovers a door that appears where no door should exist. Each time he steps through, he becomes an invisible witness to acts of violence unfolding on the other side—unable to intervene, unable to be seen, and unable to prove what he witnessed once the door disappears. As it keeps returning and revealing more, he begins to realize the true mystery is not what lies behind the door, but why he is the only person being shown.",
+    posterImage: "/images/l-42-06/poster.jpg",
+    heroImage: "/images/l-42-06/hero.jpg",
+    palette: {
+      accent: "#c0392b",
+      bg: "#070505",
+    },
+  },
+  {
+    slug: "the-sum-of-me",
+    title: "THE SUM OF ME",
+    number: "05",
+    subtitle: "FEATURE FILM TREATMENT · PHILOSOPHICAL SCI-FI DRAMA",
+    tagline: "What if we were never meant to be judged by the one life we lived?",
+    creator: "Wes Anthony · S.42 Films",
+    format: "FEATURE FILM",
+    genre: "PHILOSOPHICAL SCI-FI DRAMA",
+    pitch:
+      "In his forty-second and final life, a man begins remembering every person his soul has ever been and discovers that humanity is not judged by a single lifetime, but by the sum of all 42.",
+    logline:
+      "A man begins remembering forty-one previous lives across centuries, cultures, bodies, wars, loves, crimes, losses, and sacrifices—only to discover that every soul is given exactly 42 lives before facing judgment. Now living his final life, he becomes the first human being to approach that judgment remembering everything his soul has ever done.",
+    posterImage: "/images/the-sum-of-me/poster.jpg",
+    heroImage: "/images/the-sum-of-me/hero.jpg",
+    palette: {
+      accent: "#c9a84c",
+      bg: "#080706",
+    },
+    details: {
+      stats: [
+        { label: "LIVES", value: "42" },
+        { label: "REMEMBERED", value: "41" },
+        { label: "FINAL JUDGMENT", value: "1" },
+      ],
+      audiencePromise:
+        "THE SUM OF ME is a philosophical science-fiction drama built around one unsettling idea: what if one lifetime is not enough to judge a human soul? As memories from forty-one previous lives begin flooding into one ordinary man, the story moves across radically different periods, cultures, identities, and circumstances. In some lives he was powerful; in others powerless. He has been rich and poor, loved and abandoned, parent and child, victim and aggressor, believer and skeptic. He has lived as both men and women—and each existence forces him to confront the same question from another perspective.",
+      emotionalEngine:
+        "At its center is one man carrying the emotional weight of forty-two human beings who were all, impossibly, him. He remembers the people he loved and lost. He remembers kindness he once received and cruelty he once inflicted. He remembers being the victim in one lifetime and becoming the kind of person he feared in another. And because this is his final life, those memories are no longer history. They are evidence.",
+    },
+  },
+  {
+    slug: "memories-i-am",
+    title: "MEMORIES I AM",
+    number: "06",
+    subtitle: "FEATURE FILM · PHILOSOPHICAL SCI-FI DRAMA",
+    tagline: "Some things are worth more than money.",
+    creator: "S.42 Films",
+    format: "FEATURE FILM",
+    genre: "PSYCHOLOGICAL SCIENCE-FICTION DRAMA",
+    logline:
+      "In a near future where memories can be bought and sold—but never copied—a struggling father sells a treasured memory of unconditional love to save his family, only to discover that losing the experience changes who he is, while the wealthy woman who buys it begins becoming someone she has never been.",
+    posterImage: "/images/memories-i-am/poster.jpg",
+    heroImage: "/images/memories-i-am/hero.jpg",
+    palette: {
+      accent: "#4a9eda",
+      bg: "#050810",
+    },
+  },
+  {
+    slug: "everyone-thinks-im-dead",
+    title: "EVERYONE THINKS I'M DEAD",
+    number: "07",
+    subtitle: "DARK COMEDY-DRAMA · FEATURE FILM",
+    tagline: "Everyone appreciates you more when you're dead.",
+    creator: "S.42 Films",
+    format: "FEATURE FILM",
+    genre: "DARK COMEDY-DRAMA",
+    logline:
+      "After a mass-casualty accident mistakenly leaves a burned-out man legally dead, he chooses not to correct the mistake and secretly watches his old life continue without him—discovering who truly misses him, who is better off, and whether disappearing might be the second chance he never knew he needed.",
+    posterImage: "/images/everyone-thinks-im-dead/poster.jpg",
+    heroImage: "/images/everyone-thinks-im-dead/hero.jpg",
+    palette: {
+      accent: "#e8c44a",
+      bg: "#080807",
+    },
+  },
 ];
 
 export function getFilmBySlug(slug: string): Film | undefined {

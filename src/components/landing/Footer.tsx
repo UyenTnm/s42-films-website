@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { films } from "@/data/films";
 import { useLenis } from "@/hooks/useLenis";
 
 export default function Footer() {
@@ -36,25 +37,16 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-6 md:gap-8 uppercase tracking-widest text-[11px]">
-            <Link
-              href="/films/insane-aisylum"
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors"
-            >
-              01 INSANE AiSYLUM
-            </Link>
-            <Link
-              href="/films/suicide-train"
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors"
-            >
-              02 SUICIDE TRAIN
-            </Link>
-            <Link
-              href="/films/life-is"
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors"
-            >
-              03 LIFE IS...
-            </Link>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 md:gap-x-8 uppercase tracking-widest text-[11px]">
+            {films.map((film) => (
+              <Link
+                key={film.slug}
+                href={`/films/${film.slug}`}
+                className="text-[#898989] hover:text-[#f1f1ed] transition-colors"
+              >
+                {film.number} {film.title}
+              </Link>
+            ))}
             <button
               onClick={scrollToTop}
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors cursor-pointer ml-auto"

@@ -107,7 +107,7 @@ export default function Hero() {
             <span className="block text-[10px] text-[#555] tracking-widest uppercase">
               REVEALED SLOTS
             </span>
-            <span className="text-[#f1f1ed] font-semibold text-sm">03 TITLES</span>
+            <span className="text-[#f1f1ed] font-semibold text-sm">07 TITLES</span>
           </div>
           <div>
             <span className="block text-[10px] text-[#555] tracking-widest uppercase">
@@ -121,7 +121,7 @@ export default function Hero() {
           href="#films"
           className="group inline-flex items-center gap-3 px-5 py-2.5 rounded border border-[#f1f1ed]/20 bg-[#f1f1ed]/5 hover:bg-[#f1f1ed] hover:text-[#050505] text-[#f1f1ed] transition-all duration-300"
         >
-          <span className="text-xs uppercase tracking-widest">View 3 Film Projects</span>
+          <span className="text-xs uppercase tracking-widest">View 7 Film Projects</span>
           <span className="group-hover:translate-y-0.5 transition-transform duration-300">
             ↓
           </span>
