@@ -48,6 +48,7 @@ export default function PrivateAccessForm({
         return;
       }
 
+      inputRef.current?.blur();
       router.replace(destination);
       router.refresh();
     } catch {
@@ -90,7 +91,7 @@ export default function PrivateAccessForm({
             />
           </div>
 
-          <h1 className="whitespace-nowrap font-heading text-[clamp(1.65rem,7vw,2.4rem)] leading-none tracking-[0.055em] uppercase">
+          <h1 className="max-w-full whitespace-nowrap font-heading text-[clamp(1.25rem,5.4vw,2.4rem)] leading-none tracking-[0.04em] uppercase">
             Private Access
           </h1>
           <p className="mt-[clamp(1rem,2.5svh,1.5rem)] max-w-md text-sm leading-relaxed font-light text-white/68 sm:text-base">
@@ -118,9 +119,8 @@ export default function PrivateAccessForm({
                 if (message) setMessage("");
               }}
               placeholder="ACCESS CODE"
-              className="h-14 w-full min-w-0 border border-white/30 bg-black/35 px-5 font-heading text-xs tracking-[0.2em] text-white uppercase outline-none backdrop-blur-md transition placeholder:text-white/38 focus:border-white/75 focus:bg-black/50 sm:flex-1"
+              className="h-14 w-full min-w-0 border border-white/30 bg-black/35 px-5 font-heading text-base tracking-[0.2em] text-white uppercase outline-none backdrop-blur-md transition placeholder:text-white/38 focus:border-white/75 focus:bg-black/50 sm:flex-1 sm:text-xs"
               aria-describedby="access-status"
-              autoFocus
               required
             />
             <button
