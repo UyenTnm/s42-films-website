@@ -1,7 +1,7 @@
 export const ACCESS_COOKIE_NAME = "s42_private_access";
 export const ACCESS_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 
-const DEFAULT_ACCESS_CODE = "S42";
+const DEFAULT_ACCESS_CODE = "S42@#Films$2026";
 
 function getAccessCode() {
   return process.env.SITE_ACCESS_CODE?.trim() || DEFAULT_ACCESS_CODE;
