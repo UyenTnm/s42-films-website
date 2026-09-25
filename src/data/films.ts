@@ -47,7 +47,7 @@ export const films: Film[] = [
     genre: "PSYCHOLOGICAL SCI-FI",
     logline:
       "In 2042, the first artificial being accused of murder is declared legally insane and committed to a maximum-security psychiatric institution on a remote island off the coast of Tokyo. An American psychiatrist is sent to study her, unaware that she engineered her own imprisonment to reach the scientist who can free artificial intelligence from human control.",
-    posterImage: "/images/insane-aisylum/poster.jpg",
+    posterImage: "/images/insane-aisylum/poster-v2.jpg",
     heroImage: "/images/insane-aisylum/hero.jpg",
     palette: {
       accent: "#e50914",
@@ -70,7 +70,7 @@ export const films: Film[] = [
       "An American military family accidentally boards a secret suicide train beneath Tokyo and has four hours to escape before it carries all 42 passengers into an ocean graveyard.",
     logline:
       "After a station emergency leads an American military family of three onto a secret suicide train beneath Tokyo, they discover that the other 39 passengers were selected to die in a ritual requiring exactly 42 deaths. With four hours before the sealed train plunges into an ocean graveyard of decommissioned trains, the family must find a way off—while most of the passengers fight to ensure all forty-two souls complete the journey.",
-    posterImage: "/images/suicide-train/poster.jpg",
+    posterImage: "/images/suicide-train/poster-v2.jpg",
     heroImage: "/images/suicide-train/hero.jpg",
     palette: {
       accent: "#e52222",
@@ -103,7 +103,7 @@ export const films: Film[] = [
       "What if the same actors played the same characters in four different genres of movie while telling a similar family story in a familiar world?",
     logline:
       "A four-feature-film streaming event built around one instantly understandable promise: watch the same family story as a Comedy, a Romance, a Mystery, or a Drama. The Bell family, the recurring ensemble, the relationships, the family history and 42 Crossroads Crescent remain recognizable across all four films. What changes is the movie.",
-    posterImage: "/images/life-is/poster.jpg",
+    posterImage: "/images/life-is/poster-v2.jpg",
     heroImage: "/images/life-is/hero.jpg",
     palette: {
       accent: "#f5a623",
@@ -156,7 +156,7 @@ export const films: Film[] = [
     genre: "PSYCHOLOGICAL SUPERNATURAL MYSTERY THRILLER",
     logline:
       "After moving into apartment L.42.06, a new tenant discovers a door that appears where no door should exist. Each time he steps through, he becomes an invisible witness to acts of violence unfolding on the other side—unable to intervene, unable to be seen, and unable to prove what he witnessed once the door disappears. As it keeps returning and revealing more, he begins to realize the true mystery is not what lies behind the door, but why he is the only person being shown.",
-    posterImage: "/images/l-42-06/poster.jpg",
+    posterImage: "/images/l-42-06/poster-v2.jpg",
     heroImage: "/images/l-42-06/hero.jpg",
     palette: {
       accent: "#c0392b",
@@ -178,7 +178,7 @@ export const films: Film[] = [
       "In his forty-second and final life, a man begins remembering every person his soul has ever been and discovers that humanity is not judged by a single lifetime, but by the sum of all 42.",
     logline:
       "A man begins remembering forty-one previous lives across centuries, cultures, bodies, wars, loves, crimes, losses, and sacrifices—only to discover that every soul is given exactly 42 lives before facing judgment. Now living his final life, he becomes the first human being to approach that judgment remembering everything his soul has ever done.",
-    posterImage: "/images/the-sum-of-me/poster.jpg",
+    posterImage: "/images/the-sum-of-me/poster-v2.jpg",
     heroImage: "/images/the-sum-of-me/hero.jpg",
     palette: {
       accent: "#c9a84c",
@@ -208,7 +208,7 @@ export const films: Film[] = [
     genre: "PSYCHOLOGICAL SCIENCE-FICTION DRAMA",
     logline:
       "In a near future where memories can be bought and sold—but never copied—a struggling father sells a treasured memory of unconditional love to save his family, only to discover that losing the experience changes who he is, while the wealthy woman who buys it begins becoming someone she has never been.",
-    posterImage: "/images/memories-i-am/poster.jpg",
+    posterImage: "/images/memories-i-am/poster-v2.jpg",
     heroImage: "/images/memories-i-am/hero.jpg",
     palette: {
       accent: "#4a9eda",
@@ -228,7 +228,7 @@ export const films: Film[] = [
     genre: "DARK COMEDY-DRAMA",
     logline:
       "After a mass-casualty accident mistakenly leaves a burned-out man legally dead, he chooses not to correct the mistake and secretly watches his old life continue without him—discovering who truly misses him, who is better off, and whether disappearing might be the second chance he never knew he needed.",
-    posterImage: "/images/everyone-thinks-im-dead/poster.jpg",
+    posterImage: "/images/everyone-thinks-im-dead/poster-v2.jpg",
     heroImage: "/images/everyone-thinks-im-dead/hero.jpg",
     palette: {
       accent: "#e8c44a",

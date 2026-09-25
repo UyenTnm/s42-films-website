@@ -68,8 +68,8 @@ export default function PrivateAccessForm({
         preload="auto"
         aria-hidden="true"
       >
-        <source src="/video/s42-hero-h264.mp4" type="video/mp4" />
-        <source src="/video/s42-hero.mp4" type="video/mp4" />
+        <source src="/video/s42-hero-v2-h264.mp4" type="video/mp4" />
+        <source src="/video/s42-hero-v2.mp4" type="video/mp4" />
       </video>
 
       <div className="absolute inset-0 -z-20 bg-black/45" />
