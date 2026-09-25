@@ -42,7 +42,7 @@ export default function LifeIsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Left Column: Official Poster */}
           <div className="lg:col-span-5 xl:col-span-5 space-y-4">
-            <div className="relative aspect-[3/4] w-full rounded-lg overflow-hidden shadow-[0_0_40px_rgba(245,166,35,0.15)] bg-black">
+            <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden shadow-[0_0_40px_rgba(245,166,35,0.15)] bg-black">
               <Image
                 src={film.posterImage}
                 alt="LIFE IS... Official Poster"
