@@ -107,7 +107,7 @@ function drawParticle(
 //  Set this to your video path (e.g. "/video/s42-intro.mp4") once
 //  uploaded to public/video/. Set to null to use the logo animation.
 // ══════════════════════════════════════════════════════════════
-const HERO_VIDEO_SRC: string | null = "/video/s42-hero.mp4";
+const HERO_VIDEO_SRC: string | null = "/video/s42-hero-v2.mp4";
 
 // ══════════════════════════════════════════════════════════════
 //  Component
@@ -602,8 +602,8 @@ export default function SmokeHero() {
                 preload="auto"
                 className="absolute inset-0 w-full h-full object-contain"
               >
-                <source src="/video/s42-hero-h264.mp4" type="video/mp4" />
-                <source src="/video/s42-hero.mp4" type="video/mp4" />
+                <source src="/video/s42-hero-v2-h264.mp4" type="video/mp4" />
+                <source src={HERO_VIDEO_SRC} type="video/mp4" />
               </video>
               {/* Subtle vignette over the video */}
               <div
