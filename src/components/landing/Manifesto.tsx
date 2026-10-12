@@ -56,12 +56,12 @@ export default function Manifesto() {
         <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-6 w-full">
           <div className="flex items-center gap-4">
             <span className="font-heading font-ethnocentric text-xs sm:text-sm tracking-[0.25em] text-[#f1f1ed]">
-              01 // THE S•42 PROMISE
+              01 // S•42 — STUDIO 42
             </span>
           </div>
           <div className="flex items-center gap-3 font-sans text-xs tracking-widest text-[#888] uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>CANONICAL PROTOCOL · 42 ORIGINAL PRODUCTIONS</span>
+            <span>THE S•42 PROMISE · 42 ORIGINAL STORIES</span>
           </div>
         </div>
 
@@ -72,27 +72,58 @@ export default function Manifesto() {
               FORTY-TWO STORIES.
             </h2>
             <p className="manifesto-line font-sans text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-[#a0a09c] font-light italic leading-tight">
-              One Enduring Legacy.
+              Infinite Possibilities. One Enduring Legacy.
             </p>
           </div>
 
           <p className="manifesto-line font-sans text-lg sm:text-xl md:text-2xl lg:text-3xl text-[#8e8e88] leading-relaxed font-light pt-4 w-full">
-            S•42 was founded on a singular cinematic commitment: forty-two
-            original feature films and limited series, each created with
-            uncompromising artistic conviction. Forty-two distinct visions.
-            Forty-two stories with the ambition to matter, to resonate, and to
-            be remembered.
+            Studio 42 was founded on a singular creative commitment: to develop
+            forty-two exceptional original stories, each conceived with
+            uncompromising artistic ambition and the potential to captivate,
+            inspire, and leave a lasting impression.
           </p>
 
-          <div className="space-y-4 border-l border-[#c9a84c]/40 pl-5 sm:pl-7">
-            <p className="manifesto-line font-sans text-lg sm:text-xl md:text-2xl text-[#f1f1ed] font-semibold leading-relaxed">
-              Every S•42 project must earn its place.
+          <div className="manifesto-line border-l border-[#c9a84c]/40 pl-5 sm:pl-7">
+            <p className="font-sans text-lg sm:text-xl md:text-2xl text-[#f1f1ed] font-semibold leading-relaxed">
+              Every story must earn its place. Because there will only ever be
+              forty-two.
             </p>
-            <p className="manifesto-line font-sans text-lg sm:text-xl md:text-2xl text-[#f1f1ed] font-semibold leading-relaxed">
-              Because there will only ever be forty-two.
+          </div>
+
+          <div className="space-y-5 font-sans text-base sm:text-lg md:text-xl text-[#9a9a94] leading-relaxed font-light">
+            <p className="manifesto-line">
+              But our vision extends far beyond the stories themselves.
             </p>
-            <p className="manifesto-line pt-3 font-heading font-ethnocentric text-base sm:text-lg md:text-xl text-[#c9a84c] tracking-[0.08em] leading-relaxed">
-              42 stories. Make every one unforgettable.
+            <p className="manifesto-line">
+              Studio 42 is building a new kind of independent entertainment
+              studio — creating original worlds, developing virtual stars,
+              producing films and series, and connecting directly with
+              audiences worldwide.
+            </p>
+            <p className="manifesto-line">
+              Combining cinematic storytelling with artificial intelligence
+              and emerging technologies, we are expanding the boundaries of
+              how entertainment is imagined, created, and experienced.
+            </p>
+            <p className="manifesto-line">
+              Our ambition is to build more than individual films: stories that
+              evolve across genres and platforms, virtual performers who become
+              recognizable stars, and original creations with the potential to
+              grow into lasting entertainment franchises.
+            </p>
+            <p className="manifesto-line">
+              Through independent production and strategic partnerships, we aim
+              to reach global audiences while retaining creative control,
+              protecting our intellectual property, and building long-term
+              value.
+            </p>
+          </div>
+
+          <div className="manifesto-line space-y-2 pt-3 font-heading font-ethnocentric text-base sm:text-lg md:text-xl text-[#c9a84c] tracking-[0.08em] leading-relaxed">
+            <p>Imagination defines what is worth creating.</p>
+            <p>
+              Technology expands what is possible. Storytelling remains at the
+              heart of everything we do.
             </p>
           </div>
         </div>

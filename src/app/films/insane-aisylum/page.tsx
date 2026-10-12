@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getFilmBySlug } from "@/data/films";
+import FilmStorySections from "@/components/films/FilmStorySections";
 
 export const metadata: Metadata = {
   title: "01 — INSANE AiSYLUM | S•42 Films",
   description:
-    "In 2042, the first artificial being accused of murder is declared legally insane and committed to a maximum-security psychiatric institution on a remote island off the coast of Tokyo.",
+    "The world's first artificially intelligent robot accused of murder is declared legally insane and confined to a remote Japanese psychiatric asylum.",
 };
 
 export default function InsaneAisylumPage() {
@@ -115,6 +116,18 @@ export default function InsaneAisylumPage() {
               </div>
             </div>
 
+            {/* One-Sentence Pitch */}
+            {film.pitch && (
+              <div className="space-y-3">
+                <h3 className="font-mono text-xs tracking-widest uppercase text-[#e50914] font-bold">
+                  ONE-SENTENCE PITCH
+                </h3>
+                <p className="text-base sm:text-lg text-[#d1d5db] leading-relaxed font-medium">
+                  {film.pitch}
+                </p>
+              </div>
+            )}
+
             {/* Logline */}
             <div className="space-y-3">
               <h3 className="font-mono text-xs tracking-widest uppercase text-[#e50914] font-bold">
@@ -124,6 +137,12 @@ export default function InsaneAisylumPage() {
                 {film.logline}
               </p>
             </div>
+
+            <FilmStorySections
+              sections={film.details?.sections}
+              closingStatement={film.details?.closingStatement}
+              accentColor={film.palette.accent}
+            />
 
             {/* Creator Credit */}
             <div className="pt-6 border-t border-[#e50914]/20 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#898989]">

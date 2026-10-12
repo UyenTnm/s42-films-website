@@ -9,10 +9,10 @@ import gsap from "gsap";
 
 const CATEGORIES = [
   { id: "ALL", label: "ALL", count: 7 },
-  { id: "THRILLER", label: "THRILLER", count: 3 },
-  { id: "SCI-FI", label: "SCI-FI", count: 2 },
+  { id: "THRILLER", label: "THRILLER", count: 5 },
+  { id: "SCI-FI", label: "SCI-FI", count: 3 },
   { id: "ACTION", label: "ACTION", count: 1 },
-  { id: "COMEDY", label: "COMEDY", count: 1 },
+  { id: "COMEDY", label: "COMEDY", count: 2 },
 ];
 
 export default function FilmIndex() {
@@ -28,7 +28,12 @@ export default function FilmIndex() {
       );
     }
     if (activeFilter === "SCI-FI") {
-      return films.filter((f) => f.genre.includes("SCI-FI"));
+      return films.filter(
+        (f) =>
+          f.genre.includes("SCI-FI") ||
+          f.genre.includes("SCIENCE-FICTION") ||
+          f.genre.includes("SCIENCE FICTION")
+      );
     }
     if (activeFilter === "ACTION") {
       return films.filter((f) => f.genre.includes("ACTION"));

@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getFilmBySlug } from "@/data/films";
+import FilmStorySections from "@/components/films/FilmStorySections";
 
 export const metadata: Metadata = {
   title: "04 — L.42.06 | S•42 Films",
   description:
-    "After moving into apartment L.42.06, a new tenant discovers a door that appears where no door should exist — and becomes an invisible witness to violence he cannot stop.",
+    "A Japanese manga artist discovers an impossible doorway that lets him secretly watch a woman's increasingly dangerous encounters with a masked stranger.",
 };
 
 export default function L4206Page() {
@@ -89,13 +90,21 @@ export default function L4206Page() {
             </blockquote>
 
             {/* Production Specifications */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 rounded-lg border border-[#c0392b]/20 bg-[#0d0909] font-sans text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 rounded-lg border border-[#c0392b]/20 bg-[#0d0909] font-sans text-xs">
               <div>
                 <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">
                   FORMAT
                 </span>
                 <span className="text-[#f1f1ed] font-medium text-sm">
                   {film.format}
+                </span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">
+                  SETTING
+                </span>
+                <span className="text-[#f1f1ed] font-medium text-sm">
+                  {film.setting}
                 </span>
               </div>
               <div>
@@ -108,6 +117,18 @@ export default function L4206Page() {
               </div>
             </div>
 
+            {/* One-Sentence Pitch */}
+            {film.pitch && (
+              <div className="space-y-3">
+                <h3 className="font-heading font-ethnocentric text-xs tracking-wider uppercase text-[#c0392b] font-bold">
+                  ONE-SENTENCE PITCH
+                </h3>
+                <p className="font-sans text-base sm:text-lg text-[#d1d5db] leading-relaxed font-medium">
+                  {film.pitch}
+                </p>
+              </div>
+            )}
+
             {/* Logline */}
             <div className="space-y-3">
               <h3 className="font-heading font-ethnocentric text-xs tracking-wider uppercase text-[#c0392b] font-bold">
@@ -118,21 +139,11 @@ export default function L4206Page() {
               </p>
             </div>
 
-            {/* The Hook — key thematic statement */}
-            <div className="p-5 rounded-lg border border-[#c0392b]/25 bg-[#110808] space-y-3">
-              <h3 className="font-mono text-xs tracking-widest uppercase text-[#c0392b] font-bold">
-                THE PREMISE
-              </h3>
-              <p className="text-sm text-[#b5aba7] leading-relaxed">
-                A door that should not exist. Violence witnessed through it. No
-                way to intervene. No way to prove it. And the door keeps coming
-                back — revealing more each time.
-              </p>
-              <p className="text-sm text-[#7a706c] leading-relaxed border-t border-[#c0392b]/10 pt-3">
-                The true mystery of L.42.06 is not what lies behind the door.
-                It is why this man — and only this man — is being shown.
-              </p>
-            </div>
+            <FilmStorySections
+              sections={film.details?.sections}
+              closingStatement={film.details?.closingStatement}
+              accentColor={film.palette.accent}
+            />
 
             {/* Creator Credit */}
             <div className="pt-6 border-t border-[#c0392b]/20 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#898989]">

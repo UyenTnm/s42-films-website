@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getFilmBySlug } from "@/data/films";
+import FilmStorySections from "@/components/films/FilmStorySections";
 
 export const metadata: Metadata = {
   title: "03 — LIFE IS... | S•42 Films",
   description:
-    "A four-feature-film streaming event built around one promise: watch the same family story as a Comedy, a Romance, a Mystery, or a Drama.",
+    "Four siblings become the protagonists of four different movies — a comedy, a romance, a mystery, and a drama — all unfolding within one shared reality.",
 };
 
 export default function LifeIsPage() {
@@ -85,30 +86,39 @@ export default function LifeIsPage() {
 
             {/* Core Hook Quote */}
             <blockquote className="border-l-2 border-[#f5a623] pl-6 py-2 text-xl sm:text-2xl text-[#f1f1ed] italic font-serif">
-              &ldquo;SAME FAMILY. SAME ACTORS. SAME HOUSE. SAME FAMILIAR
-              SETTINGS. <br />
-              <span className="text-[#f5a623] font-sans font-bold not-italic text-lg sm:text-xl">
-                SAME WEEKEND. DIFFERENT MOVIE.
-              </span>
-              &rdquo;
+              &ldquo;{film.tagline}&rdquo;
             </blockquote>
 
-            {/* The Proposition */}
+            {/* Production Specifications */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 rounded-lg border border-[#f5a623]/20 bg-[#120f0c] font-mono text-xs">
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">FORMAT</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.format}</span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">SETTING</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.setting}</span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">GENRE</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.genre}</span>
+              </div>
+            </div>
+
+            {/* Pitch and Logline */}
             <div className="space-y-3 p-6 rounded-lg border border-[#f5a623]/20 bg-[#120f0c]">
               <h3 className="font-mono text-xs tracking-widest uppercase text-[#f5a623] font-bold">
-                THE PROPOSITION
+                ONE-SENTENCE PITCH
               </h3>
               <p className="text-base text-[#f1f1ed] font-medium leading-relaxed">
                 {film.pitch}
               </p>
-              <p className="text-sm text-[#b8b0a5] leading-relaxed pt-2">
+              <h3 className="pt-3 font-mono text-xs tracking-widest uppercase text-[#f5a623] font-bold border-t border-[#f5a623]/10">
+                LOGLINE
+              </h3>
+              <p className="text-sm text-[#b8b0a5] leading-relaxed">
                 {film.logline}
               </p>
-              {film.details?.proposition && (
-                <p className="text-sm text-[#8c857b] leading-relaxed pt-2 border-t border-[#f5a623]/10">
-                  {film.details.proposition}
-                </p>
-              )}
             </div>
 
             {/* The Four Films Quadrants */}
@@ -116,11 +126,8 @@ export default function LifeIsPage() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between border-b border-[#f5a623]/20 pb-2">
                   <h3 className="font-mono text-xs tracking-widest uppercase text-[#f5a623] font-bold">
-                    4 GENRES. ONE FAMILY. MULTIPLE TRUTHS.
+                    THE WORLD OF LIFE IS…
                   </h3>
-                  <span className="font-mono text-[11px] text-[#898989]">
-                    24 POSSIBLE VIEWING ORDERS
-                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
@@ -136,9 +143,6 @@ export default function LifeIsPage() {
                           style={{ color: subFilm.color }}
                         >
                           {subFilm.title}
-                        </span>
-                        <span className="italic font-serif text-[#f1f1ed] text-sm">
-                          {subFilm.tagline}
                         </span>
                       </div>
                       <p className="text-[11px] text-[#a8a197] leading-relaxed font-sans">
@@ -159,6 +163,12 @@ export default function LifeIsPage() {
                 WE LAUGH. WE FALL IN LOVE. WE SEARCH FOR ANSWERS. WE ENDURE.
               </span>
             </div>
+
+            <FilmStorySections
+              sections={film.details?.sections}
+              closingStatement={film.details?.closingStatement}
+              accentColor={film.palette.accent}
+            />
 
             {/* Creator Credit & Navigation */}
             <div className="pt-6 border-t border-[#f5a623]/20 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#898989]">

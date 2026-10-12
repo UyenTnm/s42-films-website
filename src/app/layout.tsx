@@ -19,9 +19,9 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "S•42 — 42 Great Stories Worth Remembering",
+  title: "S•42 — Studio 42",
   description:
-    "An independent cinematic house producing forty-two seminal films across sci-fi, neo-noir, and human drama.",
+    "An independent entertainment studio developing forty-two exceptional original stories, virtual stars, films, and series for audiences worldwide.",
   keywords: [
     "S•42",
     "S42 Films",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "S•42 Films",
     description:
-      "An independent cinematic house producing forty-two seminal films.",
+      "An independent entertainment studio developing forty-two exceptional original stories.",
     type: "website",
   },
 };
