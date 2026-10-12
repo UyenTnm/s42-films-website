@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getFilmBySlug } from "@/data/films";
+import FilmStorySections from "@/components/films/FilmStorySections";
 
 export const metadata: Metadata = {
   title: "07 — EVERYONE THINKS I'M DEAD | S•42 Films",
   description:
-    "After a mass-casualty accident mistakenly leaves a burned-out man legally dead, he chooses not to correct the mistake and secretly watches his old life continue without him.",
+    "A burned-out American businessman mistakenly declared dead after a car crash in Mexico decides to remain dead and discovers what everyone really thinks of him.",
 };
 
 export default function EveryoneThinkImDeadPage() {
@@ -53,7 +54,7 @@ export default function EveryoneThinkImDeadPage() {
               />
             </div>
             <p className="font-mono text-[10px] text-[#898989] tracking-widest text-center uppercase">
-              COMING SOON • © S.42 FILMS
+              COMING SOON • © S•42 FILMS
             </p>
           </div>
 
@@ -100,10 +101,14 @@ export default function EveryoneThinkImDeadPage() {
             </div>
 
             {/* Production Specifications */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 rounded-lg border border-[#e8c44a]/20 bg-[#0f0e09] font-mono text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 rounded-lg border border-[#e8c44a]/20 bg-[#0f0e09] font-mono text-xs">
               <div>
                 <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">FORMAT</span>
                 <span className="text-[#f1f1ed] font-semibold text-sm">{film.format}</span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">SETTING</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.setting}</span>
               </div>
               <div>
                 <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">GENRE</span>
@@ -111,25 +116,29 @@ export default function EveryoneThinkImDeadPage() {
               </div>
             </div>
 
+            {/* One-Sentence Pitch */}
+            {film.pitch && (
+              <div className="space-y-3">
+                <h3 className="font-mono text-xs tracking-widest uppercase text-[#e8c44a] font-bold">
+                  ONE-SENTENCE PITCH
+                </h3>
+                <p className="text-base sm:text-lg text-[#d1d5db] leading-relaxed font-medium">
+                  {film.pitch}
+                </p>
+              </div>
+            )}
+
             {/* Logline */}
             <div className="space-y-3">
               <h3 className="font-mono text-xs tracking-widest uppercase text-[#e8c44a] font-bold">LOGLINE</h3>
               <p className="text-base sm:text-lg text-[#d1d5db] leading-relaxed">{film.logline}</p>
             </div>
 
-            {/* The Description */}
-            <div className="p-5 rounded-lg border border-[#e8c44a]/15 bg-[#0d0d0b] space-y-3">
-              <h3 className="font-mono text-xs tracking-widest uppercase text-[#e8c44a] font-bold">THE STORY</h3>
-              <p className="text-sm text-[#b5b0a0] leading-relaxed">
-                What begins as the best mistake that ever happened to him becomes a funny, painful and unexpectedly
-                moving opportunity to see his life — and himself — from the outside. Some people genuinely miss him.
-                Some barely notice. And a few seem considerably happier without him.
-              </p>
-              <p className="text-sm text-[#7a7060] leading-relaxed border-t border-[#e8c44a]/10 pt-3">
-                Now he faces a choice no living person normally gets to make: stay dead and finally be free, or come
-                back to life and become someone worth returning as.
-              </p>
-            </div>
+            <FilmStorySections
+              sections={film.details?.sections}
+              closingStatement={film.details?.closingStatement}
+              accentColor={film.palette.accent}
+            />
 
             {/* Creator Credit */}
             <div className="pt-6 border-t border-[#e8c44a]/20 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#898989]">

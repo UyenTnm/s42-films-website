@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { getFilmBySlug } from "@/data/films";
+import FilmStorySections from "@/components/films/FilmStorySections";
 
 export const metadata: Metadata = {
   title: "05 — THE SUM OF ME | S•42 Films",
   description:
-    "In his forty-second and final life, a man begins remembering every person his soul has ever been — and discovers that humanity is not judged by a single lifetime, but by the sum of all 42.",
+    "On his 42nd birthday, a history professor begins remembering the 41 previous lives his soul lived before its final judgment.",
 };
 
 export default function TheSumOfMePage() {
@@ -87,6 +88,22 @@ export default function TheSumOfMePage() {
               &ldquo;{film.tagline}&rdquo;
             </blockquote>
 
+            {/* Production Specifications */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 rounded-lg border border-[#c9a84c]/20 bg-[#0f0d09] font-mono text-xs">
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">FORMAT</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.format}</span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">SETTING</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.setting}</span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">GENRE</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.genre}</span>
+              </div>
+            </div>
+
             {/* Stats */}
             {film.details?.stats && (
               <div className="grid grid-cols-3 gap-4 p-6 rounded-lg border border-[#c9a84c]/20 bg-[#0f0d09] font-mono">
@@ -125,29 +142,11 @@ export default function TheSumOfMePage() {
               </p>
             </div>
 
-            {/* Audience Promise */}
-            {film.details?.audiencePromise && (
-              <div className="p-5 rounded-lg border border-[#c9a84c]/20 bg-[#0f0d09] space-y-3">
-                <h3 className="font-mono text-xs tracking-widest uppercase text-[#c9a84c] font-bold">
-                  THE AUDIENCE PROMISE
-                </h3>
-                <p className="text-sm text-[#b5aba7] leading-relaxed">
-                  {film.details.audiencePromise}
-                </p>
-              </div>
-            )}
-
-            {/* Emotional Engine */}
-            {film.details?.emotionalEngine && (
-              <div className="p-5 rounded-lg border border-[#c9a84c]/15 bg-[#0d0b08] space-y-3">
-                <h3 className="font-mono text-xs tracking-widest uppercase text-[#c9a84c] font-bold">
-                  THE EMOTIONAL ENGINE
-                </h3>
-                <p className="text-sm text-[#9c9285] leading-relaxed">
-                  {film.details.emotionalEngine}
-                </p>
-              </div>
-            )}
+            <FilmStorySections
+              sections={film.details?.sections}
+              closingStatement={film.details?.closingStatement}
+              accentColor={film.palette.accent}
+            />
 
             {/* Creator Credit */}
             <div className="pt-6 border-t border-[#c9a84c]/20 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#898989]">

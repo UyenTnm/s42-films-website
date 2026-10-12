@@ -3,11 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { getFilmBySlug } from "@/data/films";
 import BackToHomeLink from "@/components/navigation/BackToHomeLink";
+import FilmStorySections from "@/components/films/FilmStorySections";
 
 export const metadata: Metadata = {
   title: "02 — SUICIDE TRAIN | S•42 Films",
   description:
-    "An American military family accidentally boards a secret suicide train beneath Tokyo and has four hours to escape before it carries all 42 passengers into an ocean graveyard.",
+    "An American military family of three accidentally completes the count aboard a secret suicide train and has four hours to escape before it plunges into the ocean.",
 };
 
 export default function SuicideTrainPage() {
@@ -87,6 +88,22 @@ export default function SuicideTrainPage() {
               </h2>
             </div>
 
+            {/* Production Specifications */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 rounded-lg border border-[#e52222]/20 bg-[#0d0909] font-mono text-xs">
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">FORMAT</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.format}</span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">SETTING</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.setting}</span>
+              </div>
+              <div>
+                <span className="text-[#898989] block mb-1 text-[11px] uppercase tracking-wider">GENRE</span>
+                <span className="text-[#f1f1ed] font-semibold text-sm">{film.genre}</span>
+              </div>
+            </div>
+
             {/* Three Core Numbers Banner */}
             <div className="grid grid-cols-3 gap-3 p-4 sm:p-6 rounded-lg border border-[#e52222]/20 bg-[#0d0909] text-center font-mono">
               <div className="space-y-1">
@@ -142,29 +159,11 @@ export default function SuicideTrainPage() {
               </p>
             </div>
 
-            {/* The Audience Promise */}
-            {film.details?.audiencePromise && (
-              <div className="space-y-2">
-                <h3 className="font-mono text-xs tracking-widest uppercase text-[#e52222] font-bold">
-                  THE AUDIENCE PROMISE
-                </h3>
-                <p className="text-sm sm:text-base text-[#b8b8b3] leading-relaxed">
-                  {film.details.audiencePromise}
-                </p>
-              </div>
-            )}
-
-            {/* The Emotional Engine */}
-            {film.details?.emotionalEngine && (
-              <div className="space-y-2">
-                <h3 className="font-mono text-xs tracking-widest uppercase text-[#e52222] font-bold">
-                  THE EMOTIONAL ENGINE
-                </h3>
-                <p className="text-sm sm:text-base text-[#b8b8b3] leading-relaxed">
-                  {film.details.emotionalEngine}
-                </p>
-              </div>
-            )}
+            <FilmStorySections
+              sections={film.details?.sections}
+              closingStatement={film.details?.closingStatement}
+              accentColor={film.palette.accent}
+            />
 
             {/* Creator Credit & Navigation */}
             <div className="pt-6 border-t border-[#e52222]/20 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-[#898989]">
