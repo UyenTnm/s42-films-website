@@ -18,7 +18,7 @@ export default function Footer() {
 
   return (
     <footer className="relative bg-[#050505] text-[#898989] border-t border-[#f1f1ed]/10 px-6 md:px-16 pt-16 pb-12 overflow-hidden">
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="w-full space-y-12">
         {/* Top Footer Bar */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-10 border-b border-white/[0.08] font-sans text-xs">
           <div className="space-y-2">
@@ -57,9 +57,8 @@ export default function Footer() {
         </div>
 
         {/* Bottom Credits */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 font-sans text-xs text-[#555] font-light">
+        <div className="font-sans text-xs text-[#555] font-light">
           <span>© S•42 FILMS. ALL RIGHTS RESERVED.</span>
-          <span>WRITTEN AND CREATED BY WESLEY ANTON DADWAH</span>
         </div>
       </div>
     </footer>

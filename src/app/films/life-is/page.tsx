@@ -105,18 +105,24 @@ export default function LifeIsPage() {
               </div>
             </div>
 
-            {/* Pitch and Logline */}
-            <div className="space-y-3 p-6 rounded-lg border border-[#f5a623]/20 bg-[#120f0c]">
+            {/* One-Sentence Pitch */}
+            {film.pitch && (
+              <div className="space-y-3">
+                <h3 className="font-mono text-xs tracking-widest uppercase text-[#f5a623] font-bold">
+                  ONE-SENTENCE PITCH
+                </h3>
+                <p className="text-base sm:text-lg text-[#d1d5db] leading-relaxed font-medium">
+                  {film.pitch}
+                </p>
+              </div>
+            )}
+
+            {/* Logline */}
+            <div className="space-y-3">
               <h3 className="font-mono text-xs tracking-widest uppercase text-[#f5a623] font-bold">
-                ONE-SENTENCE PITCH
-              </h3>
-              <p className="text-base text-[#f1f1ed] font-medium leading-relaxed">
-                {film.pitch}
-              </p>
-              <h3 className="pt-3 font-mono text-xs tracking-widest uppercase text-[#f5a623] font-bold border-t border-[#f5a623]/10">
                 LOGLINE
               </h3>
-              <p className="text-sm text-[#b8b0a5] leading-relaxed">
+              <p className="text-base sm:text-lg text-[#d1d5db] leading-relaxed">
                 {film.logline}
               </p>
             </div>
