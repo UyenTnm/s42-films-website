@@ -139,18 +139,18 @@ export default function SuicideTrainPage() {
 
             {/* One-Sentence Pitch */}
             {film.pitch && (
-              <div className="space-y-2 p-5 rounded-lg border border-[#e52222]/20 bg-[#0e0a0a]">
+              <div className="space-y-3">
                 <h3 className="font-mono text-xs tracking-widest uppercase text-[#e52222] font-bold">
                   ONE-SENTENCE PITCH
                 </h3>
-                <p className="text-base text-[#f1f1ed] leading-relaxed">
+                <p className="text-base sm:text-lg text-[#d1d5db] leading-relaxed font-medium">
                   {film.pitch}
                 </p>
               </div>
             )}
 
             {/* Logline */}
-            <div className="space-y-2">
+            <div className="space-y-3">
               <h3 className="font-mono text-xs tracking-widest uppercase text-[#e52222] font-bold">
                 LOGLINE
               </h3>
