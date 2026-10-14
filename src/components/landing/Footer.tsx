@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  faFacebookF,
+  faInstagram,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
 import { films } from "@/data/films";
@@ -57,8 +63,40 @@ export default function Footer() {
         </div>
 
         {/* Bottom Credits */}
-        <div className="font-sans text-xs text-[#555] font-light">
+        <div className="flex flex-col items-start justify-between gap-6 font-sans text-xs text-[#555] font-light sm:flex-row sm:items-center">
           <span>© S•42 FILMS. ALL RIGHTS RESERVED.</span>
+          <nav aria-label="S•42 Films social media" className="flex items-center gap-3">
+            <a
+              href="https://www.facebook.com/s42films/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="S•42 Films on Facebook"
+              title="Facebook"
+              className="flex size-9 items-center justify-center rounded-full border border-white/10 text-[#898989] transition-colors hover:border-white/30 hover:text-white"
+            >
+              <FontAwesomeIcon icon={faFacebookF} className="size-4" />
+            </a>
+            <a
+              href="https://www.instagram.com/s42films/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="S•42 Films on Instagram"
+              title="Instagram"
+              className="flex size-9 items-center justify-center rounded-full border border-white/10 text-[#898989] transition-colors hover:border-white/30 hover:text-white"
+            >
+              <FontAwesomeIcon icon={faInstagram} className="size-4" />
+            </a>
+            <a
+              href="https://www.youtube.com/@S42FILMSAdmin"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="S•42 Films on YouTube"
+              title="YouTube"
+              className="flex size-9 items-center justify-center rounded-full border border-white/10 text-[#898989] transition-colors hover:border-white/30 hover:text-white"
+            >
+              <FontAwesomeIcon icon={faYoutube} className="size-4" />
+            </a>
+          </nav>
         </div>
       </div>
     </footer>
