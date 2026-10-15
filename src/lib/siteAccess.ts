@@ -83,7 +83,7 @@ function valuesMatch(left: string, right: string) {
 // Email helpers
 // ---------------------------------------------------------------------------
 
-// "|" is excluded because it separates fields inside the signed tokens.
+// "|" is excluded because it separates fields inside the session token.
 const EMAIL_PATTERN =
   /^[^\s@<>()[\]\\,;:"|]+@[^\s@<>()[\]\\,;:"|]+\.[^\s@<>()[\]\\,;:"|]{2,}$/;
 
@@ -94,6 +94,29 @@ export function normalizeEmail(value: unknown): string | null {
   if (email.length > 254 || !EMAIL_PATTERN.test(email)) return null;
 
   return email;
+}
+
+export interface Profile {
+  email: string;
+  firstName: string;
+  lastName: string;
+  company: string;
+}
+
+/** Trims, collapses whitespace and strips control characters. */
+export function normalizeName(value: unknown, maxLength: number): string | null {
+  if (typeof value !== "string") return null;
+
+  let cleaned = "";
+  for (const char of value) {
+    const code = char.charCodeAt(0);
+    cleaned += code < 32 || code === 127 ? " " : char;
+  }
+
+  const name = cleaned.replace(/\s+/g, " ").trim();
+  if (!name || name.length > maxLength) return null;
+
+  return name;
 }
 
 // ---------------------------------------------------------------------------
@@ -119,51 +142,57 @@ export function sanitizeCode(value: unknown): string | null {
   return digits.length === CODE_LENGTH ? digits : null;
 }
 
-export async function createChallenge(email: string) {
+export async function createChallenge(profile: Profile) {
   const secret = getSecret();
   if (!secret) return null;
 
   const code = generateCode();
   const expiresAt = Math.floor(Date.now() / 1000) + CHALLENGE_TTL_SECONDS;
-  const payload = textToBase64Url(`${email}|${expiresAt}`);
-  const signature = await hmac(
-    secret,
-    `s42-challenge|${email}|${expiresAt}|${code}`,
-  );
+  const payload = textToBase64Url(JSON.stringify({ ...profile, expiresAt }));
+  const signature = await hmac(secret, `s42-challenge|${payload}|${code}`);
 
   return { code, token: `${payload}.${signature}` };
 }
 
-/** Returns the verified email when the code matches this challenge cookie. */
+/** Returns the signed profile when the code matches this challenge cookie. */
 export async function verifyChallenge(
   token: string | undefined,
   code: string,
-): Promise<string | null> {
+): Promise<Profile | null> {
   const secret = getSecret();
   if (!secret || !token) return null;
 
   const [payload, signature] = token.split(".");
   if (!payload || !signature) return null;
 
-  let email: string;
-  let expiresAt: number;
+  const expected = await hmac(secret, `s42-challenge|${payload}|${code}`);
+  if (!valuesMatch(signature, expected)) return null;
+
   try {
-    const [decodedEmail, decodedExpiry] = base64UrlToText(payload).split("|");
-    email = decodedEmail;
-    expiresAt = Number(decodedExpiry);
+    const data = JSON.parse(base64UrlToText(payload)) as Partial<Profile> & {
+      expiresAt?: number;
+    };
+
+    if (
+      typeof data.email !== "string" ||
+      typeof data.firstName !== "string" ||
+      typeof data.lastName !== "string" ||
+      typeof data.company !== "string" ||
+      typeof data.expiresAt !== "number"
+    ) {
+      return null;
+    }
+    if (data.expiresAt < Math.floor(Date.now() / 1000)) return null;
+
+    return {
+      email: data.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      company: data.company,
+    };
   } catch {
     return null;
   }
-
-  if (!email || !Number.isFinite(expiresAt)) return null;
-  if (expiresAt < Math.floor(Date.now() / 1000)) return null;
-
-  const expected = await hmac(
-    secret,
-    `s42-challenge|${email}|${expiresAt}|${code}`,
-  );
-
-  return valuesMatch(signature, expected) ? email : null;
 }
 
 // ---------------------------------------------------------------------------
