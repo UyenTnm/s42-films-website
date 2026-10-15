@@ -1,61 +1,160 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface PrivateAccessFormProps {
   destination: string;
-  initialMessage?: string;
+}
+
+type Step = "email" | "code";
+type Status = { tone: "error" | "info"; text: string } | null;
+
+const RESEND_COOLDOWN_SECONDS = 30;
+const CODE_LENGTH = 6;
+
+async function postJson(url: string, body: unknown) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const result = (await response.json().catch(() => ({}))) as {
+    ok?: boolean;
+    message?: string;
+  };
+
+  return { ok: response.ok && Boolean(result.ok), message: result.message };
 }
 
 export default function PrivateAccessForm({
   destination,
-  initialMessage = "",
 }: PrivateAccessFormProps) {
   const router = useRouter();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [message, setMessage] = useState(initialMessage);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const codeRef = useRef<HTMLInputElement>(null);
+  const [step, setStep] = useState<Step>("email");
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [status, setStatus] = useState<Status>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = window.setTimeout(
+      () => setCooldown((value) => value - 1),
+      1000,
+    );
+    return () => window.clearTimeout(timer);
+  }, [cooldown]);
+
+  useEffect(() => {
+    if (step === "code") codeRef.current?.focus();
+    else emailRef.current?.focus();
+  }, [step]);
+
+  const requestCode = async (target: string, isResend = false) => {
+    setIsSubmitting(true);
+    setStatus(null);
+
+    try {
+      const result = await postJson("/api/access/request", { email: target });
+
+      if (!result.ok) {
+        setStatus({
+          tone: "error",
+          text:
+            result.message || "We could not send the code. Please try again.",
+        });
+        return false;
+      }
+
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+      if (isResend) {
+        setStatus({ tone: "info", text: "A new code is on its way." });
+      }
+      return true;
+    } catch {
+      setStatus({
+        tone: "error",
+        text: "We could not send the code. Please try again.",
+      });
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEmailSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isSubmitting) return;
 
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const code = String(formData.get("access-code") || "");
-    if (!code.trim()) return;
+    const target = email.trim();
+    if (!target) return;
+
+    const sent = await requestCode(target);
+    if (sent) {
+      setEmail(target);
+      setCode("");
+      setStep("code");
+    }
+  };
+
+  const verifyCode = async (value: string) => {
+    if (isSubmitting || value.length !== CODE_LENGTH) return;
 
     setIsSubmitting(true);
-    setMessage("");
+    setStatus(null);
 
     try {
-      const response = await fetch("/api/access", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
-      });
-      const result = (await response.json()) as {
-        ok?: boolean;
-        message?: string;
-      };
+      const result = await postJson("/api/access/verify", { code: value });
 
-      if (!response.ok || !result.ok) {
-        setMessage(result.message || "Access could not be verified.");
-        form.reset();
-        inputRef.current?.focus();
+      if (!result.ok) {
+        setStatus({
+          tone: "error",
+          text: result.message || "That code is not valid. Please try again.",
+        });
+        setCode("");
+        codeRef.current?.focus();
         return;
       }
 
       router.replace(destination);
       router.refresh();
     } catch {
-      setMessage("Access could not be verified. Please try again.");
+      setStatus({
+        tone: "error",
+        text: "We could not verify the code. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const handleCodeSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void verifyCode(code);
+  };
+
+  const handleCodeChange = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, CODE_LENGTH);
+    setCode(digits);
+    if (status) setStatus(null);
+    if (digits.length === CODE_LENGTH) void verifyCode(digits);
+  };
+
+  const goBackToEmail = () => {
+    setStep("email");
+    setCode("");
+    setStatus(null);
+  };
+
+  const inputClasses =
+    "h-14 w-full min-w-0 border border-white/30 bg-black/35 px-5 text-white outline-none backdrop-blur-md transition placeholder:text-white/38 focus:border-white/75 focus:bg-black/50";
+  const buttonClasses =
+    "group relative flex h-14 w-full cursor-pointer items-center justify-center overflow-hidden border border-[#a3a3a3] bg-[#a3a3a3] px-8 font-heading text-[10px] tracking-[0.2em] text-black uppercase transition-colors hover:border-[#f1f1ed] disabled:cursor-not-allowed disabled:border-white/20 disabled:bg-white/10 disabled:text-white/35 sm:text-xs";
 
   return (
     <main className="private-access relative isolate min-h-svh overflow-hidden bg-black text-[#f1f1ed]">
@@ -90,57 +189,153 @@ export default function PrivateAccessForm({
             />
           </div>
 
-          <h1 className="whitespace-nowrap font-heading text-[clamp(1.65rem,7vw,2.4rem)] leading-none tracking-[0.055em] uppercase">
-            Private Access
-          </h1>
-          <p className="mt-[clamp(1rem,2.5svh,1.5rem)] max-w-md text-sm leading-relaxed font-light text-white/68 sm:text-base">
-            Enter the access code to preview the S•42 slate and confidential
-            film-development materials.
+          <p className="mb-3 font-heading text-[10px] tracking-[0.3em] text-white/45 uppercase">
+            Step {step === "email" ? "1" : "2"} of 2
           </p>
 
-          <form
-            onSubmit={handleSubmit}
-            action="/api/access"
-            method="post"
-            className="mt-[clamp(1.5rem,4svh,2.5rem)] flex w-full max-w-lg flex-col gap-3 sm:flex-row"
-          >
-            <input type="hidden" name="next" value={destination} />
-            <label className="sr-only" htmlFor="access-code">
-              Access code
-            </label>
-            <input
-              ref={inputRef}
-              id="access-code"
-              name="access-code"
-              type="password"
-              autoComplete="current-password"
-              onChange={() => {
-                if (message) setMessage("");
-              }}
-              placeholder="ACCESS CODE"
-              className="h-14 w-full min-w-0 border border-white/30 bg-black/35 px-5 font-heading text-xs tracking-[0.2em] text-white uppercase outline-none backdrop-blur-md transition placeholder:text-white/38 focus:border-white/75 focus:bg-black/50 sm:flex-1"
-              aria-describedby="access-status"
-              autoFocus
-              required
-            />
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="group flex h-14 min-w-44 cursor-pointer items-center justify-between gap-8 border border-white bg-white px-5 font-heading text-[10px] tracking-[0.2em] text-black uppercase transition hover:bg-transparent hover:text-white disabled:cursor-not-allowed disabled:border-white/20 disabled:bg-white/10 disabled:text-white/35 sm:text-xs"
-            >
-              <span>{isSubmitting ? "Verifying" : "Enter S•42"}</span>
-              <span className="transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </button>
-          </form>
+          <h1 className="whitespace-nowrap font-heading text-[clamp(1.65rem,7vw,2.4rem)] leading-none tracking-[0.055em] uppercase">
+            {step === "email" ? "Private Access" : "Check Your Email"}
+          </h1>
+
+          {step === "email" ? (
+            <>
+              <p className="mt-[clamp(1rem,2.5svh,1.5rem)] max-w-md text-sm leading-relaxed font-light text-white/68 sm:text-base">
+                Enter your email and we will send you a one-time code to preview
+                the S•42 slate and confidential film-development materials.
+              </p>
+
+              <form
+                onSubmit={handleEmailSubmit}
+                className="mt-[clamp(1.5rem,4svh,2.5rem)] flex w-full max-w-lg flex-col gap-3"
+              >
+                <label className="sr-only" htmlFor="access-email">
+                  Email address
+                </label>
+                <input
+                  ref={emailRef}
+                  id="access-email"
+                  name="email"
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    if (status) setStatus(null);
+                  }}
+                  placeholder="YOUR@EMAIL.COM"
+                  className={`${inputClasses} text-center font-heading text-xs tracking-[0.2em] uppercase`}
+                  aria-describedby="access-status"
+                  maxLength={254}
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !email.trim()}
+                  className={buttonClasses}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`absolute inset-0 origin-left bg-[#f1f1ed] transition-transform ease-out group-disabled:hidden ${
+                      isSubmitting
+                        ? "scale-x-100 duration-[1800ms]"
+                        : "scale-x-0 duration-500 group-hover:scale-x-100"
+                    }`}
+                  />
+                  <span className="relative pl-[0.2em]">
+                    {isSubmitting ? "Sending" : "Send Code"}
+                  </span>
+                </button>
+              </form>
+
+              <p className="mt-5 max-w-sm text-[12px] leading-relaxed text-white">
+                By continuing you agree to receive occasional updates about S•42
+                Films at this address. You can unsubscribe at any time.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="mt-[clamp(1rem,2.5svh,1.5rem)] max-w-md text-sm leading-relaxed font-light text-white/68 sm:text-base">
+                We sent a 6-digit code to{" "}
+                <span className="break-all font-normal text-white">
+                  {email}
+                </span>
+                .{" "}
+                <span className="whitespace-nowrap">
+                  It expires in 10 minutes.
+                </span>
+              </p>
+
+              <form
+                onSubmit={handleCodeSubmit}
+                className="mt-[clamp(1.5rem,4svh,2.5rem)] flex w-full max-w-lg flex-col gap-3"
+              >
+                <label className="sr-only" htmlFor="access-code">
+                  6-digit code
+                </label>
+                <input
+                  ref={codeRef}
+                  id="access-code"
+                  name="code"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9]*"
+                  value={code}
+                  onChange={(event) => handleCodeChange(event.target.value)}
+                  placeholder="······"
+                  className={`${inputClasses} text-center font-heading text-2xl tracking-[0.6em] indent-[0.6em]`}
+                  aria-describedby="access-status"
+                  maxLength={CODE_LENGTH}
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting || code.length !== CODE_LENGTH}
+                  className={buttonClasses}
+                >
+                  <span
+                    aria-hidden="true"
+                    className={`absolute inset-0 origin-left bg-[#f1f1ed] transition-transform ease-out group-disabled:hidden ${
+                      isSubmitting
+                        ? "scale-x-100 duration-[1800ms]"
+                        : "scale-x-0 duration-500 group-hover:scale-x-100"
+                    }`}
+                  />
+                  <span className="relative pl-[0.2em]">
+                    {isSubmitting ? "Verifying" : "Enter S•42"}
+                  </span>
+                </button>
+              </form>
+
+              <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 font-heading text-[10px] tracking-[0.2em] uppercase">
+                <button
+                  type="button"
+                  onClick={goBackToEmail}
+                  className="cursor-pointer text-white/55 underline-offset-4 transition hover:text-white hover:underline"
+                >
+                  Use a different email
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void requestCode(email, true)}
+                  disabled={isSubmitting || cooldown > 0}
+                  className="cursor-pointer text-white/55 underline-offset-4 transition hover:text-white hover:underline disabled:cursor-not-allowed disabled:text-white/25 disabled:no-underline"
+                >
+                  {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+                </button>
+              </div>
+            </>
+          )}
 
           <p
             id="access-status"
-            className="mt-4 min-h-5 text-xs tracking-wide text-[#ffb4ad]"
+            className={`mt-4 min-h-5 text-xs tracking-wide ${
+              status?.tone === "info" ? "text-white/70" : "text-[#ffb4ad]"
+            }`}
             aria-live="polite"
           >
-            {message}
+            {status?.text}
           </p>
         </section>
       </div>

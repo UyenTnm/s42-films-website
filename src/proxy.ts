@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { ACCESS_COOKIE_NAME, createAccessToken } from "@/lib/siteAccess";
+import { ACCESS_COOKIE_NAME, verifySessionToken } from "@/lib/siteAccess";
 
 function safeDestination(value: string | null) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : "/";
 }
 
 export async function proxy(request: NextRequest) {
-  const expectedToken = await createAccessToken();
-  const hasAccess =
-    request.cookies.get(ACCESS_COOKIE_NAME)?.value === expectedToken;
+  const hasAccess = Boolean(
+    await verifySessionToken(request.cookies.get(ACCESS_COOKIE_NAME)?.value),
+  );
   const { pathname, search } = request.nextUrl;
 
   if (pathname === "/access") {
