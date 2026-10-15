@@ -1,7 +1,9 @@
-// Minimal Resend client (REST, no extra dependency).
-// Docs: https://resend.com/docs/api-reference
-
 const RESEND_API = "https://api.resend.com";
+
+const SITE_URL = (
+  process.env.SITE_URL?.trim() || "https://www.s42films.com"
+).replace(/\/$/, "");
+const LOGO_URL = `${SITE_URL}/images/brand/s42-films-official.png`;
 
 function getApiKey() {
   return process.env.RESEND_API_KEY?.trim() || null;
@@ -35,7 +37,7 @@ export async function sendAccessCodeEmail(to: string, code: string) {
           <table role="presentation" width="100%" style="max-width:480px;border:1px solid #2a2a2a;background:#0b0b0b;">
             <tr>
               <td style="padding:36px 32px;text-align:center;">
-                <p style="margin:0 0 24px;font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#9a9a96;">S&bull;42 Films</p>
+                                <img src="${LOGO_URL}" width="240" height="84" alt="S&bull;42 Films" style="display:block;margin:0 auto 28px;border:0;outline:none;width:240px;max-width:100%;height:auto;font-size:12px;letter-spacing:0.3em;color:#9a9a94;text-align:center;" />
                 <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#cfcfca;">Your private access code is</p>
                 <p style="margin:0 0 24px;font-size:36px;font-weight:700;letter-spacing:0.18em;color:#ffffff;">${spacedCode}</p>
                 <p style="margin:0;font-size:13px;line-height:1.6;color:#8a8a86;">This code expires in 10 minutes. If you did not request it, you can ignore this email.</p>
