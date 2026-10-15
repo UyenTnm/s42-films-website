@@ -19,19 +19,9 @@ export default async function AccessPage({
 }: {
   searchParams: Promise<{
     next?: string | string[];
-    error?: string | string[];
   }>;
 }) {
   const query = await searchParams;
 
-  return (
-    <PrivateAccessForm
-      destination={safeDestination(query.next)}
-      initialMessage={
-        query.error === "invalid"
-          ? "That access code is not recognised."
-          : ""
-      }
-    />
-  );
+  return <PrivateAccessForm destination={safeDestination(query.next)} />;
 }
