@@ -7,6 +7,7 @@ import {
   isAccessConfigured,
   isRateLimited,
   normalizeEmail,
+  normalizeName,
 } from "@/lib/siteAccess";
 import { sendAccessCodeEmail } from "@/lib/resend";
 
@@ -19,9 +20,29 @@ export async function POST(request: Request) {
   }
 
   const payload = (await request.json().catch(() => null)) as {
+    firstName?: unknown;
+    lastName?: unknown;
+    company?: unknown;
     email?: unknown;
   } | null;
+  const firstName = normalizeName(payload?.firstName, 60);
+  const lastName = normalizeName(payload?.lastName, 60);
+  const company = normalizeName(payload?.company, 100);
   const email = normalizeEmail(payload?.email);
+
+  if (!firstName || !lastName) {
+    return Response.json(
+      { ok: false, message: "Please enter your first and last name." },
+      { status: 400 },
+    );
+  }
+
+  if (!company) {
+    return Response.json(
+      { ok: false, message: "Please enter your company name." },
+      { status: 400 },
+    );
+  }
 
   if (!email) {
     return Response.json(
@@ -44,7 +65,12 @@ export async function POST(request: Request) {
     );
   }
 
-  const challenge = await createChallenge(email);
+  const challenge = await createChallenge({
+    email,
+    firstName,
+    lastName,
+    company,
+  });
   if (!challenge) {
     return Response.json(
       { ok: false, message: "Access is not available right now." },

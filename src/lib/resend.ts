@@ -1,3 +1,5 @@
+import type { Profile } from "@/lib/siteAccess";
+
 const RESEND_API = "https://api.resend.com";
 
 const SITE_URL = (
@@ -80,31 +82,82 @@ export async function sendAccessCodeEmail(to: string, code: string) {
   }
 }
 
-/** Saves a verified email as a Resend contact. Never throws. */
-export async function saveContact(email: string) {
+/**
+ * Saves a verified visitor as a Resend contact. Never throws.
+ *
+ * The company goes into a custom contact property called "company_name",
+ * which must exist in Resend first (Contacts > Properties). If it does not,
+ * the contact is still saved with email and name so no lead is lost.
+ */
+export async function saveContact(profile: Profile) {
   const apiKey = getApiKey();
   if (!apiKey) return;
 
   const segmentId = process.env.RESEND_SEGMENT_ID?.trim();
+  const { email } = profile;
+  const names = { first_name: profile.firstName, last_name: profile.lastName };
+  const withCompany = {
+    ...names,
+    properties: { company_name: profile.company },
+  };
+
+  const send = (method: "POST" | "PATCH", fields: object) => {
+    const isCreate = method === "POST";
+
+    return fetch(
+      isCreate
+        ? `${RESEND_API}/contacts`
+        : `${RESEND_API}/contacts/${encodeURIComponent(email)}`,
+      {
+        method,
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(
+          isCreate
+            ? {
+                email,
+                ...fields,
+                ...(segmentId ? { segments: [{ id: segmentId }] } : {}),
+              }
+            : fields,
+        ),
+        signal: AbortSignal.timeout(5000),
+      },
+    );
+  };
+
+  // Create first; if the contact already exists, update it instead. Then
+  // fall back to saving without the company property.
+  const attempts: Array<["POST" | "PATCH", object]> = [
+    ["POST", withCompany],
+    ["PATCH", withCompany],
+    ["POST", names],
+    ["PATCH", names],
+  ];
 
   try {
-    const response = await fetch(`${RESEND_API}/contacts`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        ...(segmentId ? { segments: [{ id: segmentId }] } : {}),
-      }),
-      signal: AbortSignal.timeout(5000),
-    });
+    let lastStatus = 0;
 
-    // An existing contact is not an error worth surfacing to the visitor.
-    if (!response.ok && response.status !== 409) {
-      console.error("[s42 access] Resend contact failed", response.status);
+    for (const [method, fields] of attempts) {
+      const response = await send(method, fields);
+
+      if (response.ok) {
+        if (fields === names) {
+          console.warn(
+            '[s42 access] Contact saved without company. Create the "company_name" property in Resend (Contacts > Properties).',
+          );
+        }
+        return;
+      }
+
+      lastStatus = response.status;
+      // Bad key, no permission or rate limited: retrying will not help.
+      if ([401, 403, 429].includes(response.status)) break;
     }
+
+    console.error("[s42 access] Resend contact failed", lastStatus);
   } catch (error) {
     console.error("[s42 access] Resend contact error", error);
   }
