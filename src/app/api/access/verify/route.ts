@@ -45,9 +45,9 @@ export async function POST(request: NextRequest) {
   }
 
   const challengeToken = request.cookies.get(CHALLENGE_COOKIE_NAME)?.value;
-  const email = await verifyChallenge(challengeToken, code);
+  const profile = await verifyChallenge(challengeToken, code);
 
-  if (!email) {
+  if (!profile) {
     return Response.json(
       {
         ok: false,
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const sessionToken = await createSessionToken(email);
+  const sessionToken = await createSessionToken(profile.email);
   if (!sessionToken) {
     return Response.json(
       { ok: false, message: "Access is not available right now." },
@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Keep the verified email as a contact; a failure here never blocks access.
-  await saveContact(email);
+  // Keep the verified visitor as a contact; a failure here never blocks access.
+  await saveContact(profile);
 
   const response = NextResponse.json({ ok: true });
   response.cookies.set({

@@ -32,9 +32,12 @@ export default function PrivateAccessForm({
   destination,
 }: PrivateAccessFormProps) {
   const router = useRouter();
-  const emailRef = useRef<HTMLInputElement>(null);
+  const firstNameRef = useRef<HTMLInputElement>(null);
   const codeRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<Step>("email");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [company, setCompany] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<Status>(null);
@@ -52,15 +55,20 @@ export default function PrivateAccessForm({
 
   useEffect(() => {
     if (step === "code") codeRef.current?.focus();
-    else emailRef.current?.focus();
+    else firstNameRef.current?.focus();
   }, [step]);
 
-  const requestCode = async (target: string, isResend = false) => {
+  const requestCode = async (isResend = false) => {
     setIsSubmitting(true);
     setStatus(null);
 
     try {
-      const result = await postJson("/api/access/request", { email: target });
+      const result = await postJson("/api/access/request", {
+        firstName,
+        lastName,
+        company,
+        email,
+      });
 
       if (!result.ok) {
         setStatus({
@@ -87,16 +95,18 @@ export default function PrivateAccessForm({
     }
   };
 
+  const canSubmitDetails = [firstName, lastName, company, email].every(
+    (value) => value.trim().length > 0,
+  );
+
   const handleEmailSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (isSubmitting) return;
 
-    const target = email.trim();
-    if (!target) return;
+    if (!canSubmitDetails) return;
 
-    const sent = await requestCode(target);
+    const sent = await requestCode();
     if (sent) {
-      setEmail(target);
       setCode("");
       setStep("code");
     }
@@ -200,19 +210,85 @@ export default function PrivateAccessForm({
           {step === "email" ? (
             <>
               <p className="mt-[clamp(1rem,2.5svh,1.5rem)] max-w-md text-sm leading-relaxed font-light text-white/68 sm:text-base">
-                Enter your email and we will send you a one-time code to preview
-                the S•42 slate and confidential film-development materials.
+                Tell us who you are and we will email you a one-time code to
+                preview the S•42 slate and confidential film-development
+                materials.
               </p>
 
               <form
                 onSubmit={handleEmailSubmit}
                 className="mt-[clamp(1.5rem,4svh,2.5rem)] flex w-full max-w-lg flex-col gap-3"
               >
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div>
+                    <label className="sr-only" htmlFor="access-first-name">
+                      First name
+                    </label>
+                    <input
+                      ref={firstNameRef}
+                      id="access-first-name"
+                      name="firstName"
+                      type="text"
+                      autoComplete="given-name"
+                      value={firstName}
+                      onChange={(event) => {
+                        setFirstName(event.target.value);
+                        if (status) setStatus(null);
+                      }}
+                      placeholder="FIRST NAME"
+                      className={`${inputClasses} text-center font-heading text-xs tracking-[0.2em] uppercase`}
+                      aria-describedby="access-status"
+                      maxLength={60}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="sr-only" htmlFor="access-last-name">
+                      Last name
+                    </label>
+                    <input
+                      id="access-last-name"
+                      name="lastName"
+                      type="text"
+                      autoComplete="family-name"
+                      value={lastName}
+                      onChange={(event) => {
+                        setLastName(event.target.value);
+                        if (status) setStatus(null);
+                      }}
+                      placeholder="LAST NAME"
+                      className={`${inputClasses} text-center font-heading text-xs tracking-[0.2em] uppercase`}
+                      aria-describedby="access-status"
+                      maxLength={60}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <label className="sr-only" htmlFor="access-company">
+                  Company name
+                </label>
+                <input
+                  id="access-company"
+                  name="company"
+                  type="text"
+                  autoComplete="organization"
+                  value={company}
+                  onChange={(event) => {
+                    setCompany(event.target.value);
+                    if (status) setStatus(null);
+                  }}
+                  placeholder="COMPANY NAME"
+                  className={`${inputClasses} text-center font-heading text-xs tracking-[0.2em] uppercase`}
+                  aria-describedby="access-status"
+                  maxLength={100}
+                  required
+                />
+
                 <label className="sr-only" htmlFor="access-email">
                   Email address
                 </label>
                 <input
-                  ref={emailRef}
                   id="access-email"
                   name="email"
                   type="email"
@@ -231,7 +307,7 @@ export default function PrivateAccessForm({
                 />
                 <button
                   type="submit"
-                  disabled={isSubmitting || !email.trim()}
+                  disabled={isSubmitting || !canSubmitDetails}
                   className={buttonClasses}
                 >
                   <span
@@ -314,11 +390,11 @@ export default function PrivateAccessForm({
                   onClick={goBackToEmail}
                   className="cursor-pointer text-white/55 underline-offset-4 transition hover:text-white hover:underline"
                 >
-                  Use a different email
+                  Edit your details
                 </button>
                 <button
                   type="button"
-                  onClick={() => void requestCode(email, true)}
+                  onClick={() => void requestCode(true)}
                   disabled={isSubmitting || cooldown > 0}
                   className="cursor-pointer text-white/55 underline-offset-4 transition hover:text-white hover:underline disabled:cursor-not-allowed disabled:text-white/25 disabled:no-underline"
                 >
