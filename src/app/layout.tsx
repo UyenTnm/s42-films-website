@@ -29,6 +29,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.s42films.com"),
   title: "S•42 — Studio 42",
   description:
     "An independent entertainment studio developing forty-two exceptional original stories, virtual stars, films, and series for audiences worldwide.",
@@ -45,7 +46,10 @@ export const metadata: Metadata = {
     description:
       "An independent entertainment studio developing forty-two exceptional original stories.",
     type: "website",
+    siteName: "S•42 Films",
+    url: "/",
   },
+  twitter: { card: "summary_large_image" },
 };
 
 export default async function RootLayout({

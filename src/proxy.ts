@@ -15,7 +15,10 @@ export async function proxy(request: NextRequest) {
   if (pathname === "/access") {
     if (hasAccess) {
       return NextResponse.redirect(
-        new URL(safeDestination(request.nextUrl.searchParams.get("next")), request.url),
+        new URL(
+          safeDestination(request.nextUrl.searchParams.get("next")),
+          request.url,
+        ),
       );
     }
 
@@ -33,6 +36,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api/access|_next/static|_next/image|favicon(?:-3)?\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm|woff2?|otf)$).*)",
+    "/((?!api/access|robots\\.txt|sitemap\\.xml|_next/static|_next/image|favicon(?:-3)?\\.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm|woff2?|otf)$).*)",
   ],
 };
