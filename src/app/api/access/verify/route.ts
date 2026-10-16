@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import type { NextRequest } from "next/server";
 import {
   ACCESS_COOKIE_MAX_AGE,
@@ -11,7 +11,7 @@ import {
   sanitizeCode,
   verifyChallenge,
 } from "@/lib/siteAccess";
-import { saveContact } from "@/lib/resend";
+import { saveContactToMonday } from "@/lib/monday";
 
 export async function POST(request: NextRequest) {
   if (!isAccessConfigured()) {
@@ -65,8 +65,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Keep the verified visitor as a contact; a failure here never blocks access.
-  await saveContact(profile);
+  // Keep the verified visitor on the monday.com board. It runs after the
+  // response so it never slows down or blocks access.
+  after(() => saveContactToMonday(profile));
 
   const response = NextResponse.json({ ok: true });
   response.cookies.set({

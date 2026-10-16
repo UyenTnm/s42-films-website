@@ -24,6 +24,8 @@ export default function ContentProtection() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
+      // Browser autofill can fire keydown events without a key.
+      if (typeof event.key !== "string") return;
       const key = event.key.toLowerCase();
       const mod = event.ctrlKey || event.metaKey;
 
