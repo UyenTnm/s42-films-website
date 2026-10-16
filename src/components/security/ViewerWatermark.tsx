@@ -1,8 +1,3 @@
-/**
- * Faint, repeating S•42 Films watermark over every page.
- * Edit WATERMARK_TEXT to change the wording, and FILL_OPACITY to make it
- * lighter (smaller number) or stronger (bigger number).
- */
 const WATERMARK_TEXT = "S•42 FILMS · CONFIDENTIAL";
 const FILL_OPACITY = 0.07;
 
