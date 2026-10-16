@@ -28,7 +28,11 @@ export default function ContentProtection() {
       const mod = event.ctrlKey || event.metaKey;
 
       if (key === "f12") return event.preventDefault();
-      if (mod && event.shiftKey && ["i", "j", "c", "s", "4", "3", "5"].includes(key)) {
+      if (
+        mod &&
+        event.shiftKey &&
+        ["i", "j", "c", "s", "4", "3", "5"].includes(key)
+      ) {
         return event.preventDefault();
       }
       if (mod && ["s", "p", "u"].includes(key)) return event.preventDefault();
@@ -69,6 +73,8 @@ export default function ContentProtection() {
       document.removeEventListener("selectstart", block);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
+      // iOS Safari ignores user-scalable=no, so cancel its pinch gesture.
+      document.addEventListener("gesturestart", block);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("blur", shieldOn);
       window.removeEventListener("focus", shieldOff);
