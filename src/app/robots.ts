@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/films/", "/api/"],
       },
     ],
-    sitemap: "https://www.s42films.com/sitemap.xml",
+    sitemap: "https://s42films.com/sitemap.xml",
   };
 }

@@ -29,7 +29,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.s42films.com"),
+  metadataBase: new URL("https://s42films.com"),
   title: "S•42 — Studio 42",
   description:
     "An independent entertainment studio developing forty-two exceptional original stories, virtual stars, films, and series for audiences worldwide.",
