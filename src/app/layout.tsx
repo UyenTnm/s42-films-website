@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import { Outfit } from "next/font/google";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import Header from "@/components/navigation/Header";
+import ContentProtection from "@/components/security/ContentProtection";
+import ViewerWatermark from "@/components/security/ViewerWatermark";
 import "./globals.css";
 
 const ethnocentric = localFont({
@@ -38,7 +40,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -53,6 +55,8 @@ export default function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
         </SmoothScroll>
+        <ViewerWatermark />
+        <ContentProtection />
       </body>
     </html>
   );

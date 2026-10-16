@@ -324,9 +324,11 @@ export default function PrivateAccessForm({
                 </button>
               </form>
 
-              <p className="mt-5 max-w-sm text-[12px] leading-relaxed text-white">
-                By continuing you agree to receive occasional updates about S•42
-                Films at this address. You can unsubscribe at any time.
+              <p className="mt-5 max-w-md text-[12px] leading-relaxed text-white">
+                By continuing you agree to keep all materials confidential and
+                not to copy, record or share them. You also agree to receive
+                occasional updates about S•42 Films at this address, and can
+                unsubscribe at any time.
               </p>
             </>
           ) : (

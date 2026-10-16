@@ -143,3 +143,36 @@ body {
   --accent: var(--film-03-accent);
   --theme-bg: var(--film-03-bg);
 }
+
+/* --- Content protection (deterrents) --- */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+img,
+video,
+svg {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* Hides the page when the window loses focus or PrintScreen is pressed. */
+html.s42-shield body > *:not(script) {
+  visibility: hidden;
+}
+
+@media print {
+  html,
+  body {
+    display: none !important;
+  }
+}
