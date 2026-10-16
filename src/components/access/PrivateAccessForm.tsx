@@ -186,7 +186,8 @@ export default function PrivateAccessForm({
       <div className="private-access-grain absolute inset-0 -z-10 opacity-[0.055]" />
 
       <div className="flex min-h-svh items-center justify-center px-6 py-6 sm:px-10 md:px-14">
-        <section className="flex w-full max-w-3xl flex-col items-center border border-white/12 bg-black/55 px-6 py-[clamp(1.5rem,5svh,3.5rem)] text-center shadow-[0_40px_140px_rgba(0,0,0,0.88)] backdrop-blur-[10px] sm:px-12 md:px-16">
+        {/* <section className="flex w-full max-w-3xl flex-col items-center border border-white/12 bg-black/55 px-6 py-[clamp(1.5rem,5svh,3.5rem)] text-center shadow-[0_40px_140px_rgba(0,0,0,0.88)] backdrop-blur-[10px] sm:px-12 md:px-16"> */}
+        <section className="flex w-full max-w-3xl flex-col items-center border border-white/12 bg-black/55 px-4 py-[clamp(1.5rem,5svh,3.5rem)] text-center shadow-[0_40px_140px_rgba(0,0,0,0.88)] backdrop-blur-[10px] sm:px-12 md:px-16">
           <div className="relative mb-[clamp(1rem,3svh,2rem)] h-[clamp(5.5rem,15svh,9rem)] w-[clamp(15rem,42svh,24rem)]">
             <Image
               src="/images/brand/s42-films-official.png"
@@ -203,7 +204,8 @@ export default function PrivateAccessForm({
             Step {step === "email" ? "1" : "2"} of 2
           </p>
 
-          <h1 className="whitespace-nowrap font-heading text-[clamp(1.65rem,7vw,2.4rem)] leading-none tracking-[0.055em] uppercase">
+          {/* <h1 className="whitespace-nowrap font-heading text-[clamp(1.65rem,7vw,2.4rem)] leading-none tracking-[0.055em] uppercase"> */}
+          <h1 className="whitespace-nowrap font-heading text-[clamp(0.95rem,calc((100vw-6.5rem)/14.8),2.4rem)] sm:text-[clamp(0.95rem,calc((100vw-11.1rem)/15.5),2.4rem)] md:text-[clamp(0.95rem,calc((100vw-15.2rem)/15.5),2.4rem)] min-[880px]:text-[2.4rem] leading-none tracking-[0.055em] uppercase">
             {step === "email" ? "Private Access" : "Check Your Email"}
           </h1>
 
