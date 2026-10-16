@@ -6,6 +6,7 @@ import Header from "@/components/navigation/Header";
 import ContentProtection from "@/components/security/ContentProtection";
 import ViewerWatermark from "@/components/security/ViewerWatermark";
 import "./globals.css";
+import Footer from "../components/landing/Footer";
 
 const ethnocentric = localFont({
   src: "../../public/fonts/FC-Ethnocentric-Rg.otf",
@@ -61,6 +62,7 @@ export default async function RootLayout({
         <SmoothScroll>
           <Header />
           <main className="flex-1">{children}</main>
+          <Footer />
         </SmoothScroll>
         <ViewerWatermark />
         <ContentProtection />
