@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { films } from "@/data/films";
 import { useLenis } from "@/hooks/useLenis";
+import { usePathname } from "next/navigation";
 
 function MailIcon() {
   return (
@@ -48,6 +49,7 @@ function PhoneIcon() {
 
 export default function Footer() {
   const lenis = useLenis();
+  const pathname = usePathname();
 
   const scrollToTop = () => {
     if (lenis) {
@@ -56,6 +58,8 @@ export default function Footer() {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
+
+  if (pathname === "/access") return null;
 
   return (
     <footer className="relative bg-[#050505] text-[#898989] border-t border-[#f1f1ed]/10 px-6 md:px-16 pt-16 pb-12 overflow-hidden">
