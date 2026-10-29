@@ -1254,7 +1254,16 @@ export default function ApplicationForm() {
                   min={minDate}
                   value={form.startDate}
                   onChange={(event) => update("startDate", event.target.value)}
-                  className={`${inputClasses} [color-scheme:dark] sm:max-w-xs`}
+                  // Clicking anywhere in the box opens the calendar, not only
+                  // the icon. Typing the date still works.
+                  onClick={(event) => {
+                    try {
+                      event.currentTarget.showPicker?.();
+                    } catch {
+                      // Older browsers: the calendar icon still works.
+                    }
+                  }}
+                  className={`${inputClasses} cursor-pointer [color-scheme:dark] sm:max-w-xs [&::-webkit-calendar-picker-indicator]:cursor-pointer`}
                   aria-invalid={Boolean(errors.startDate)}
                   aria-describedby={errorId("startDate")}
                 />
