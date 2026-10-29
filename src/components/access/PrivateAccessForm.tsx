@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -212,9 +213,9 @@ export default function PrivateAccessForm({
           {step === "email" ? (
             <>
               <p className="mt-[clamp(1rem,2.5svh,1.5rem)] max-w-md text-sm leading-relaxed font-light text-white/68 sm:text-base">
-                Tell us who you are and we will email you a one-time code to
-                preview the S•42 slate and confidential film-development
-                materials.
+                For partners, investors, distributors and press. Tell us who
+                you are and we will email you a one-time code to preview the
+                S•42 slate and confidential film-development materials.
               </p>
 
               <form
@@ -314,7 +315,7 @@ export default function PrivateAccessForm({
                 >
                   <span
                     aria-hidden="true"
-                    className={`absolute inset-0 origin-left bg-[#f1f1ed] transition-transform ease-out group-disabled:hidden ${
+                    className={`absolute inset-0 origin-left bg-[#f1f1ed] transition-transform ease-outgroup-disabled:hidden ${
                       isSubmitting
                         ? "scale-x-100 duration-[1800ms]"
                         : "scale-x-0 duration-500 group-hover:scale-x-100"
@@ -332,6 +333,19 @@ export default function PrivateAccessForm({
                 occasional updates about S•42 Films at this address, and can
                 unsubscribe at any time.
               </p>
+
+              {/* Candidates often land here first: send them to the right form. */}
+              <div className="mt-6 w-full max-w-lg border-t border-white/12 pt-5">
+                <p className="text-sm text-white/60">
+                  Looking to join our team?{" "}
+                  <Link
+                    href="/careers"
+                    className="font-heading text-[11px] tracking-[0.2em] text-white uppercase underline-offset-4 transition hover:underline sm:text-xs"
+                  >
+                    View careers →
+                  </Link>
+                </p>
+              </div>
             </>
           ) : (
             <>
@@ -376,7 +390,7 @@ export default function PrivateAccessForm({
                 >
                   <span
                     aria-hidden="true"
-                    className={`absolute inset-0 origin-left bg-[#f1f1ed] transition-transform ease-out group-disabled:hidden ${
+                    className={`absolute inset-0 origin-left bg-[#f1f1ed] transition-transform ease-outgroup-disabled:hidden ${
                       isSubmitting
                         ? "scale-x-100 duration-[1800ms]"
                         : "scale-x-0 duration-500 group-hover:scale-x-100"
