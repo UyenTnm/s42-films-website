@@ -116,6 +116,16 @@ export default function Header() {
           </>
         )}
 
+        <Link
+          href="/careers"
+          aria-current={pathname === "/careers" ? "page" : undefined}
+          className={`transition-colors duration-200 hover:text-[#f1f1ed] ${
+            pathname === "/careers" ? "text-[#f1f1ed]" : "text-[#898989]"
+          }`}
+        >
+          Careers
+        </Link>
+
         <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded border border-[#f1f1ed]/[0.13] bg-[#f1f1ed]/[0.04] text-[10px] text-[#636360]">
           <span className="w-1.5 h-1.5 rounded-full bg-[#f1f1ed]/50 animate-pulse" />
           <span>42 INITIATIVE</span>
