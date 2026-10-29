@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import TurnstileWidget, { TURNSTILE_SITE_KEY } from "./TurnstileWidget";
 import {
   useEffect,
   useRef,
@@ -776,6 +777,8 @@ export default function ApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [minDate, setMinDate] = useState<string>();
+  const [botToken, setBotToken] = useState<string | null>(null);
+  const [botResetKey, setBotResetKey] = useState(0);
 
   // The page is pre-rendered, so "today" is worked out in the browser.
   useEffect(() => setMinDate(todayInVietnam()), []);
@@ -857,6 +860,11 @@ export default function ApplicationForm() {
       return;
     }
 
+    if (TURNSTILE_SITE_KEY && !botToken) {
+      setStatus("Please complete the security check above the button.");
+      return;
+    }
+
     setIsSubmitting(true);
     setStatus(null);
 
@@ -864,6 +872,7 @@ export default function ApplicationForm() {
       const body = new FormData();
       body.append("data", JSON.stringify(data));
       if (fileForSubmit) body.append("cvFile", fileForSubmit);
+      if (botToken) body.append("turnstileToken", botToken);
 
       const response = await fetch("/api/careers/apply", { method: "POST", body });
       const result = (await response.json().catch(() => ({}))) as {
@@ -873,6 +882,8 @@ export default function ApplicationForm() {
       };
 
       if (!response.ok || !result.ok) {
+        // The token was used up by this attempt: get a fresh check.
+        setBotResetKey((key) => key + 1);
         if (result.errors) {
           setErrors(result.errors);
           focusFirstError(result.errors);
@@ -889,6 +900,7 @@ export default function ApplicationForm() {
       setIsDone(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
+      setBotResetKey((key) => key + 1);
       setStatus(
         `We could not submit your application. Please try again, or email ${CONTACT_EMAIL}.`,
       );
@@ -1338,6 +1350,13 @@ export default function ApplicationForm() {
             </Section>
 
             <div className="border-t border-white/12 pt-8">
+              <TurnstileWidget
+                resetKey={botResetKey}
+                onToken={(token) => {
+                  setBotToken(token);
+                  if (token && status) setStatus(null);
+                }}
+              />
               <button
                 type="submit"
                 disabled={isSubmitting}

@@ -5,6 +5,7 @@ import {
   validateApplication,
 } from "@/lib/careers";
 import { getClientIp, isRateLimited } from "@/lib/siteAccess";
+import { verifyTurnstile } from "@/lib/turnstile";
 import { saveApplicationToMonday, type CvUpload } from "@/lib/mondayCareers";
 import {
   sendApplicationConfirmation,
@@ -87,6 +88,11 @@ export async function POST(request: Request) {
   const website = (payload as { website?: unknown } | null)?.website;
   if (typeof website === "string" && website.trim() !== "") {
     return Response.json({ ok: true });
+  }
+
+  // "I'm not a robot" check, before anything is read, saved or emailed.
+  if (!(await verifyTurnstile(form.get("turnstileToken"), ip))) {
+    return fail(403, "Please complete the security check and try again.");
   }
 
   const fileEntry = form.get("cvFile");
