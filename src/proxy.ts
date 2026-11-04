@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { ACCESS_COOKIE_NAME, verifySessionToken } from "@/lib/siteAccess";
+import { isProtectedPath } from "@/lib/protectedPaths";
 
-// Pages anyone may open without the private-access code. Everything else
-// (films, slate, confidential materials) stays behind /access.
-const PUBLIC_PATHS = ["/careers"];
-
-function isPublicPath(pathname: string) {
-  return PUBLIC_PATHS.some(
-    (path) => pathname === path || pathname.startsWith(`${path}/`),
-  );
-}
+// Which pages are behind /access is set by NEXT_PUBLIC_PROTECTED_PATHS
+// (see src/lib/protectedPaths.ts). The access system itself stays in place.
 
 function safeDestination(value: string | null) {
   return value?.startsWith("/") && !value.startsWith("//") ? value : "/";
@@ -19,7 +13,9 @@ function safeDestination(value: string | null) {
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
-  if (isPublicPath(pathname)) return NextResponse.next();
+  if (pathname !== "/access" && !isProtectedPath(pathname)) {
+    return NextResponse.next();
+  }
 
   const hasAccess = Boolean(
     await verifySessionToken(request.cookies.get(ACCESS_COOKIE_NAME)?.value),
