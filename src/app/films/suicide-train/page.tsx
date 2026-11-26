@@ -133,7 +133,7 @@ export default function SuicideTrainPage() {
             </div>
 
             {/* Hook Quote */}
-            <blockquote className="border-l-2 border-[#e52222] pl-6 py-2 text-xl sm:text-2xl text-[#f1f1ed] italic font-serif">
+            <blockquote className="border-l-2 border-[#e52222] pl-6 py-2 text-xl sm:text-2xl text-[#f1f1ed] italic font-sans">
               &ldquo;{film.tagline}&rdquo;
             </blockquote>
 

@@ -78,7 +78,7 @@ export default function FilmIndex() {
           <div className="space-y-2">
             <div className="flex items-center gap-3">
               <span className="font-heading font-ethnocentric text-xs sm:text-sm tracking-[0.25em] text-[#f1f1ed]">
-                02 // ACTIVE FILM ROSTER
+                ACTIVE FILM ROSTER
               </span>
             </div>
             <p className="font-sans text-xs sm:text-sm text-[#898989] font-light">

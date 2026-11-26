@@ -2,7 +2,7 @@
 
 @theme {
   --font-ethnocentric: var(--font-ethnocentric), sans-serif;
-  --font-sans: var(--font-sans), sans-serif;
+  --font-sans: var(--font-outfit), sans-serif;
 }
 
 :root {
@@ -31,7 +31,7 @@
   /* Fonts */
   --font-display: var(--font-ethnocentric), sans-serif;
   --font-sans:
-    var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    var(--font-outfit), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 /* Lenis Recommended CSS */

@@ -7,8 +7,6 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import Link from "next/link";
-import { films } from "@/data/films";
 import { useLenis } from "@/hooks/useLenis";
 import { usePathname } from "next/navigation";
 
@@ -62,49 +60,28 @@ export default function Footer() {
   if (pathname === "/access") return null;
 
   return (
-    <footer className="relative bg-[#050505] text-[#898989] border-t border-[#f1f1ed]/10 px-6 md:px-16 pt-16 pb-12 overflow-hidden">
-      <div className="w-full space-y-12">
-        {/* Top Footer Bar */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-10 border-b border-white/[0.08] font-sans text-xs">
-          <div className="space-y-2">
-            <div className="relative w-28 h-10 flex items-center justify-start">
-              <Image
-                src="/images/brand/s42-films-official.png"
-                alt="S•42 FILMS"
-                fill
-                sizes="120px"
-                className="object-contain object-left"
-                unoptimized
-              />
-            </div>
-            <p className="text-[#666] font-light">
-              42 great stories worth remembering.
-            </p>
-          </div>
+    <footer className="relative overflow-hidden bg-[#050505] px-6 pb-12 pt-16 text-[#898989] md:px-16 md:pb-14 md:pt-20">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-[-180px] left-1/2 h-[360px] w-[760px] -translate-x-1/2 rounded-full bg-white/[0.025] blur-[120px]"
+      />
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-3 md:gap-x-8 font-heading font-ethnocentric text-[9px] sm:text-[10px] tracking-wider uppercase">
-            {films.map((film) => (
-              <Link
-                key={film.slug}
-                href={`/films/${film.slug}`}
-                className="text-[#898989] hover:text-white transition-colors"
-              >
-                {film.number} {film.title}
-              </Link>
-            ))}
-            <button
-              onClick={scrollToTop}
-              className="text-[#898989] hover:text-white transition-colors cursor-pointer ml-auto"
-            >
-              Back To Top ↑
-            </button>
+      <div className="relative mx-auto grid w-full max-w-[1440px] items-end gap-10 text-center font-sans text-xs font-light md:grid-cols-[1fr_auto_1fr] md:text-left">
+        <div className="flex flex-col items-center gap-2 md:items-start">
+          <div className="relative h-10 w-28">
+            <Image
+              src="/images/brand/s42-films-official.png"
+              alt="S•42 FILMS"
+              fill
+              sizes="120px"
+              className="object-contain object-left"
+              unoptimized
+            />
           </div>
+          <p className="text-[#666]">42 great stories worth remembering.</p>
         </div>
 
-        {/* Bottom Credits */}
-        {/* Bottom Credits */}
-        {/* Bottom Credits */}
-        <div className="flex flex-col items-center gap-6 text-center font-sans text-xs text-[#555] font-light">
+        <div className="flex flex-col items-center gap-5 text-center text-[#555]">
           <nav
             aria-label="S•42 Films social media"
             className="flex items-center justify-center gap-3"
@@ -142,7 +119,7 @@ export default function Footer() {
           </nav>
           <address
             aria-label="Contact S•42 Films"
-            className="flex flex-col items-start gap-2 not-italic sm:flex-row sm:items-center sm:gap-6"
+            className="flex flex-col items-center gap-2 not-italic sm:flex-row sm:gap-6"
           >
             <a
               href="mailto:hello@s42films.com"
@@ -162,8 +139,19 @@ export default function Footer() {
               <span>+1.647.980.6279</span>
             </a>
           </address>
-          <span className="text-sm">© S•42 FILMS. ALL RIGHTS RESERVED.</span>
+          <span>© S•42 FILMS. ALL RIGHTS RESERVED.</span>
         </div>
+
+        <button
+          type="button"
+          onClick={scrollToTop}
+          className="group mx-auto inline-flex cursor-pointer items-center gap-3 font-heading font-ethnocentric text-[10px] uppercase tracking-[0.12em] text-[#898989] transition-colors hover:text-white md:mx-0 md:ml-auto"
+        >
+          <span>Back To Top</span>
+          <span className="transition-transform duration-300 group-hover:-translate-y-1">
+            ↑
+          </span>
+        </button>
       </div>
     </footer>
   );

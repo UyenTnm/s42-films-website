@@ -1,13 +1,15 @@
 import SmokeHero from "@/components/landing/SmokeHero";
 import Manifesto from "@/components/landing/Manifesto";
-import FilmIndex from "@/components/landing/FilmIndex";
+import FilmPosterStrip from "@/components/landing/FilmPosterStrip";
+import TalentCallout from "@/components/landing/TalentCallout";
 
 export default function HomePage() {
   return (
     <>
       <SmokeHero />
       <Manifesto />
-      <FilmIndex />
+      <FilmPosterStrip />
+      <TalentCallout />
       {/* <Footer /> */}
     </>
   );

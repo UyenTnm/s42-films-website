@@ -1,11 +1,9 @@
 "use client";
 
-import { useRef, useEffect, useLayoutEffect, useState } from "react";
+import { useRef, useEffect, useLayoutEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { films } from "@/data/films";
 import { useLenis } from "@/hooks/useLenis";
 
 if (typeof window !== "undefined") {
@@ -119,7 +117,6 @@ export default function SmokeHero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const smokeLayerRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
-  const posterRef = useRef<HTMLDivElement>(null);
   const hintRef = useRef<HTMLButtonElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const smokeAlpha = useRef(1);
@@ -191,7 +188,6 @@ export default function SmokeHero() {
       wrapper: wrapperRef.current,
       smoke: smokeLayerRef.current,
       logo: logoRef.current,
-      poster: posterRef.current,
       hint: hintRef.current,
       overlay: overlayRef.current,
     };
@@ -253,10 +249,6 @@ export default function SmokeHero() {
           } else {
             gsap.set(el.logo, { opacity: Math.max(0, 1 - p * 3.2), y: p * -55 });
           }
-          gsap.set(el.poster, {
-            opacity: Math.max(0, (p - 0.28) / 0.72),
-            pointerEvents: p > 0.35 ? "auto" : "none",
-          });
           gsap.set(el.hint, { opacity: Math.max(0, 1 - p * 12) });
         },
       });
@@ -267,51 +259,6 @@ export default function SmokeHero() {
       ctx.revert();
     };
   }, []);
-
-  const [activeIndex, setActiveIndex] = useState(3);
-  const [isPaused, setIsPaused] = useState(false);
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.touches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return;
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
-    if (diff > 45) {
-      // Swiped left -> Next
-      setActiveIndex((prev) => (prev + 1) % films.length);
-    } else if (diff < -45) {
-      // Swiped right -> Prev
-      setActiveIndex((prev) => (prev - 1 + films.length) % films.length);
-    }
-    setTouchStartX(null);
-  };
-
-  // Auto-flow carousel effect
-  useEffect(() => {
-    if (isPaused) return;
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % films.length);
-    }, 3200);
-    return () => clearInterval(interval);
-  }, [isPaused]);
-
-  const scrollToPosterReveal = () => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-
-    const target =
-      wrapper.offsetTop + wrapper.offsetHeight - window.innerHeight;
-
-    if (lenis) {
-      lenis.scrollTo(target, { duration: 1.55 });
-    } else {
-      window.scrollTo({ top: target, behavior: "smooth" });
-    }
-  };
 
   const scrollToManifesto = () => {
     const target = document.querySelector<HTMLElement>("#manifesto");
@@ -325,7 +272,7 @@ export default function SmokeHero() {
   };
 
   return (
-    <div ref={wrapperRef} style={{ height: "260vh" }} className="relative">
+    <div ref={wrapperRef} style={{ height: "100vh" }} className="relative">
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#050505]">
         <div
           ref={overlayRef}
@@ -333,243 +280,7 @@ export default function SmokeHero() {
           style={{ opacity: 1 }}
         />
 
-        {/* 0 ─ Poster reveal layer: ANIMATED 3D FLOWING COVERFLOW */}
-        <div
-          ref={posterRef}
-          className="absolute inset-0 z-25 opacity-0 pointer-events-none flex flex-col justify-between py-6 sm:py-10 px-4 select-none"
-          style={{ zIndex: 25 }}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
-        >
-          {/* Active Film Header info */}
-          <div className="relative z-30 flex flex-col items-center text-center gap-1 sm:gap-2 pt-[calc(5.5rem+env(safe-area-inset-top))] sm:pt-24 md:pt-28 lg:pt-24 pointer-events-auto">
-            <div aria-hidden="true" className="h-[26px] sm:h-[30px]" />
-
-            {/* Official Film Title Logo Graphic - Extra Large & Prominent */}
-            <div
-              className={`relative my-1 sm:my-2 w-[92vw] sm:w-[85vw] ${
-                films[activeIndex].slug === "everyone-thinks-im-dead"
-                  ? "h-24 sm:h-32 md:h-42 lg:h-48 md:w-[920px] lg:w-[1040px] max-w-[1060px]"
-                  : "h-20 sm:h-28 md:h-36 lg:h-40 md:w-[850px] lg:w-[950px] max-w-[1000px]"
-              }`}
-            >
-              <Image
-                key={films[activeIndex].slug}
-                src={films[activeIndex].titleImage}
-                alt={films[activeIndex].title}
-                fill
-                sizes="(max-width: 640px) 92vw, (max-width: 1024px) 85vw, 1000px"
-                className={`object-contain transition-opacity duration-300 ${
-                  films[activeIndex].slug === "everyone-thinks-im-dead"
-                    ? "[filter:drop-shadow(0_0_12px_rgba(255,255,255,0.4))_drop-shadow(0_3px_10px_rgba(0,0,0,0.95))]"
-                    : "[filter:drop-shadow(0_4px_12px_rgba(0,0,0,0.75))]"
-                }`}
-                priority
-              />
-            </div>
-
-            <p className="font-sans text-sm sm:text-base md:text-lg text-[#c5c5be] font-light max-w-2xl italic px-4">
-              &ldquo;{films[activeIndex].tagline}&rdquo;
-            </p>
-          </div>
-
-          {/* 3D Flowing Coverflow Stage - Active poster ALWAYS flows to middle position */}
-          <div
-            className="relative w-full flex-1 flex items-center justify-center my-auto pointer-events-auto min-h-[250px] sm:min-h-[330px] md:min-h-[390px] lg:min-h-[440px]"
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            {/* Left Prev Arrow Button */}
-            <button
-              onClick={() =>
-                setActiveIndex((prev) => (prev - 1 + films.length) % films.length)
-              }
-              aria-label="Previous film"
-              className="absolute left-2 sm:left-6 md:left-12 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/75 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
-            >
-              <span className="font-heading font-ethnocentric text-sm sm:text-base group-hover:-translate-x-0.5 transition-transform">
-                ←
-              </span>
-            </button>
-
-            {/* Right Next Arrow Button */}
-            <button
-              onClick={() => setActiveIndex((prev) => (prev + 1) % films.length)}
-              aria-label="Next film"
-              className="absolute right-2 sm:right-6 md:right-12 z-50 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-black/75 hover:bg-black border border-white/20 hover:border-white/70 text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-2xl backdrop-blur-md cursor-pointer group"
-            >
-              <span className="font-heading font-ethnocentric text-sm sm:text-base group-hover:translate-x-0.5 transition-transform">
-                →
-              </span>
-            </button>
-
-            {/* Carousel Stage - All posters positioned relative to center */}
-            <div
-              className="relative w-full h-[270px] sm:h-[350px] md:h-[410px] lg:h-[460px] flex items-center justify-center [--step:110px] sm:[--step:165px] md:[--step:220px] lg:[--step:275px] xl:[--step:315px]"
-              style={{ perspective: "1200px", overflowX: "clip" }}
-            >
-              {films.map((film, i) => {
-                const n = films.length;
-                let offset = (i - activeIndex) % n;
-                if (offset > n / 2) offset -= n;
-                if (offset < -n / 2) offset += n;
-                const isCenter = offset === 0;
-                const absOffset = Math.abs(offset);
-
-                // Calculate 3D coverflow styling dynamically
-                let xMult = 0;
-                let scale = 1.06;
-                let translateY = 0;
-                let rotateY = 0;
-                let opacity = 1;
-                let zIndex = 30;
-
-                if (absOffset === 0) {
-                  xMult = 0;
-                  scale = 1.06;
-                  translateY = 0;
-                  rotateY = 0;
-                  opacity = 1;
-                  zIndex = 30;
-                } else if (absOffset === 1) {
-                  xMult = offset; // ±1
-                  scale = 0.88;
-                  translateY = 12;
-                  rotateY = offset * -8;
-                  opacity = 0.85;
-                  zIndex = 20;
-                } else if (absOffset === 2) {
-                  xMult = offset * 1.8;
-                  scale = 0.72;
-                  translateY = 24;
-                  rotateY = offset * -14;
-                  opacity = 0.6;
-                  zIndex = 10;
-                } else {
-                  // In wings (absOffset >= 3)
-                  xMult = offset * 2.4;
-                  scale = 0.58;
-                  translateY = 36;
-                  rotateY = offset * -20;
-                  opacity = 0; // Fully invisible in wings for clean wrap
-                  zIndex = 5;
-                }
-
-                // On small mobile screens, hide offset >= 2 to keep center poster prominent
-                const isMobileHidden = absOffset >= 2;
-
-                return (
-                  <div
-                    key={film.slug}
-                    onClick={() => {
-                      if (!isCenter) setActiveIndex(i);
-                    }}
-                    className={`absolute left-1/2 top-1/2 cursor-pointer flex-shrink-0 select-none ${
-                      isMobileHidden ? "max-sm:hidden" : ""
-                    }`}
-                    style={{
-                      transform: `translate(-50%, -50%) translateX(calc(${xMult} * var(--step, 240px))) translateY(${translateY}px) scale(${scale}) rotateY(${rotateY}deg)`,
-                      transformOrigin: "center center",
-                      zIndex,
-                      opacity,
-                      pointerEvents: opacity === 0 ? "none" : "auto",
-                      transition:
-                        "transform 650ms cubic-bezier(0.16, 1, 0.3, 1), opacity 650ms cubic-bezier(0.16, 1, 0.3, 1)",
-                    }}
-                  >
-                    {/* Ambient Backlit Glow for Active & Flanking Posters */}
-                    <div
-                      className={`absolute -inset-4 rounded-3xl blur-2xl transition-opacity duration-700 pointer-events-none ${
-                        isCenter
-                          ? "opacity-90 scale-105"
-                          : "opacity-25 group-hover:opacity-50"
-                      }`}
-                      style={{ background: film.palette.accent }}
-                    />
-
-                    {/* Poster Card Container — Clean Cinema Artwork (No numbers, no title overlay) */}
-                    <Link
-                      href={`/films/${film.slug}`}
-                      onClick={(e) => {
-                        if (!isCenter) {
-                          e.preventDefault();
-                          setActiveIndex(i);
-                        }
-                      }}
-                      className={`relative block w-[170px] sm:w-[210px] md:w-[260px] lg:w-[300px] xl:w-[340px] aspect-[2/3] rounded-2xl overflow-hidden transition-all duration-500 bg-[#0d0d0d] ${
-                        isCenter
-                          ? "shadow-[0_35px_90px_rgba(0,0,0,0.98)] ring-1 ring-white/15"
-                          : "shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
-                      }`}
-                    >
-                      {/* High-Resolution Poster Image */}
-                      <Image
-                        src={film.posterImage}
-                        alt={film.title}
-                        fill
-                        sizes="(max-width: 640px) 170px, (max-width: 1024px) 260px, 340px"
-                        className={`object-cover transition-transform duration-700 ${
-                          isCenter
-                            ? "brightness-110 contrast-105 scale-100"
-                            : "brightness-90 hover:brightness-105"
-                        }`}
-                        priority
-                      />
-                    </Link>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Bottom Pagination Dots & Explore CTA */}
-          <div className="relative z-30 flex flex-row flex-wrap items-center justify-center sm:justify-between gap-3 px-4 max-w-5xl mx-auto w-full pointer-events-auto pb-2">
-            {/* Film dots selector */}
-            <div className="flex items-center gap-2 sm:gap-2.5">
-              {films.map((film, i) => (
-                <button
-                  key={film.slug}
-                  onClick={() => setActiveIndex(i)}
-                  aria-label={`Select ${film.title}`}
-                  className={`h-2 sm:h-2.5 rounded-full transition-all duration-400 cursor-pointer ${
-                    i === activeIndex
-                      ? "w-8 sm:w-10 bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)]"
-                      : "w-2 sm:w-2.5 bg-white/25 hover:bg-white/50"
-                  }`}
-                  style={
-                    i === activeIndex
-                      ? { backgroundColor: film.palette.accent }
-                      : undefined
-                  }
-                />
-              ))}
-            </div>
-
-            {/* Center film Explore Link */}
-            <Link
-              href={`/films/${films[activeIndex].slug}`}
-              className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-white/25 bg-black/60 hover:bg-white hover:text-black text-white font-heading font-ethnocentric text-[10px] sm:text-xs tracking-widest uppercase transition-all duration-300 hover:scale-105 shadow-xl backdrop-blur-md"
-            >
-              <span>Explore Film Treatment</span>
-              <span>→</span>
-            </Link>
-
-            <button
-              type="button"
-              onClick={scrollToManifesto}
-              aria-label="Go to the S•42 Promise"
-              className="group inline-flex h-10 items-center justify-center gap-2 rounded-full border border-white/20 bg-black/60 px-3.5 font-heading font-ethnocentric text-[9px] tracking-widest text-white/75 uppercase shadow-xl backdrop-blur-md transition-all duration-300 hover:border-white/60 hover:text-white sm:px-4 sm:text-[10px] cursor-pointer"
-            >
-              <span className="hidden sm:inline">Next section</span>
-              <span className="transition-transform group-hover:translate-y-0.5">↓</span>
-            </button>
-          </div>
-
-          {/* Subtle bottom gradient to merge into manifesto */}
-          <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#050505] to-transparent z-10 pointer-events-none" />
-        </div>
-
-        {/* 1 ─ Smoke canvas */}
+        {/* 0 ─ Smoke canvas */}
         <div
           ref={smokeLayerRef}
           className="absolute inset-0 z-10 pointer-events-none"
@@ -585,7 +296,7 @@ export default function SmokeHero() {
           />
         </div>
 
-        {/* 2 ─ Logo / Video center element */}
+        {/* 1 ─ Logo / Video center element */}
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none select-none">
           {HERO_VIDEO_SRC ? (
             /* ── VIDEO MODE: fullscreen autoplay video runs ONCE (no loop) ── */
@@ -663,17 +374,17 @@ export default function SmokeHero() {
           )}
         </div>
 
-        {/* 3 ─ Scroll hint */}
+        {/* 2 ─ Scroll hint */}
         <button
           type="button"
           ref={hintRef}
-          onClick={scrollToPosterReveal}
-          aria-label="Reveal the featured films"
+          onClick={scrollToManifesto}
+          aria-label="Go to the S•42 Promise"
           className="group absolute bottom-7 left-1/2 z-30 -translate-x-1/2 flex cursor-pointer flex-col items-center gap-2 opacity-0"
           style={{ opacity: 0 }}
         >
           <p className="font-heading font-ethnocentric text-[8px] sm:text-[9px] tracking-[0.3em] uppercase text-white/55 transition-colors group-hover:text-white/90">
-            View featured films
+            Discover S•42
           </p>
           <div className="smoke-bounce-arrow flex h-9 w-9 items-center justify-center rounded-full border border-white/18 bg-black/30 text-sm text-white/55 backdrop-blur-sm transition group-hover:border-white/55 group-hover:text-white">
             ↓

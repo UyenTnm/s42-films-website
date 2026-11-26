@@ -1,28 +1,95 @@
 "use client";
 
+import Image from "next/image";
 import { useRef } from "react";
 import { useGSAPContext } from "@/hooks/useGSAPContext";
 import gsap from "gsap";
+
+const pillars = [
+  {
+    title: "CREATIVE POWER.",
+    description:
+      "Extraordinary stories. Original characters. Immersive worlds. Limitless imagination.",
+    image: "/images/manifesto/creative-power.png",
+    imageAlt:
+      "A lone figure overlooking an expansive cinematic world blending nature and a futuristic city",
+  },
+  {
+    title: "TECHNICAL POWER.",
+    description:
+      "Advanced AIGC. Intelligent production. Digital world building. Interactive entertainment.",
+    image: "/images/manifesto/technical-power.png",
+    imageAlt:
+      "A cinematic character portrait transitioning into a digital wireframe world",
+  },
+] as const;
 
 export default function Manifesto() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useGSAPContext(
     () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        return;
+      }
+
+      gsap.utils
+        .toArray<HTMLElement>(".manifesto-reveal")
+        .forEach((element) => {
+          gsap.fromTo(
+            element,
+            {
+              opacity: 0,
+              y: 52,
+              scale: 0.975,
+              filter: "blur(14px)",
+              clipPath: "inset(12% 0% 0% 0%)",
+            },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              filter: "blur(0px)",
+              clipPath: "inset(0% 0% 0% 0%)",
+              duration: 1.15,
+              ease: "power4.out",
+              scrollTrigger: {
+                trigger: element,
+                start: "top 88%",
+                once: true,
+              },
+            }
+          );
+        });
+
       gsap.fromTo(
-        ".manifesto-line",
-        { opacity: 0.15, y: 20 },
+        ".manifesto-visual img",
+        { scale: 1.045 },
         {
-          opacity: 1,
-          y: 0,
-          stagger: 0.2,
+          scale: 1,
+          duration: 1.6,
+          ease: "power2.out",
           scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top 75%",
-            end: "bottom 65%",
-            scrub: 1,
+            trigger: ".manifesto-pillars",
+            start: "top 78%",
+            once: true,
           },
         }
+      );
+
+      gsap.fromTo(
+        ".manifesto-ambient-42",
+        { yPercent: -8 },
+        {
+          yPercent: 14,
+          ease: "none",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1.3,
+          },
+        },
       );
     },
     sectionRef,
@@ -33,99 +100,115 @@ export default function Manifesto() {
     <section
       id="manifesto"
       ref={sectionRef}
-      className="py-24 sm:py-32 md:py-36 px-6 sm:px-10 md:px-16 lg:px-20 border-t border-white/[0.08] bg-[#060606] relative overflow-hidden"
+      className="relative overflow-hidden bg-[#060606] px-6 pb-24 pt-12 sm:px-10 sm:pb-32 sm:pt-16 md:px-16 md:pb-40 md:pt-20 lg:px-20 lg:pb-44 lg:pt-20"
     >
-      {/* Illuminated 42 Watermark Backdrop */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none -z-0">
-        <span className="font-heading font-ethnocentric text-[180px] sm:text-[280px] md:text-[380px] lg:text-[440px] font-black text-white/[0.02] tracking-tighter block leading-none">
+      <div className="pointer-events-none absolute left-1/2 top-[43%] -z-0 -translate-x-1/2 -translate-y-1/2 select-none">
+        <span className="manifesto-ambient-42 block font-heading font-ethnocentric text-[190px] font-black leading-none tracking-tighter text-white/[0.018] sm:text-[300px] md:text-[420px] lg:text-[520px]">
           42
         </span>
       </div>
 
-      {/* Ambient radial lighting */}
       <div
-        className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] rounded-full pointer-events-none blur-[140px] opacity-15"
+        className="pointer-events-none absolute left-1/2 top-[28%] h-[560px] w-[1100px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-[150px]"
         style={{
           background:
-            "radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(201,168,76,0.08) 50%, transparent 80%)",
+            "radial-gradient(circle, rgba(201,168,76,0.12) 0%, rgba(255,255,255,0.07) 38%, transparent 72%)",
         }}
       />
 
-      <div className="w-full max-w-[1440px] mx-auto space-y-12 sm:space-y-16 relative z-10">
-        {/* Section Label Header - Full Width */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-6 w-full">
-          <div className="flex items-center gap-4">
-            <span className="font-heading font-ethnocentric text-xs sm:text-sm tracking-[0.25em] text-[#f1f1ed]">
-              01 // S•42 — STUDIO 42
-            </span>
-          </div>
-          <div className="flex items-center gap-3 font-sans text-xs tracking-widest text-[#888] uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>THE S•42 PROMISE · 42 ORIGINAL STORIES</span>
-          </div>
+      <div className="relative z-10 mx-auto w-full max-w-[1440px]">
+        <div className="manifesto-reveal pb-6 text-center">
+          <span
+            className="inline-block bg-clip-text font-heading font-ethnocentric text-[clamp(0.95rem,1.9vw,1.9rem)] leading-[1.3] tracking-[0.12em] text-transparent [filter:drop-shadow(0_2px_14px_rgba(222,225,230,0.14))]"
+            style={{
+              backgroundImage:
+                "linear-gradient(112deg, #74777d 0%, #f4f5f6 28%, #a8abb0 52%, #ffffff 72%, #73767b 100%)",
+              WebkitBackgroundClip: "text",
+            }}
+          >
+            S•42 — AI-NATIVE ENTERTAINMENT &amp; TECHNOLOGY
+          </span>
         </div>
 
-        {/* Core Statement - Full Width */}
-        <div className="space-y-8 w-full">
-          <div className="space-y-4 w-full">
-            <h2 className="manifesto-line font-heading font-ethnocentric text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white tracking-wide leading-tight">
-              FORTY-TWO STORIES.
-            </h2>
-            <p className="manifesto-line font-sans text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-[#a0a09c] font-light italic leading-tight">
-              Infinite Possibilities. One Enduring Legacy.
-            </p>
-          </div>
-
-          <p className="manifesto-line font-sans text-lg sm:text-xl md:text-2xl lg:text-3xl text-[#8e8e88] leading-relaxed font-light pt-4 w-full">
-            Studio 42 was founded on a singular creative commitment: to develop
-            forty-two exceptional original stories, each conceived with
-            uncompromising artistic ambition and the potential to captivate,
-            inspire, and leave a lasting impression.
+        <div className="manifesto-reveal mx-auto max-w-6xl pb-16 pt-14 text-center sm:pb-20 sm:pt-20 md:pb-24 md:pt-24">
+          <h2
+            className="whitespace-nowrap bg-clip-text font-heading font-ethnocentric text-[clamp(1.15rem,4.5vw,4.1rem)] leading-none tracking-[0.015em] text-transparent [filter:drop-shadow(0_5px_24px_rgba(201,168,76,0.16))]"
+            style={{
+              backgroundImage:
+                "linear-gradient(112deg, #6d4b1e 0%, #f2d48b 28%, #a87428 52%, #fff0b5 72%, #76501e 100%)",
+              WebkitBackgroundClip: "text",
+            }}
+          >
+            FORTY-TWO WORLDS.
+          </h2>
+          <p
+            className="mt-6 font-sans text-xl font-light italic leading-tight tracking-[-0.01em] text-[#aaa9a3] sm:mt-8 sm:text-3xl md:text-4xl lg:text-5xl"
+          >
+            Infinite Possibilities. One Enduring Legacy.
           </p>
+          <p
+            className="mx-auto mt-8 max-w-4xl font-sans text-base font-light leading-relaxed tracking-[0.01em] text-[#8e8e88] sm:mt-10 sm:text-lg md:text-xl lg:text-2xl lg:leading-relaxed"
+          >
+            One extraordinary commitment: to create forty-two original worlds
+            with uncompromising creative ambition and technological excellence.
+          </p>
+        </div>
 
-          <div className="manifesto-line border-l border-[#c9a84c]/40 pl-5 sm:pl-7">
-            <p className="font-sans text-lg sm:text-xl md:text-2xl text-[#f1f1ed] font-semibold leading-relaxed">
-              Every story must earn its place. Because there will only ever be
-              forty-two.
-            </p>
-          </div>
+        <div className="manifesto-pillars grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-7">
+          {pillars.map((pillar) => (
+            <article
+              key={pillar.title}
+              className="manifesto-reveal group flex h-full flex-col overflow-hidden border border-white/[0.09] bg-[#090909]"
+            >
+              <div className="manifesto-visual relative aspect-[16/9] overflow-hidden bg-[#0b0b0b]">
+                <Image
+                  src={pillar.image}
+                  alt={pillar.imageAlt}
+                  fill
+                  sizes="(max-width: 767px) calc(100vw - 3rem), (max-width: 1439px) 50vw, 700px"
+                  className="object-cover saturate-[0.78] contrast-[1.08] brightness-[0.72] transition-[filter,transform] duration-1000 ease-out group-hover:saturate-100 group-hover:brightness-[0.82]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#090909] via-black/10 to-black/20" />
+                <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(201,168,76,0.07),transparent_46%)]" />
+              </div>
 
-          <div className="space-y-5 font-sans text-base sm:text-lg md:text-xl text-[#9a9a94] leading-relaxed font-light">
-            <p className="manifesto-line">
-              But our vision extends far beyond the stories themselves.
-            </p>
-            <p className="manifesto-line">
-              Studio 42 is building a new kind of independent entertainment
-              studio — creating original worlds, developing virtual stars,
-              producing films and series, and connecting directly with
-              audiences worldwide.
-            </p>
-            <p className="manifesto-line">
-              Combining cinematic storytelling with artificial intelligence
-              and emerging technologies, we are expanding the boundaries of
-              how entertainment is imagined, created, and experienced.
-            </p>
-            <p className="manifesto-line">
-              Our ambition is to build more than individual films: stories that
-              evolve across genres and platforms, virtual performers who become
-              recognizable stars, and original creations with the potential to
-              grow into lasting entertainment franchises.
-            </p>
-            <p className="manifesto-line">
-              Through independent production and strategic partnerships, we aim
-              to reach global audiences while retaining creative control,
-              protecting our intellectual property, and building long-term
-              value.
-            </p>
-          </div>
+              <div className="flex flex-1 flex-col items-center px-6 pb-8 pt-7 text-center sm:px-8 sm:pb-10 sm:pt-8 lg:px-10 lg:pb-12 lg:pt-10">
+                <h3
+                  className="bg-clip-text font-heading font-ethnocentric text-xl leading-tight tracking-[0.06em] text-transparent [filter:drop-shadow(0_4px_18px_rgba(201,168,76,0.14))] sm:text-2xl lg:text-3xl"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(112deg, #765220 0%, #efd087 32%, #b27e2e 58%, #f8e1a3 78%, #79531f 100%)",
+                    WebkitBackgroundClip: "text",
+                  }}
+                >
+                  {pillar.title}
+                </h3>
+                <p
+                  className="mt-5 max-w-xl font-sans text-base font-light leading-relaxed tracking-[0.01em] text-[#969690] sm:text-lg lg:text-xl lg:leading-relaxed"
+                >
+                  {pillar.description}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
 
-          <div className="manifesto-line space-y-2 pt-3 font-heading font-ethnocentric text-base sm:text-lg md:text-xl text-[#c9a84c] tracking-[0.08em] leading-relaxed">
-            <p>Imagination defines what is worth creating.</p>
-            <p>
-              Technology expands what is possible. Storytelling remains at the
-              heart of everything we do.
-            </p>
-          </div>
+        <div className="manifesto-reveal flex min-h-[34vh] flex-col items-center justify-center pb-4 pt-28 text-center sm:min-h-[40vh] sm:pt-36 md:pt-44 lg:pt-52">
+          <p
+            className="bg-clip-text font-heading font-ethnocentric text-[clamp(2rem,5.2vw,5.4rem)] leading-[0.98] tracking-[0.035em] text-transparent [filter:drop-shadow(0_5px_24px_rgba(222,225,230,0.14))]"
+            style={{
+              backgroundImage:
+                "linear-gradient(112deg, #70737a 0%, #f1f3f5 28%, #9da1a7 52%, #ffffff 72%, #74777d 100%)",
+              WebkitBackgroundClip: "text",
+            }}
+          >
+            IMAGINATION. ENGINEERED.
+          </p>
+          <p className="mt-7 max-w-4xl font-sans text-base font-light leading-relaxed tracking-[0.01em] text-[#969690] sm:mt-9 sm:text-lg md:text-xl lg:text-2xl lg:leading-relaxed">
+            We bring human imagination to life through advanced artificial
+            intelligence, cinematic craftsmanship and emerging creative
+            technologies.
+          </p>
         </div>
       </div>
     </section>
