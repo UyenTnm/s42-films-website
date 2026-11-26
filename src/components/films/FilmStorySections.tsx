@@ -39,7 +39,7 @@ export default function FilmStorySections({
 
       {closingStatement && (
         <blockquote
-          className="border-l-2 py-2 pl-6 font-serif text-lg font-semibold italic leading-relaxed text-[#f1f1ed] sm:text-xl"
+          className="border-l-2 py-2 pl-6 font-sans text-lg font-semibold italic leading-relaxed text-[#f1f1ed] sm:text-xl"
           style={{ borderColor: accentColor }}
         >
           {closingStatement}

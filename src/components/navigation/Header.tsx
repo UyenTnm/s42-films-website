@@ -45,12 +45,14 @@ export default function Header() {
 
   if (pathname === "/access") return null;
 
+  const isVisible = pathname === "/films" || scrolled;
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-5 md:px-12 ease-out ${
         instant ? "transition-none" : "transition-all duration-700"
       } ${
-        scrolled
+        isVisible
           ? "bg-[#050505]/88 backdrop-blur-lg border-b border-[#f1f1ed]/[0.07]"
           : "bg-transparent border-b border-transparent"
       }`}
@@ -59,7 +61,7 @@ export default function Header() {
       <Link
         href="/"
         className={`${instant ? "transition-none" : "transition-all duration-500"} ${
-          scrolled
+          isVisible
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
         }`}
@@ -82,7 +84,7 @@ export default function Header() {
       <nav
         className={`flex items-center gap-5 md:gap-9 font-heading font-ethnocentric text-[10px] sm:text-[11px] uppercase tracking-wider ${
           instant ? "transition-none" : "transition-all duration-500"
-        } ${scrolled ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+        } ${isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       >
         {pathname === "/" ? (
           <>
@@ -90,28 +92,29 @@ export default function Header() {
               onClick={() => scrollTo("#films")}
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 cursor-pointer"
             >
-              Films [07]
+              Films
             </button>
             <button
               onClick={() => scrollTo("#manifesto")}
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 cursor-pointer"
             >
-              Promise
+              About
             </button>
           </>
         ) : (
           <>
             <Link
-              href="/#films"
+              href="/films"
+              aria-current={pathname === "/films" ? "page" : undefined}
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200"
             >
-              Films Index
+              Films
             </Link>
             <Link
-              href="/"
+              href="/#manifesto"
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200"
             >
-              S•42 Home
+              About
             </Link>
           </>
         )}
@@ -126,10 +129,6 @@ export default function Header() {
           Careers
         </Link>
 
-        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded border border-[#f1f1ed]/[0.13] bg-[#f1f1ed]/[0.04] text-[10px] text-[#636360]">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#f1f1ed]/50 animate-pulse" />
-          <span>42 INITIATIVE</span>
-        </div>
       </nav>
     </header>
   );

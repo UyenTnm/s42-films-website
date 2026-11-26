@@ -15,7 +15,7 @@ const ethnocentric = localFont({
 });
 
 const outfit = Outfit({
-  variable: "--font-sans",
+  variable: "--font-outfit",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   display: "swap",
