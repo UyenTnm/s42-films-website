@@ -154,3 +154,38 @@ body {
   --accent: var(--film-03-accent);
   --theme-bg: var(--film-03-bg);
 }
+
+/* Film routes only: deter casual copying without displaying a watermark. */
+html.s42-film-protection-active {
+  touch-action: pan-x pan-y;
+}
+
+html.s42-film-protection-active body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+html.s42-film-protection-active input,
+html.s42-film-protection-active textarea,
+html.s42-film-protection-active [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+html.s42-film-protection-active img,
+html.s42-film-protection-active video,
+html.s42-film-protection-active svg {
+  -webkit-user-drag: none;
+}
+
+html.s42-film-shield body > *:not(script) {
+  visibility: hidden;
+}
+
+@media print {
+  html.s42-film-protection-active,
+  html.s42-film-protection-active body {
+    display: none !important;
+  }
+}
