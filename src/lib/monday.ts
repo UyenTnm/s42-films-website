@@ -20,9 +20,9 @@ interface GraphQlResponse<T> {
   errors?: Array<{ message: string }>;
 }
 
-let columnCache: { boardId: string; columns: Column[]; at: number } | null =
-  null;
-const COLUMN_CACHE_MS = 10 * 60 * 1000;
+// let columnCache: { boardId: string; columns: Column[]; at: number } | null =
+//   null;
+// const COLUMN_CACHE_MS = 10 * 60 * 1000;
 
 function getConfig() {
   const token = process.env.MONDAY_API_TOKEN?.trim();
@@ -59,23 +59,21 @@ async function mondayRequest<T>(
 }
 
 async function getColumns(token: string, boardId: string) {
-  if (
-    columnCache &&
-    columnCache.boardId === boardId &&
-    Date.now() - columnCache.at < COLUMN_CACHE_MS
-  ) {
-    return columnCache.columns;
-  }
-
   const data = await mondayRequest<{ boards: Array<{ columns: Column[] }> }>(
     token,
-    `query ($ids: [ID!]) { boards(ids: $ids) { columns { id title type } } }`,
+    `query ($ids: [ID!]) {
+      boards(ids: $ids) {
+        columns {
+          id
+          title
+          type
+        }
+      }
+    }`,
     { ids: [boardId] },
   );
 
-  const columns = data.boards?.[0]?.columns ?? [];
-  columnCache = { boardId, columns, at: Date.now() };
-  return columns;
+  return data.boards?.[0]?.columns ?? [];
 }
 
 function findColumn(columns: Column[], titles: string[], type?: string) {
@@ -180,7 +178,8 @@ export async function saveContactToMonday(profile: Profile) {
       }`,
       {
         board: boardId,
-        name: `${profile.firstName} ${profile.lastName}`.trim() || profile.email,
+        name:
+          `${profile.firstName} ${profile.lastName}`.trim() || profile.email,
         values: JSON.stringify(values),
       },
     );
