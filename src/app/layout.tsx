@@ -3,8 +3,6 @@ import localFont from "next/font/local";
 import { Outfit } from "next/font/google";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import Header from "@/components/navigation/Header";
-import ContentProtection from "@/components/security/ContentProtection";
-import ViewerWatermark from "@/components/security/ViewerWatermark";
 import "./globals.css";
 import Footer from "../components/landing/Footer";
 
@@ -24,13 +22,11 @@ const outfit = Outfit({
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://s42films.com"),
-  title: "S•42 — Studio 42",
+  title: "S•42 — AI-Native Entertainment & Technology",
   description:
     "An independent entertainment studio developing forty-two exceptional original stories, virtual stars, films, and series for audiences worldwide.",
   keywords: [
@@ -68,8 +64,6 @@ export default async function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </SmoothScroll>
-        <ViewerWatermark />
-        <ContentProtection />
       </body>
     </html>
   );

@@ -930,7 +930,7 @@ export default function ApplicationForm() {
             />
           </div>
           <p className="mb-3 font-heading text-xs tracking-[0.3em] text-white/55 uppercase">
-            Studio 42 · Ho Chi Minh City
+            S•42 · Ho Chi Minh City
           </p>
           <h1 className="font-heading text-[clamp(1.6rem,6vw,2.6rem)] leading-tight tracking-[0.06em] uppercase">
             {isDone ? "Application Received" : "Join as an AI Creative"}
@@ -940,7 +940,7 @@ export default function ApplicationForm() {
         {isDone ? (
           <div className="border border-white/12 bg-white/[0.03] px-6 py-10 text-center sm:px-12">
             <p className="mx-auto max-w-lg text-base leading-relaxed font-light text-white/80 sm:text-lg">
-              Thank you for applying to Studio 42! We&apos;ve received your
+              Thank you for applying to S•42! We&apos;ve received your
               application. Our team will review your profile and contact you if
               you&apos;re shortlisted.
             </p>
@@ -1346,7 +1346,7 @@ export default function ApplicationForm() {
                     aria-describedby={errorId("consent")}
                   />
                   <span>
-                    I agree to Studio 42 collecting and processing my personal
+                    I agree to S•42 collecting and processing my personal
                     information for recruitment purposes in accordance with its
                     privacy policy.
                     <span className="ml-1 text-[#ffb4ad]" aria-hidden="true">

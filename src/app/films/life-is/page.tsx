@@ -53,10 +53,6 @@ export default function LifeIsPage() {
                 priority
               />
             </div>
-            <p className="font-mono text-[10px] text-[#898989] tracking-widest text-center uppercase">
-              CONFIDENTIAL — PRIVATE DEVELOPMENT MATERIAL • 42 CROSSROADS
-              CRESCENT
-            </p>
           </div>
 
           {/* Right Column: Narrative Structure */}

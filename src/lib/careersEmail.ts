@@ -6,7 +6,7 @@ import {
 } from "@/lib/careers";
 import type { CvUpload } from "@/lib/mondayCareers";
 
-// Careers emails via Resend, same setup as src/lib/resend.ts
+// Careers emails via Resend.
 // (RESEND_API_KEY + RESEND_FROM). CAREERS_NOTIFY_EMAIL overrides who receives
 // new applications; it defaults to hello@s42films.com.
 
@@ -177,13 +177,13 @@ export function sendApplicationConfirmation(app: Application) {
 
   const html = shell(`
     <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#cfcfca;">Hi ${esc(firstName)},</p>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#cfcfca;">Thank you for applying to Studio 42 for the <strong style="color:#ffffff;">${esc(app.position)}</strong> role. We've received your application.</p>
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#cfcfca;">Thank you for applying to S&bull;42 for the <strong style="color:#ffffff;">${esc(app.position)}</strong> role. We've received your application.</p>
     <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#cfcfca;">Our team will review your profile and contact you if you're shortlisted.</p>
     <p style="margin:0;font-size:13px;line-height:1.6;color:#8a8a86;">Questions? Write to <a href="mailto:${CONTACT_EMAIL}" style="color:#f1f1ed;">${CONTACT_EMAIL}</a>.</p>`);
 
   const text = `Hi ${firstName},
 
-Thank you for applying to Studio 42 for the ${app.position} role. We've received your application.
+Thank you for applying to S•42 for the ${app.position} role. We've received your application.
 
 Our team will review your profile and contact you if you're shortlisted.
 
@@ -191,7 +191,7 @@ Questions? Write to ${CONTACT_EMAIL}.`;
 
   return send({
     to: app.email,
-    subject: "We received your application — Studio 42",
+    subject: "We received your application — S•42",
     html,
     text,
   });

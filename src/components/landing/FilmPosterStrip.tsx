@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -9,41 +9,7 @@ import { useGSAPContext } from "@/hooks/useGSAPContext";
 
 export default function FilmPosterStrip() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(3);
-  const [isPaused, setIsPaused] = useState(false);
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (isPaused) return;
-
-    const interval = window.setInterval(() => {
-      setActiveIndex((previous) => (previous + 1) % films.length);
-    }, 3200);
-
-    return () => window.clearInterval(interval);
-  }, [isPaused]);
-
-  const handleTouchStart = (event: React.TouchEvent) => {
-    setTouchStartX(event.touches[0].clientX);
-  };
-
-  const handleTouchEnd = (event: React.TouchEvent) => {
-    if (touchStartX === null) return;
-
-    const difference = touchStartX - event.changedTouches[0].clientX;
-
-    if (difference > 45) {
-      setActiveIndex((previous) => (previous + 1) % films.length);
-    } else if (difference < -45) {
-      setActiveIndex(
-        (previous) => (previous - 1 + films.length) % films.length,
-      );
-    }
-
-    setTouchStartX(null);
-  };
-
-  const activeFilm = films[activeIndex];
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   useGSAPContext(
     () => {
@@ -54,61 +20,64 @@ export default function FilmPosterStrip() {
       const timeline = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top 84%",
+          start: "top 82%",
           once: true,
         },
       });
 
       timeline
         .fromTo(
-          ".film-strip-heading",
-          { autoAlpha: 0, y: 42, filter: "blur(14px)", scale: 0.96 },
+          ".poster-wall-heading",
+          { autoAlpha: 0, y: 48, scale: 0.95, filter: "blur(16px)" },
           {
             autoAlpha: 1,
             y: 0,
-            filter: "blur(0px)",
             scale: 1,
+            filter: "blur(0px)",
             duration: 1,
             ease: "power4.out",
           },
         )
         .fromTo(
-          ".film-strip-stage",
+          ".poster-wall-reveal",
           {
             autoAlpha: 0,
-            y: 90,
+            y: (index) => (index % 2 === 0 ? 100 : 145),
+            rotationY: (index) => (index % 2 === 0 ? -8 : 8),
             scale: 0.9,
-            filter: "blur(18px)",
+            filter: "blur(14px)",
           },
           {
             autoAlpha: 1,
             y: 0,
+            rotationY: 0,
             scale: 1,
             filter: "blur(0px)",
-            duration: 1.3,
+            duration: 1.15,
+            stagger: 0.075,
             ease: "power4.out",
           },
-          "-=0.55",
+          "-=0.45",
         )
         .fromTo(
-          ".film-strip-controls",
-          { autoAlpha: 0, y: 26 },
+          ".poster-wall-footer",
+          { autoAlpha: 0, y: 28 },
           { autoAlpha: 1, y: 0, duration: 0.75, ease: "power3.out" },
-          "-=0.55",
+          "-=0.42",
         );
 
       gsap.fromTo(
-        ".film-strip-glow",
-        { yPercent: 12, scale: 0.88 },
+        ".poster-wall-ambient",
+        { yPercent: 14, scale: 0.88 },
         {
-          yPercent: -14,
+          yPercent: -12,
           scale: 1.12,
           ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top bottom",
             end: "bottom top",
-            scrub: 1.25,
+            scrub: 1.2,
           },
         },
       );
@@ -121,211 +90,106 @@ export default function FilmPosterStrip() {
     <section
       ref={sectionRef}
       id="films"
-      aria-label="Featured S•42 films"
-      className="relative overflow-hidden bg-[#050505] px-4 py-20 select-none sm:py-24 lg:py-20"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      aria-labelledby="poster-wall-title"
+      className="relative overflow-hidden bg-[#020202] px-6 pb-24 pt-24 select-none sm:px-8 sm:pb-32 sm:pt-32 lg:px-10 lg:pb-36 lg:pt-36"
     >
       <div
         aria-hidden="true"
-        className="film-strip-glow pointer-events-none absolute inset-0 opacity-70"
+        className="poster-wall-ambient pointer-events-none absolute left-1/2 top-[52%] h-[720px] w-[1250px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-55 blur-[150px]"
         style={{
-          background: `radial-gradient(circle at 50% 52%, ${activeFilm.palette.accent}1f 0%, transparent 36%)`,
+          background:
+            "radial-gradient(circle, rgba(201,168,76,0.12) 0%, rgba(117,121,130,0.08) 32%, transparent 72%)",
         }}
       />
 
-      <div className="relative z-10 mx-auto flex max-w-[1600px] flex-col">
-        <div className="film-strip-heading relative z-40 flex flex-col items-center gap-2 text-center">
-          <div
-            className={`relative w-[92vw] max-w-[1000px] sm:w-[85vw] ${
-              activeFilm.slug === "everyone-thinks-im-dead"
-                ? "h-24 sm:h-32 md:h-42 lg:h-48"
-                : "h-20 sm:h-28 md:h-36 lg:h-40"
-            }`}
+      <div className="relative z-10 mx-auto w-full max-w-[1800px]">
+        <div className="poster-wall-heading mx-auto mb-12 max-w-6xl text-center sm:mb-16 lg:mb-20">
+          <h2
+            id="poster-wall-title"
+            className="bg-clip-text font-heading font-ethnocentric text-[clamp(1.45rem,4vw,4.25rem)] leading-[1.02] tracking-[0.025em] text-transparent [filter:drop-shadow(0_5px_24px_rgba(222,225,230,0.1))]"
+            style={{
+              backgroundImage:
+                "linear-gradient(112deg, #6b6f76 0%, #f0f2f4 28%, #969ba3 52%, #ffffff 72%, #70747b 100%)",
+              WebkitBackgroundClip: "text",
+            }}
           >
-            <Image
-              key={activeFilm.slug}
-              src={activeFilm.titleImage}
-              alt={activeFilm.title}
-              fill
-              sizes="(max-width: 640px) 92vw, (max-width: 1024px) 85vw, 1000px"
-              className={`object-contain transition-opacity duration-300 ${
-                activeFilm.slug === "everyone-thinks-im-dead"
-                  ? "[filter:drop-shadow(0_0_12px_rgba(255,255,255,0.4))_drop-shadow(0_3px_10px_rgba(0,0,0,0.95))]"
-                  : "[filter:drop-shadow(0_4px_12px_rgba(0,0,0,0.75))]"
-              }`}
-            />
-          </div>
-
-          <p className="max-w-2xl px-4 font-sans text-sm font-light italic text-[#c5c5be] sm:text-base md:text-lg">
-            &ldquo;{activeFilm.tagline}&rdquo;
+            ORIGINAL STORIES. LIMITLESS WORLDS.
+          </h2>
+          <p className="mx-auto mt-6 max-w-2xl font-sans text-base font-light tracking-[0.01em] text-[#85857f] sm:text-lg">
+            Each story opens a different door. Choose a world to enter.
           </p>
         </div>
 
         <div
-          className="film-strip-stage relative z-10 mt-12 flex h-[320px] w-full shrink-0 items-center justify-center sm:mt-16 sm:h-[400px] md:h-[480px] lg:mt-20 lg:h-[540px]"
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
+          className="poster-wall-track -mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:-mx-8 sm:px-8 md:mx-0 md:grid md:grid-cols-8 md:gap-4 md:overflow-visible md:px-0 md:pb-0 lg:gap-5"
+          onMouseLeave={() => setHoveredIndex(null)}
         >
-          <button
-            type="button"
-            onClick={() =>
-              setActiveIndex(
-                (previous) =>
-                  (previous - 1 + films.length) % films.length,
-              )
-            }
-            aria-label="Previous film"
-            className="group absolute left-2 top-1/2 z-50 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/75 text-white shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-white/70 hover:bg-black sm:left-6 sm:h-14 sm:w-14 md:left-12"
-          >
-            <span className="font-heading font-ethnocentric text-sm transition-transform group-hover:-translate-x-0.5 sm:text-base">
-              ←
-            </span>
-          </button>
+          {films.map((film, index) => {
+            const isFocused = hoveredIndex === index;
+            const isDimmed = hoveredIndex !== null && !isFocused;
 
-          <button
-            type="button"
-            onClick={() =>
-              setActiveIndex((previous) => (previous + 1) % films.length)
-            }
-            aria-label="Next film"
-            className="group absolute right-2 top-1/2 z-50 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-black/75 text-white shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-white/70 hover:bg-black sm:right-6 sm:h-14 sm:w-14 md:right-12"
-          >
-            <span className="font-heading font-ethnocentric text-sm transition-transform group-hover:translate-x-0.5 sm:text-base">
-              →
-            </span>
-          </button>
-
-          <div
-            className="relative flex h-[300px] w-full items-center justify-center [--step:110px] sm:h-[380px] sm:[--step:165px] md:h-[460px] md:[--step:220px] lg:h-[520px] lg:[--step:275px] xl:[--step:315px]"
-            style={{ perspective: "1200px", overflowX: "clip" }}
-          >
-            {films.map((film, index) => {
-              const filmCount = films.length;
-              let offset = (index - activeIndex) % filmCount;
-
-              if (offset > filmCount / 2) offset -= filmCount;
-              if (offset < -filmCount / 2) offset += filmCount;
-
-              const isCenter = offset === 0;
-              const absoluteOffset = Math.abs(offset);
-              let horizontalMultiplier = 0;
-              let scale = 1.06;
-              let translateY = 0;
-              let rotateY = 0;
-              let opacity = 1;
-              let zIndex = 30;
-
-              if (absoluteOffset === 1) {
-                horizontalMultiplier = offset;
-                scale = 0.88;
-                translateY = 12;
-                rotateY = offset * -8;
-                opacity = 0.85;
-                zIndex = 20;
-              } else if (absoluteOffset === 2) {
-                horizontalMultiplier = offset * 1.8;
-                scale = 0.72;
-                translateY = 24;
-                rotateY = offset * -14;
-                opacity = 0.6;
-                zIndex = 10;
-              } else if (absoluteOffset >= 3) {
-                horizontalMultiplier = offset * 2.4;
-                scale = 0.58;
-                translateY = 36;
-                rotateY = offset * -20;
-                opacity = 0;
-                zIndex = 5;
-              }
-
-              return (
-                <div
-                  key={film.slug}
-                  onClick={() => {
-                    if (!isCenter) setActiveIndex(index);
-                  }}
-                  className={`absolute left-1/2 top-1/2 flex-shrink-0 cursor-pointer ${
-                    absoluteOffset >= 2 ? "max-sm:hidden" : ""
+            return (
+              <div
+                key={film.slug}
+                className={`poster-wall-reveal w-[72vw] max-w-[300px] flex-none snap-center md:col-span-2 md:w-auto md:max-w-none ${
+                  index === 4 ? "md:col-start-2" : ""
+                }`}
+                style={{ perspective: "1200px" }}
+              >
+                <Link
+                  href={`/films/${film.slug}`}
+                  aria-label={`Explore ${film.title}`}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onFocus={() => setHoveredIndex(index)}
+                  onBlur={() => setHoveredIndex(null)}
+                  className={`group relative block aspect-[2/3] w-full overflow-hidden rounded-[18px] border bg-[#090909] shadow-[0_28px_80px_rgba(0,0,0,0.82)] transition-[transform,filter,opacity,border-color,box-shadow] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] md:aspect-auto md:h-[58vh] md:min-h-[470px] md:max-h-[690px] ${
+                    isFocused
+                      ? "z-20 border-white/20 brightness-100 saturate-100 md:scale-[1.055] md:border-white/35 md:brightness-110 md:saturate-110 md:shadow-[0_34px_100px_rgba(0,0,0,0.95)]"
+                      : isDimmed
+                        ? "border-white/10 brightness-100 saturate-100 md:scale-[0.985] md:border-white/[0.04] md:brightness-[0.34] md:saturate-[0.45] md:opacity-75"
+                        : "border-white/10 brightness-100 saturate-100 hover:border-white/25"
                   }`}
-                  style={{
-                    transform: `translate(-50%, -50%) translateX(calc(${horizontalMultiplier} * var(--step, 240px))) translateY(${translateY}px) scale(${scale}) rotateY(${rotateY}deg)`,
-                    transformOrigin: "center center",
-                    zIndex,
-                    opacity,
-                    pointerEvents: opacity === 0 ? "none" : "auto",
-                    transition:
-                      "transform 650ms cubic-bezier(0.16, 1, 0.3, 1), opacity 650ms cubic-bezier(0.16, 1, 0.3, 1)",
-                  }}
+                  style={
+                    isFocused
+                      ? {
+                          boxShadow: `0 32px 110px rgba(0,0,0,0.94), 0 0 48px ${film.palette.accent}38`,
+                        }
+                      : undefined
+                  }
                 >
-                  <div
-                    aria-hidden="true"
-                    className={`pointer-events-none absolute -inset-4 rounded-3xl blur-2xl transition-opacity duration-700 ${
-                      isCenter ? "scale-105 opacity-90" : "opacity-25"
-                    }`}
-                    style={{ background: film.palette.accent }}
+                  <Image
+                    src={film.posterImage}
+                    alt={film.title}
+                    fill
+                    sizes="(max-width: 767px) 72vw, 14vw"
+                    className="object-cover transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
                   />
 
-                  <Link
-                    href={`/films/${film.slug}`}
-                    onClick={(event) => {
-                      if (!isCenter) {
-                        event.preventDefault();
-                        setActiveIndex(index);
-                      }
-                    }}
-                    className={`relative block aspect-[2/3] w-[170px] overflow-hidden rounded-2xl bg-[#0d0d0d] transition-all duration-500 sm:w-[210px] md:w-[260px] lg:w-[300px] xl:w-[340px] ${
-                      isCenter
-                        ? "shadow-[0_35px_90px_rgba(0,0,0,0.98)] ring-1 ring-white/15"
-                        : "shadow-[0_20px_50px_rgba(0,0,0,0.85)]"
+                  <div
+                    aria-hidden="true"
+                    className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${
+                      isFocused ? "opacity-100" : "opacity-0"
                     }`}
-                  >
-                    <Image
-                      src={film.posterImage}
-                      alt={film.title}
-                      fill
-                      sizes="(max-width: 640px) 170px, (max-width: 1024px) 260px, 340px"
-                      className={`object-cover transition-transform duration-700 ${
-                        isCenter
-                          ? "scale-100 brightness-110 contrast-105"
-                          : "brightness-90 hover:brightness-105"
-                      }`}
-                    />
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
+                    style={{
+                      background: `linear-gradient(145deg, ${film.palette.accent}24, transparent 46%)`,
+                    }}
+                  />
+
+                </Link>
+              </div>
+            );
+          })}
         </div>
 
-        <div className="film-strip-controls mx-auto mt-6 flex w-full max-w-5xl flex-col items-center justify-center gap-5 px-4 sm:flex-row sm:justify-between">
-          <div className="flex items-center gap-2 sm:gap-2.5">
-            {films.map((film, index) => (
-              <button
-                type="button"
-                key={film.slug}
-                onClick={() => setActiveIndex(index)}
-                aria-label={`Select ${film.title}`}
-                className={`h-2 cursor-pointer rounded-full transition-all duration-300 sm:h-2.5 ${
-                  index === activeIndex
-                    ? "w-8 bg-white shadow-[0_0_12px_rgba(255,255,255,0.8)] sm:w-10"
-                    : "w-2 bg-white/25 hover:bg-white/50 sm:w-2.5"
-                }`}
-                style={
-                  index === activeIndex
-                    ? { backgroundColor: film.palette.accent }
-                    : undefined
-                }
-              />
-            ))}
-          </div>
-
+        <div className="poster-wall-footer mt-9 flex items-center justify-center text-center sm:mt-12">
           <Link
             href="/films"
-            className="inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-black/60 px-6 py-3 font-heading font-ethnocentric text-[10px] uppercase tracking-widest text-white shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-white hover:text-black sm:text-xs"
+            className="group inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/[0.04] px-7 py-3.5 font-heading font-ethnocentric text-[9px] uppercase tracking-[0.15em] text-white transition-all duration-300 hover:scale-105 hover:border-white/45 hover:bg-white hover:text-black sm:text-[10px]"
           >
             <span>Explore Our Films</span>
-            <span>→</span>
+            <span className="transition-transform duration-300 group-hover:translate-x-1">
+              →
+            </span>
           </Link>
         </div>
       </div>

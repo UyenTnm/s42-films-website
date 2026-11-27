@@ -54,9 +54,6 @@ export default function L4206Page() {
                 priority
               />
             </div>
-            <p className="font-mono text-[10px] text-[#898989] tracking-widest text-center uppercase">
-              CONFIDENTIAL • DO NOT DISTRIBUTE
-            </p>
           </div>
 
           {/* Right Column: Story & Specification */}

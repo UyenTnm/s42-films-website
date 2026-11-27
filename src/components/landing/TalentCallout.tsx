@@ -43,18 +43,6 @@ export default function TalentCallout() {
           },
         )
         .fromTo(
-          ".talent-support",
-          { autoAlpha: 0, y: 28, filter: "blur(8px)" },
-          {
-            autoAlpha: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 0.8,
-            ease: "power3.out",
-          },
-          "-=0.55",
-        )
-        .fromTo(
           ".talent-cta",
           { autoAlpha: 0, y: 24, scale: 0.9 },
           {
@@ -64,7 +52,7 @@ export default function TalentCallout() {
             duration: 0.7,
             ease: "back.out(1.5)",
           },
-          "-=0.42",
+          "-=0.5",
         );
 
       gsap.fromTo(
@@ -119,13 +107,9 @@ export default function TalentCallout() {
           <span className="mt-2 block sm:mt-3">BUILD IT.</span>
         </h2>
 
-        <p className="talent-support mt-7 font-sans text-lg font-light tracking-[0.01em] text-[#9b9b95] sm:mt-9 sm:text-2xl md:text-3xl">
-          Built in Vietnam. Created for the world.
-        </p>
-
         <Link
           href="/careers"
-          className="talent-cta group mt-10 inline-flex items-center gap-3 rounded-full border border-white/25 bg-white px-7 py-3.5 font-heading font-ethnocentric text-[10px] uppercase tracking-[0.16em] text-black transition-all duration-300 hover:scale-105 hover:bg-[#d8d8d2] sm:mt-12 sm:px-9 sm:py-4 sm:text-xs"
+          className="talent-cta group mt-12 inline-flex items-center gap-3 rounded-full border border-white/25 bg-white px-7 py-3.5 font-heading font-ethnocentric text-[10px] uppercase tracking-[0.16em] text-black transition-all duration-300 hover:scale-105 hover:bg-[#d8d8d2] sm:mt-14 sm:px-9 sm:py-4 sm:text-xs"
         >
           <span>Join S•42</span>
           <span className="transition-transform duration-300 group-hover:translate-x-1">
