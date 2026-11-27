@@ -100,6 +100,7 @@ export default function Manifesto() {
     <section
       id="manifesto"
       ref={sectionRef}
+      aria-label="About"
       className="relative overflow-hidden bg-[#060606] px-6 pb-24 pt-12 sm:px-10 sm:pb-32 sm:pt-16 md:px-16 md:pb-40 md:pt-20 lg:px-20 lg:pb-44 lg:pt-20"
     >
       <div className="pointer-events-none absolute left-1/2 top-[43%] -z-0 -translate-x-1/2 -translate-y-1/2 select-none">
@@ -118,6 +119,16 @@ export default function Manifesto() {
 
       <div className="relative z-10 mx-auto w-full max-w-[1440px]">
         <div className="manifesto-reveal pb-6 text-center">
+          <p className="font-heading font-ethnocentric text-[9px] uppercase tracking-[0.24em] text-[#b38a43] sm:text-[10px]">
+            About
+          </p>
+          <Image
+            src="/images/brand/s42-wordmark.png"
+            alt="S•42 Films"
+            width={1050}
+            height={359}
+            className="mx-auto mb-7 mt-4 h-auto w-[132px] object-contain sm:mb-8 sm:mt-5 sm:w-[160px]"
+          />
           <span
             className="inline-block bg-clip-text font-heading font-ethnocentric text-[clamp(0.95rem,1.9vw,1.9rem)] leading-[1.3] tracking-[0.12em] text-transparent [filter:drop-shadow(0_2px_14px_rgba(222,225,230,0.14))]"
             style={{
@@ -126,7 +137,7 @@ export default function Manifesto() {
               WebkitBackgroundClip: "text",
             }}
           >
-            S•42 — AI-NATIVE ENTERTAINMENT &amp; TECHNOLOGY
+            AI-NATIVE ENTERTAINMENT &amp; TECHNOLOGY
           </span>
         </div>
 
@@ -191,24 +202,6 @@ export default function Manifesto() {
               </div>
             </article>
           ))}
-        </div>
-
-        <div className="manifesto-reveal flex min-h-[34vh] flex-col items-center justify-center pb-4 pt-28 text-center sm:min-h-[40vh] sm:pt-36 md:pt-44 lg:pt-52">
-          <p
-            className="bg-clip-text font-heading font-ethnocentric text-[clamp(2rem,5.2vw,5.4rem)] leading-[0.98] tracking-[0.035em] text-transparent [filter:drop-shadow(0_5px_24px_rgba(222,225,230,0.14))]"
-            style={{
-              backgroundImage:
-                "linear-gradient(112deg, #70737a 0%, #f1f3f5 28%, #9da1a7 52%, #ffffff 72%, #74777d 100%)",
-              WebkitBackgroundClip: "text",
-            }}
-          >
-            IMAGINATION. ENGINEERED.
-          </p>
-          <p className="mt-7 max-w-4xl font-sans text-base font-light leading-relaxed tracking-[0.01em] text-[#969690] sm:mt-9 sm:text-lg md:text-xl lg:text-2xl lg:leading-relaxed">
-            We bring human imagination to life through advanced artificial
-            intelligence, cinematic craftsmanship and emerging creative
-            technologies.
-          </p>
         </div>
       </div>
     </section>

@@ -1,10 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-
-// Deterrents only: they stop casual copying and saving, but no website can
-// fully block screenshots. The viewer watermark is what makes leaks traceable.
 
 const EDITABLE = "input, textarea, [contenteditable='true']";
 
@@ -12,11 +8,12 @@ function isEditable(target: EventTarget | null) {
   return target instanceof Element && target.closest(EDITABLE) !== null;
 }
 
-export default function ContentProtection() {
-  const pathname = usePathname();
-  // Keep the login page usable: people switch to their mailbox to read the code.
-  const hideOnBlur = pathname !== "/access";
-
+/**
+ * Discourages casual copying, saving, printing, and screen capture on film
+ * routes. Browser-side protection cannot prevent a determined user from
+ * photographing or otherwise recording content.
+ */
+export default function FilmContentProtection() {
   useEffect(() => {
     const root = document.documentElement;
     const block = (event: Event) => {
@@ -24,48 +21,67 @@ export default function ContentProtection() {
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      // Browser autofill can fire keydown events without a key.
       if (typeof event.key !== "string") return;
-      const key = event.key.toLowerCase();
-      const mod = event.ctrlKey || event.metaKey;
 
-      if (key === "f12") return event.preventDefault();
-      if (
-        mod &&
-        event.shiftKey &&
-        ["i", "j", "c", "s", "4", "3", "5"].includes(key)
-      ) {
-        return event.preventDefault();
+      const key = event.key.toLowerCase();
+      const modifier = event.ctrlKey || event.metaKey;
+
+      if (key === "f12") {
+        event.preventDefault();
+        return;
       }
-      if (mod && ["s", "p", "u"].includes(key)) return event.preventDefault();
-      if (mod && ["c", "x", "a"].includes(key) && !isEditable(event.target)) {
-        return event.preventDefault();
+
+      if (
+        modifier &&
+        event.shiftKey &&
+        ["i", "j", "c", "s", "3", "4", "5"].includes(key)
+      ) {
+        event.preventDefault();
+        return;
+      }
+
+      if (modifier && ["s", "p", "u"].includes(key)) {
+        event.preventDefault();
+        return;
+      }
+
+      if (
+        modifier &&
+        ["a", "c", "x"].includes(key) &&
+        !isEditable(event.target)
+      ) {
+        event.preventDefault();
       }
     };
+
+    const shieldOn = () => root.classList.add("s42-film-shield");
+    const shieldOff = () => root.classList.remove("s42-film-shield");
+    const onVisibilityChange = () =>
+      document.hidden ? shieldOn() : shieldOff();
 
     const onKeyUp = (event: KeyboardEvent) => {
       if (event.key !== "PrintScreen") return;
+
       void navigator.clipboard?.writeText("").catch(() => {});
-      root.classList.add("s42-shield");
-      window.setTimeout(() => root.classList.remove("s42-shield"), 1500);
+      shieldOn();
+      window.setTimeout(shieldOff, 1500);
     };
 
-    const shieldOn = () => {
-      if (hideOnBlur) root.classList.add("s42-shield");
-    };
-    const shieldOff = () => root.classList.remove("s42-shield");
-    const onVisibility = () => (document.hidden ? shieldOn() : shieldOff());
+    root.classList.add("s42-film-protection-active");
 
     document.addEventListener("contextmenu", block);
     document.addEventListener("dragstart", block);
     document.addEventListener("copy", block);
     document.addEventListener("cut", block);
     document.addEventListener("selectstart", block);
+    document.addEventListener("gesturestart", block);
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keyup", onKeyUp);
-    document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("blur", shieldOn);
     window.addEventListener("focus", shieldOff);
+    window.addEventListener("beforeprint", shieldOn);
+    window.addEventListener("afterprint", shieldOff);
 
     return () => {
       document.removeEventListener("contextmenu", block);
@@ -73,16 +89,19 @@ export default function ContentProtection() {
       document.removeEventListener("copy", block);
       document.removeEventListener("cut", block);
       document.removeEventListener("selectstart", block);
+      document.removeEventListener("gesturestart", block);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
-      // iOS Safari ignores user-scalable=no, so cancel its pinch gesture.
-      document.addEventListener("gesturestart", block);
-      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("blur", shieldOn);
       window.removeEventListener("focus", shieldOff);
+      window.removeEventListener("beforeprint", shieldOn);
+      window.removeEventListener("afterprint", shieldOff);
+
+      root.classList.remove("s42-film-protection-active");
       shieldOff();
     };
-  }, [hideOnBlur]);
+  }, []);
 
   return null;
 }

@@ -32,7 +32,7 @@ export default function InsaneAisylumPage() {
             <span className="text-[#e50914] font-bold">FILM {film.number}</span>
           </div>
           <Link
-            href="/#films"
+            href="/films"
             className="relative z-[60] pointer-events-auto cursor-pointer text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 uppercase tracking-widest"
           >
             ← All Films
@@ -53,9 +53,6 @@ export default function InsaneAisylumPage() {
                 priority
               />
             </div>
-            <p className="font-mono text-[10px] text-[#898989] tracking-widest text-center uppercase">
-              CONFIDENTIAL • DO NOT DISTRIBUTE
-            </p>
           </div>
 
           {/* Right Column: Story & Specification */}

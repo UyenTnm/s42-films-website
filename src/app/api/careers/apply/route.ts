@@ -4,7 +4,7 @@ import {
   fileExtension,
   validateApplication,
 } from "@/lib/careers";
-import { getClientIp, isRateLimited } from "@/lib/siteAccess";
+import { getClientIp, isRateLimited } from "@/lib/requestSecurity";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { saveApplicationToMonday, type CvUpload } from "@/lib/mondayCareers";
 import {

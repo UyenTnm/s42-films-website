@@ -9,12 +9,12 @@ const SITE_URL = (
 const DATE_POSTED = "2026-10-29";
 
 export const metadata: Metadata = {
-  title: "Careers — AI Creative | Studio 42",
+  title: "Careers — AI Creative | S•42",
   description:
-    "Studio 42 is hiring AI Creatives in Ho Chi Minh City — full-time and internship. Apply with your portfolio and showreel.",
+    "S•42 is hiring AI Creatives in Ho Chi Minh City — full-time and internship. Apply with your portfolio and showreel.",
   alternates: { canonical: "/careers" },
   openGraph: {
-    title: "Join Studio 42 as an AI Creative",
+    title: "Join S•42 as an AI Creative",
     description:
       "Full-time and internship roles in Ho Chi Minh City for creatives working with AI image and video tools.",
     url: "/careers",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 const description = `
-<p>Studio 42 (S•42 Films) is looking for AI Creatives to join our team on-site in Ho Chi Minh City.</p>
+<p>S•42 is looking for AI Creatives to join our team on-site in Ho Chi Minh City.</p>
 <p>You will create images and video with AI tools such as Midjourney, Kling, Runway, Google Veo, Higgsfield and ComfyUI, and bring them together through editing, visual storytelling, VFX and motion graphics.</p>
 <p><strong>What we ask for:</strong> a portfolio or showreel, your CV, and experience with AI creative tools. Internship applicants are welcome.</p>
 <p>Apply online at ${SITE_URL}/careers.</p>`.trim();
