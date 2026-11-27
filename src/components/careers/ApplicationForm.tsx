@@ -115,7 +115,11 @@ function groupDigits(digits: string) {
 /** "901234567" → "90 123 4567"; "0901234567" → "090 123 4567". */
 function formatPhoneDigits(digits: string) {
   const lead = digits.startsWith("0") ? 3 : 2;
-  return [digits.slice(0, lead), digits.slice(lead, lead + 3), digits.slice(lead + 3)]
+  return [
+    digits.slice(0, lead),
+    digits.slice(lead, lead + 3),
+    digits.slice(lead + 3),
+  ]
     .filter(Boolean)
     .join(" ");
 }
@@ -378,7 +382,12 @@ function SelectMenu({
     }
 
     // Type a letter to jump to a matching option (non-search menus).
-    if (!searchable && event.key.length === 1 && !event.metaKey && !event.ctrlKey) {
+    if (
+      !searchable &&
+      event.key.length === 1 &&
+      !event.metaKey &&
+      !event.ctrlKey
+    ) {
       const now = Date.now();
       const state = typeahead.current;
       state.text = now - state.at > 700 ? event.key : state.text + event.key;
@@ -403,7 +412,9 @@ function SelectMenu({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listId}
-        aria-activedescendant={open && !searchable && visible.length ? optionId(active) : undefined}
+        aria-activedescendant={
+          open && !searchable && visible.length ? optionId(active) : undefined
+        }
         aria-invalid={Boolean(error)}
         aria-describedby={errorId(name)}
         onClick={() => (open ? close() : openMenu())}
@@ -439,7 +450,9 @@ function SelectMenu({
                 aria-controls={listId}
                 aria-expanded="true"
                 aria-autocomplete="list"
-                aria-activedescendant={visible.length ? optionId(active) : undefined}
+                aria-activedescendant={
+                  visible.length ? optionId(active) : undefined
+                }
                 value={query}
                 onChange={(event) => {
                   setQuery(event.target.value);
@@ -663,7 +676,11 @@ function CvField({
           <LabelText label="CV / resume" required />
         </legend>
 
-        <div role="radiogroup" aria-label="How to send your CV" className="mb-4 flex flex-wrap gap-2">
+        <div
+          role="radiogroup"
+          aria-label="How to send your CV"
+          className="mb-4 flex flex-wrap gap-2"
+        >
           {(
             [
               ["file", "Upload a file"],
@@ -694,7 +711,9 @@ function CvField({
               >
                 <div className="min-w-0">
                   <p className="truncate text-base text-white">{file.name}</p>
-                  <p className="text-xs text-white/45">{formatBytes(file.size)}</p>
+                  <p className="text-xs text-white/45">
+                    {formatBytes(file.size)}
+                  </p>
                 </div>
                 <button
                   type="button"
@@ -724,9 +743,12 @@ function CvField({
                 }`}
               >
                 <span className="text-base text-white">
-                  Drop your CV here, or <span className="underline underline-offset-4">browse</span>
+                  Drop your CV here, or{" "}
+                  <span className="underline underline-offset-4">browse</span>
                 </span>
-                <span className="text-sm text-white/45">PDF, DOC or DOCX · max 4 MB</span>
+                <span className="text-sm text-white/45">
+                  PDF, DOC or DOCX · max 4 MB
+                </span>
                 <input
                   ref={inputRef}
                   id={fieldId("cvFile")}
@@ -776,12 +798,13 @@ export default function ApplicationForm() {
   const [status, setStatus] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDone, setIsDone] = useState(false);
-  const [minDate, setMinDate] = useState<string>();
+  // const [minDate, setMinDate] = useState<string>();
+  const [minDate] = useState(() => todayInVietnam());
   const [botToken, setBotToken] = useState<string | null>(null);
   const [botResetKey, setBotResetKey] = useState(0);
 
   // The page is pre-rendered, so "today" is worked out in the browser.
-  useEffect(() => setMinDate(todayInVietnam()), []);
+  // useEffect(() => setMinDate(todayInVietnam()), []);
 
   const clearErrors = (...names: FieldName[]) => {
     if (!names.some((name) => name in errors)) return;
@@ -811,7 +834,9 @@ export default function ApplicationForm() {
 
   const pickFile = (file: File | null) => {
     setCvFile(file);
-    const problem = file ? checkCvFile({ name: file.name, size: file.size }) : null;
+    const problem = file
+      ? checkCvFile({ name: file.name, size: file.size })
+      : null;
     setErrors((current) => {
       const next = { ...current };
       if (problem) next.cvFile = problem;
@@ -851,7 +876,9 @@ export default function ApplicationForm() {
     const data = payload();
     const check = validateApplication(
       data,
-      fileForSubmit ? { name: fileForSubmit.name, size: fileForSubmit.size } : null,
+      fileForSubmit
+        ? { name: fileForSubmit.name, size: fileForSubmit.size }
+        : null,
     );
     if (!check.ok) {
       setErrors(check.errors);
@@ -874,7 +901,10 @@ export default function ApplicationForm() {
       if (fileForSubmit) body.append("cvFile", fileForSubmit);
       if (botToken) body.append("turnstileToken", botToken);
 
-      const response = await fetch("/api/careers/apply", { method: "POST", body });
+      const response = await fetch("/api/careers/apply", {
+        method: "POST",
+        body,
+      });
       const result = (await response.json().catch(() => ({}))) as {
         ok?: boolean;
         message?: string;
@@ -955,9 +985,16 @@ export default function ApplicationForm() {
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-10">
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="flex flex-col gap-10"
+          >
             {/* Honeypot: hidden from people and screen readers. */}
-            <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <div
+              aria-hidden="true"
+              className="absolute -left-[9999px] h-0 w-0 overflow-hidden"
+            >
               <label htmlFor="apply-website">Website</label>
               <input
                 id="apply-website"
@@ -970,7 +1007,12 @@ export default function ApplicationForm() {
             </div>
 
             <Section index={1} title="Personal Information">
-              <Field name="fullName" label="Full name" required error={errors.fullName}>
+              <Field
+                name="fullName"
+                label="Full name"
+                required
+                error={errors.fullName}
+              >
                 <input
                   id={fieldId("fullName")}
                   name="fullName"
@@ -985,7 +1027,12 @@ export default function ApplicationForm() {
                 />
               </Field>
 
-              <Field name="email" label="Email address" required error={errors.email}>
+              <Field
+                name="email"
+                label="Email address"
+                required
+                error={errors.email}
+              >
                 <input
                   id={fieldId("email")}
                   name="email"
@@ -1002,7 +1049,12 @@ export default function ApplicationForm() {
                 />
               </Field>
 
-              <Field name="phone" label="Phone number" required error={errors.phone}>
+              <Field
+                name="phone"
+                label="Phone number"
+                required
+                error={errors.phone}
+              >
                 <div
                   className={`${fieldBox} flex h-14 items-stretch ${
                     errors.phone ? "border-[#ffb4ad]/80" : ""
@@ -1013,7 +1065,10 @@ export default function ApplicationForm() {
                     aria-hidden="true"
                   >
                     {/* Vietnam flag as SVG: emoji flags don't show on Windows. */}
-                    <svg viewBox="0 0 30 20" className="h-3.5 w-[21px] shrink-0">
+                    <svg
+                      viewBox="0 0 30 20"
+                      className="h-3.5 w-[21px] shrink-0"
+                    >
                       <rect width="30" height="20" fill="#DA251D" />
                       <polygon
                         fill="#FFFF00"
@@ -1033,7 +1088,8 @@ export default function ApplicationForm() {
                     onChange={(event) => {
                       let digits = event.target.value.replace(/\D/g, "");
                       // Pasted "+84 90…" or "84 90…": keep only the local part.
-                      if (digits.startsWith("84") && digits.length > 10) digits = digits.slice(2);
+                      if (digits.startsWith("84") && digits.length > 10)
+                        digits = digits.slice(2);
                       update("phone", digits.slice(0, 10));
                     }}
                     className="h-full min-w-0 flex-1 bg-transparent px-4 text-base text-white outline-none placeholder:text-white/30"
@@ -1044,7 +1100,12 @@ export default function ApplicationForm() {
                 </div>
               </Field>
 
-              <Field name="location" label="Current location" required error={errors.location}>
+              <Field
+                name="location"
+                label="Current location"
+                required
+                error={errors.location}
+              >
                 <SelectMenu
                   name="location"
                   value={form.location}
@@ -1144,7 +1205,12 @@ export default function ApplicationForm() {
                 )}
               </Field>
 
-              <Field name="english" label="English proficiency" wide error={errors.english}>
+              <Field
+                name="english"
+                label="English proficiency"
+                wide
+                error={errors.english}
+              >
                 <SelectMenu
                   name="english"
                   value={form.english}
@@ -1178,7 +1244,9 @@ export default function ApplicationForm() {
                   maxLength={LIMITS.url}
                   placeholder="https://"
                   value={form.portfolioUrl}
-                  onChange={(event) => update("portfolioUrl", event.target.value)}
+                  onChange={(event) =>
+                    update("portfolioUrl", event.target.value)
+                  }
                   className={inputClasses}
                   aria-invalid={Boolean(errors.portfolioUrl)}
                   aria-describedby={errorId("portfolioUrl")}
@@ -1212,7 +1280,9 @@ export default function ApplicationForm() {
                   maxLength={LIMITS.url}
                   placeholder="https://"
                   value={form.bestProjectUrl}
-                  onChange={(event) => update("bestProjectUrl", event.target.value)}
+                  onChange={(event) =>
+                    update("bestProjectUrl", event.target.value)
+                  }
                   className={inputClasses}
                   aria-invalid={Boolean(errors.bestProjectUrl)}
                   aria-describedby={errorId("bestProjectUrl")}
@@ -1231,7 +1301,10 @@ export default function ApplicationForm() {
               >
                 <div className="flex gap-2">
                   {(["yes", "no"] as const).map((value) => (
-                    <label key={value} className={`${chipClasses} min-w-24 justify-center`}>
+                    <label
+                      key={value}
+                      className={`${chipClasses} min-w-24 justify-center`}
+                    >
                       <input
                         type="radio"
                         name="onSite"
@@ -1246,7 +1319,13 @@ export default function ApplicationForm() {
                 </div>
               </Field>
 
-              <Field name="startDate" label="When can you start?" required wide error={errors.startDate}>
+              <Field
+                name="startDate"
+                label="When can you start?"
+                required
+                wide
+                error={errors.startDate}
+              >
                 <input
                   id={fieldId("startDate")}
                   name="startDate"
@@ -1292,9 +1371,14 @@ export default function ApplicationForm() {
                       autoComplete="off"
                       value={groupDigits(form[name])}
                       onChange={(event) =>
-                        update(name, event.target.value.replace(/\D/g, "").slice(0, 10))
+                        update(
+                          name,
+                          event.target.value.replace(/\D/g, "").slice(0, 10),
+                        )
                       }
-                      placeholder={name === "salaryMin" ? "15.000.000" : "25.000.000"}
+                      placeholder={
+                        name === "salaryMin" ? "15.000.000" : "25.000.000"
+                      }
                       className={`${inputClasses} pr-16`}
                       aria-invalid={Boolean(errors[name])}
                       aria-describedby={errorId(name)}
@@ -1340,7 +1424,9 @@ export default function ApplicationForm() {
                     type="checkbox"
                     name="consent"
                     checked={form.consent}
-                    onChange={(event) => update("consent", event.target.checked)}
+                    onChange={(event) =>
+                      update("consent", event.target.checked)
+                    }
                     className="mt-1 size-5 shrink-0 cursor-pointer accent-[#f1f1ed]"
                     aria-invalid={Boolean(errors.consent)}
                     aria-describedby={errorId("consent")}

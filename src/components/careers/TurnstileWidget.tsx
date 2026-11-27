@@ -8,7 +8,10 @@ import { useEffect, useRef, useState } from "react";
 declare global {
   interface Window {
     turnstile?: {
-      render: (element: HTMLElement, options: Record<string, unknown>) => string;
+      render: (
+        element: HTMLElement,
+        options: Record<string, unknown>,
+      ) => string;
       reset: (widgetId?: string) => void;
       remove: (widgetId: string) => void;
     };
@@ -52,7 +55,10 @@ export default function TurnstileWidget({
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetId = useRef<string | null>(null);
   const callback = useRef(onToken);
-  callback.current = onToken;
+
+  useEffect(() => {
+    callback.current = onToken;
+  }, [onToken]);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {

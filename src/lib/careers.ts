@@ -1,6 +1,3 @@
-// Shared by the careers form (browser) and /api/careers/apply (server), so the
-// rules and option lists can never drift apart.
-
 export const POSITIONS = [
   "AI Creative — Full-time",
   "AI Creative — Internship",
@@ -152,7 +149,8 @@ function text(value: unknown, max: number) {
 }
 
 function oneOf<T extends readonly string[]>(value: unknown, list: T) {
-  return typeof value === "string" && (list as readonly string[]).includes(value)
+  return typeof value === "string" &&
+    (list as readonly string[]).includes(value)
     ? value
     : "";
 }
@@ -218,8 +216,11 @@ export function fileExtension(name: string) {
 
 /** Checks name + size only; the server also checks the file's real content. */
 export function checkCvFile(file: CvFileMeta | null | undefined) {
-  if (!file || file.size === 0) return "Please upload your CV, or switch to a link.";
-  if (!(CV_EXTENSIONS as readonly string[]).includes(fileExtension(file.name))) {
+  if (!file || file.size === 0)
+    return "Please upload your CV, or switch to a link.";
+  if (
+    !(CV_EXTENSIONS as readonly string[]).includes(fileExtension(file.name))
+  ) {
     return "Please upload a PDF, DOC or DOCX file.";
   }
   if (file.size > CV_MAX_BYTES) return "The file is larger than 4 MB.";
@@ -249,9 +250,7 @@ export function todayInVietnam() {
 export function validateApplication(
   input: unknown,
   cvFile?: CvFileMeta | null,
-):
-  | { ok: true; data: Application }
-  | { ok: false; errors: FieldErrors } {
+): { ok: true; data: Application } | { ok: false; errors: FieldErrors } {
   const raw = (input && typeof input === "object" ? input : {}) as Record<
     string,
     unknown
@@ -262,11 +261,13 @@ export function validateApplication(
   if (fullName.length < 2) errors.fullName = "Please enter your full name.";
 
   const email = text(raw.email, LIMITS.email).toLowerCase();
-  if (!EMAIL_RE.test(email)) errors.email = "Please enter a valid email address.";
+  if (!EMAIL_RE.test(email))
+    errors.email = "Please enter a valid email address.";
 
   const phone = normalizeVnPhone(raw.phone);
   if (!phone) {
-    errors.phone = "Please enter a valid Vietnamese mobile number, e.g. 90 123 4567.";
+    errors.phone =
+      "Please enter a valid Vietnamese mobile number, e.g. 90 123 4567.";
   }
 
   const location = oneOf(raw.location, LOCATIONS);
@@ -280,7 +281,8 @@ export function validateApplication(
 
   const pickedStrengths = manyOf(raw.strengths, STRENGTHS);
   const strengthsOther = cleanTags(raw.strengthsOther);
-  if (!pickedStrengths.length) errors.strengths = "Choose at least one strength.";
+  if (!pickedStrengths.length)
+    errors.strengths = "Choose at least one strength.";
   else if (pickedStrengths.includes("Other") && !strengthsOther.length) {
     errors.strengthsOther = "Tell us your other strength(s).";
   }
@@ -313,7 +315,8 @@ export function validateApplication(
   if (bestProjectUrl === null)
     errors.bestProjectUrl = "Please enter a valid link, or leave it empty.";
 
-  const onSite = raw.onSite === "yes" || raw.onSite === "no" ? raw.onSite : null;
+  const onSite =
+    raw.onSite === "yes" || raw.onSite === "no" ? raw.onSite : null;
   if (!onSite) errors.onSite = "Please choose Yes or No.";
 
   const startDate = text(raw.startDate, 10);

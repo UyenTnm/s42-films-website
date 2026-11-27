@@ -1,18 +1,5 @@
 import type { Application } from "@/lib/careers";
 
-// Saves job applications as items on a SEPARATE monday.com board
-// (MONDAY_CAREERS_BOARD_ID), so candidates never mix with private-access leads.
-// It reuses MONDAY_API_TOKEN.
-//
-// Columns are matched by title (case-insensitive), so no column IDs are needed.
-// A missing column is simply skipped. Columns used:
-//   Email (Email) | Phone (Phone) | Location (Text) | Position (Status)
-//   Experience (Text) | Strengths (Long text) | AI Tools (Long text)
-//   English (Text) | Portfolio (Link) | CV (Link) | CV File (Files)
-//   Best Project (Link) | On-site HCMC (Text) | Start Date (Date)
-//   Salary Min (Numbers) | Salary Max (Numbers) | Notes (Long text)
-// The item name is "Full name — Position".
-
 const MONDAY_API = "https://api.monday.com/v2";
 const MONDAY_FILE_API = "https://api.monday.com/v2/file";
 
@@ -28,9 +15,9 @@ interface Column {
   type: string;
 }
 
-let columnCache: { boardId: string; columns: Column[]; at: number } | null =
-  null;
-const COLUMN_CACHE_MS = 10 * 60 * 1000;
+// let columnCache: { boardId: string; columns: Column[]; at: number } | null =
+//   null;
+// const COLUMN_CACHE_MS = 10 * 60 * 1000;
 
 function getConfig() {
   const token = process.env.MONDAY_API_TOKEN?.trim();
@@ -72,21 +59,21 @@ async function mondayRequest<T>(
 }
 
 async function getColumns(token: string, boardId: string) {
-  if (
-    columnCache &&
-    columnCache.boardId === boardId &&
-    Date.now() - columnCache.at < COLUMN_CACHE_MS
-  ) {
-    return columnCache.columns;
-  }
   const data = await mondayRequest<{ boards: Array<{ columns: Column[] }> }>(
     token,
-    `query ($ids: [ID!]) { boards(ids: $ids) { columns { id title type } } }`,
+    `query ($ids: [ID!]) {
+      boards(ids: $ids) {
+        columns {
+          id
+          title
+          type
+        }
+      }
+    }`,
     { ids: [boardId] },
   );
-  const columns = data.boards?.[0]?.columns ?? [];
-  columnCache = { boardId, columns, at: Date.now() };
-  return columns;
+
+  return data.boards?.[0]?.columns ?? [];
 }
 
 /** Converts a plain value into the shape each monday column type expects. */
@@ -188,7 +175,10 @@ export async function saveApplicationToMonday(
       [["portfolio", "portfolio / showreel", "showreel"], app.portfolioUrl],
       [["cv", "resume", "cv / resume"], app.cvUrl],
       [["best project", "best ai project"], app.bestProjectUrl],
-      [["on-site hcmc", "on-site", "onsite"], app.onSite === "yes" ? "Yes" : "No"],
+      [
+        ["on-site hcmc", "on-site", "onsite"],
+        app.onSite === "yes" ? "Yes" : "No",
+      ],
       [["start date", "available from"], app.startDate],
       [["salary min", "salary minimum"], app.salaryMin],
       [["salary max", "salary maximum"], app.salaryMax],
@@ -203,6 +193,12 @@ export async function saveApplicationToMonday(
       const formatted = toColumnValue(column, value);
       if (formatted !== null) values[column.id] = formatted;
     }
+
+    console.info("[s42 careers] monday mapping diagnostic", {
+      boardId,
+      columnsFound: columns.map(({ title, type }) => ({ title, type })),
+      mappedColumnIds: Object.keys(values),
+    });
 
     const created = await mondayRequest<{ create_item: { id: string } }>(
       token,
