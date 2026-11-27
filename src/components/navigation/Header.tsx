@@ -53,8 +53,8 @@ export default function Header() {
         instant ? "transition-none" : "transition-all duration-700"
       } ${
         isVisible
-          ? "bg-[#050505]/88 backdrop-blur-lg border-b border-[#f1f1ed]/[0.07]"
-          : "bg-transparent border-b border-transparent"
+          ? "bg-[#050505]/88 backdrop-blur-lg"
+          : "bg-transparent"
       }`}
     >
       {/* Logo */}
@@ -86,14 +86,16 @@ export default function Header() {
           instant ? "transition-none" : "transition-all duration-500"
         } ${isVisible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
       >
+        <Link
+          href="/films"
+          aria-current={pathname === "/films" ? "page" : undefined}
+          className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200"
+        >
+          Films
+        </Link>
+
         {pathname === "/" ? (
           <>
-            <button
-              onClick={() => scrollTo("#films")}
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 cursor-pointer"
-            >
-              Films
-            </button>
             <button
               onClick={() => scrollTo("#manifesto")}
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 cursor-pointer"
@@ -103,13 +105,6 @@ export default function Header() {
           </>
         ) : (
           <>
-            <Link
-              href="/films"
-              aria-current={pathname === "/films" ? "page" : undefined}
-              className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200"
-            >
-              Films
-            </Link>
             <Link
               href="/#manifesto"
               className="text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200"

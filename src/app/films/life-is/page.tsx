@@ -32,7 +32,7 @@ export default function LifeIsPage() {
             <span className="text-[#f5a623] font-bold">FILM {film.number}</span>
           </div>
           <Link
-            href="/#films"
+            href="/films"
             className="relative z-[60] pointer-events-auto cursor-pointer text-[#898989] hover:text-[#f1f1ed] transition-colors duration-200 uppercase tracking-widest"
           >
             ← All Films

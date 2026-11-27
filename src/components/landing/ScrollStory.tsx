@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -12,14 +17,24 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+const filmRows = [
+  ["insane-aisylum", "suicide-train"],
+  ["the-sum-of-me", "memories-i-am", "everyone-thinks-im-dead"],
+  ["l-42-06", "life-is"],
+].map((row) => row.map((slug) => films.find((film) => film.slug === slug)!));
+
 export default function ScrollStory() {
   const lenis = useLenis();
   const sectionRef = useRef<HTMLElement>(null);
+  const introRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const statementRef = useRef<HTMLDivElement>(null);
   const posterSceneRef = useRef<HTMLDivElement>(null);
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const previewRefs = useRef<Record<string, HTMLVideoElement | null>>({});
+  const [hoveredPreviewKey, setHoveredPreviewKey] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const video = videoRef.current;
@@ -30,11 +45,12 @@ export default function ScrollStory() {
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
+    const intro = introRef.current;
     const hero = heroRef.current;
     const statement = statementRef.current;
     const posterScene = posterSceneRef.current;
 
-    if (!section || !hero || !statement || !posterScene) return;
+    if (!section || !intro || !hero || !statement || !posterScene) return;
 
     const context = gsap.context(() => {
       const statementLines = gsap.utils.toArray<HTMLElement>(
@@ -69,7 +85,7 @@ export default function ScrollStory() {
         y: 28,
         filter: "blur(10px)",
       });
-      gsap.set(posterScene, { autoAlpha: 0 });
+      gsap.set(posterScene, { autoAlpha: 1 });
       gsap.set(posterHeading, {
         autoAlpha: 0,
         y: 44,
@@ -87,7 +103,7 @@ export default function ScrollStory() {
       const timeline = gsap.timeline({
         defaults: { ease: "power2.inOut" },
         scrollTrigger: {
-          trigger: section,
+          trigger: intro,
           start: "top top",
           end: "bottom bottom",
           scrub: 0.65,
@@ -139,16 +155,16 @@ export default function ScrollStory() {
           },
           "-=0.28",
         )
-        .to({}, { duration: 0.8 })
-        .to(statement, {
-          autoAlpha: 0,
-          y: -46,
-          scale: 1.035,
-          filter: "blur(12px)",
-          duration: 0.95,
-          ease: "power2.in",
+        .to({}, { duration: 1.25 });
+
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: posterScene,
+            start: "top 82%",
+            once: true,
+          },
         })
-        .set(posterScene, { autoAlpha: 1 }, "-=0.18")
         .to(
           posterHeading,
           {
@@ -159,7 +175,7 @@ export default function ScrollStory() {
             duration: 0.75,
             ease: "power3.out",
           },
-          "-=0.28",
+          0,
         )
         .to(
           posterCards,
@@ -169,10 +185,10 @@ export default function ScrollStory() {
             scale: 1,
             filter: "blur(0px)",
             duration: 0.58,
-            stagger: 0.14,
+            stagger: 0.04,
             ease: "power3.out",
           },
-          "-=0.28",
+          0.12,
         )
         .to(
           posterFooter,
@@ -182,9 +198,8 @@ export default function ScrollStory() {
             duration: 0.5,
             ease: "power2.out",
           },
-          "-=0.22",
-        )
-        .to({}, { duration: 1.05 });
+          0.34,
+        );
     }, section);
 
     return () => context.revert();
@@ -201,28 +216,52 @@ export default function ScrollStory() {
     }
   };
 
+  const startFilmPreview = (previewKey: string) => {
+    if (
+      !window.matchMedia(
+        "(min-width: 768px) and (hover: hover) and (pointer: fine)",
+      ).matches
+    ) {
+      return;
+    }
+
+    setHoveredPreviewKey(previewKey);
+
+    const preview = previewRefs.current[previewKey];
+    if (!preview) return;
+
+    preview.currentTime = 0;
+    preview.play().catch(() => {});
+  };
+
+  const stopFilmPreview = (previewKey: string) => {
+    setHoveredPreviewKey(null);
+
+    const preview = previewRefs.current[previewKey];
+    if (!preview) return;
+
+    preview.pause();
+    preview.currentTime = 0;
+  };
+
   return (
     <section
       ref={sectionRef}
       aria-label="S•42 cinematic introduction"
-      className="relative h-[620svh] bg-black"
+      className="relative bg-black"
     >
-      <div
-        id="imagination"
-        aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-[28%] h-px w-px"
-      />
-      <div
-        id="films"
-        aria-hidden="true"
-        className="pointer-events-none absolute left-0 top-[76%] h-px w-px"
-      />
-
-      <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#020202]">
+      <div ref={introRef} className="relative h-[420svh]">
         <div
-          ref={heroRef}
-          className="absolute inset-0 z-30 flex items-center justify-center bg-black"
-        >
+          id="imagination"
+          aria-hidden="true"
+          className="pointer-events-none absolute left-0 top-[32%] h-px w-px"
+        />
+
+        <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#020202]">
+          <div
+            ref={heroRef}
+            className="absolute inset-0 z-30 flex items-center justify-center bg-black"
+          >
           <video
             ref={videoRef}
             autoPlay
@@ -255,12 +294,12 @@ export default function ScrollStory() {
               ↓
             </span>
           </button>
-        </div>
+          </div>
 
-        <div
-          ref={statementRef}
-          className="invisible absolute inset-0 z-20 flex items-center justify-center bg-[#030303] px-6 pt-20 sm:px-10 md:px-16"
-        >
+          <div
+            ref={statementRef}
+            className="invisible absolute inset-0 z-20 flex items-center justify-center bg-[#030303] px-6 pt-20 sm:px-10 md:px-16"
+          >
           <div
             aria-hidden="true"
             className="pointer-events-none absolute left-1/2 top-1/2 h-[55vw] max-h-[780px] min-h-[360px] w-[88vw] max-w-[1180px] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[conic-gradient(from_205deg,transparent_0deg,rgba(183,187,194,0.12)_72deg,rgba(201,168,76,0.1)_132deg,transparent_225deg)] blur-[120px]"
@@ -309,83 +348,118 @@ export default function ScrollStory() {
               <span className="font-sans text-lg">↓</span>
             </div>
           </div>
+          </div>
         </div>
+      </div>
 
-        <div
-          ref={posterSceneRef}
-          aria-labelledby="scroll-story-poster-title"
-          className="invisible absolute inset-0 z-10 flex items-center justify-center overflow-hidden bg-[#020202] px-4 pb-5 pt-24 select-none sm:px-6 sm:pb-7 lg:px-8"
-        >
+      <div
+        id="films"
+        ref={posterSceneRef}
+        aria-labelledby="scroll-story-poster-title"
+        className="scroll-story-poster-scene invisible relative z-10 flex w-full justify-center overflow-hidden bg-[#020202] px-3 pb-20 pt-28 select-none sm:px-5 sm:pb-24 sm:pt-32 lg:px-7 lg:pb-32"
+      >
           <div
             aria-hidden="true"
             className="pointer-events-none absolute left-1/2 top-[58%] h-[70svh] w-[92vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(201,168,76,0.12)_0%,rgba(117,121,130,0.08)_34%,transparent_72%)] blur-[120px]"
           />
 
-          <div className="relative z-10 flex h-full w-full max-w-[1500px] flex-col items-center justify-center">
-            <div className="scroll-story-poster-heading mb-4 max-w-5xl text-center sm:mb-5 lg:mb-6">
+          <div className="relative z-10 flex w-full flex-col items-center">
+            <div className="scroll-story-poster-heading pointer-events-none mb-5 px-4 text-center sm:mb-7">
               <h2
                 id="scroll-story-poster-title"
-                className="bg-clip-text font-heading font-ethnocentric text-[clamp(1.2rem,3.25vw,3.5rem)] leading-[1.02] tracking-[0.025em] text-transparent [filter:drop-shadow(0_5px_24px_rgba(222,225,230,0.1))]"
+                className="whitespace-nowrap bg-clip-text font-heading font-ethnocentric text-[clamp(0.86rem,2.4vw,2.4rem)] leading-none tracking-[0.02em] text-transparent"
                 style={{
                   backgroundImage:
-                    "linear-gradient(112deg, #6b6f76 0%, #f0f2f4 28%, #969ba3 52%, #ffffff 72%, #70747b 100%)",
+                    "linear-gradient(112deg, #777b82 0%, #f4f5f6 30%, #a7abb1 52%, #ffffff 72%, #73777e 100%)",
                   WebkitBackgroundClip: "text",
+                  filter:
+                    "drop-shadow(0 5px 4px rgba(0,0,0,1)) drop-shadow(0 15px 18px rgba(0,0,0,0.98))",
                 }}
               >
-                ORIGINAL STORIES. LIMITLESS WORLDS.
+                ORIGINAL STORIES.
               </h2>
             </div>
 
-            <div
-              className="grid w-[min(96vw,86svh)] grid-cols-8 gap-2 sm:gap-3 lg:gap-4"
-              onMouseLeave={() => setHoveredIndex(null)}
-            >
-              {films.map((film, index) => {
-                const isFocused = hoveredIndex === index;
-                const isDimmed = hoveredIndex !== null && !isFocused;
+            <div className="scroll-story-film-grid">
+              {filmRows.map((rowFilms, rowIndex) => (
+                <div
+                  key={`film-row-${rowIndex}`}
+                  className={`scroll-story-film-row ${
+                    rowFilms.length === 2 ? "is-two" : "is-three"
+                  }`}
+                >
+                  {rowFilms.map((film) => {
+                    const previewKey = film.slug;
+                    const isFocused = hoveredPreviewKey === previewKey;
+                    const isDimmed =
+                      hoveredPreviewKey !== null && !isFocused;
 
-                return (
-                  <div
-                    key={film.slug}
-                    className={`scroll-story-poster-card col-span-2 ${
-                      index === 4 ? "col-start-2" : ""
-                    }`}
-                  >
-                    <Link
-                      href={`/films/${film.slug}`}
-                      aria-label={`Explore ${film.title}`}
-                      onMouseEnter={() => setHoveredIndex(index)}
-                      onFocus={() => setHoveredIndex(index)}
-                      onBlur={() => setHoveredIndex(null)}
-                      className={`group relative block aspect-[2/3] w-full overflow-hidden rounded-[10px] border bg-[#090909] shadow-[0_20px_55px_rgba(0,0,0,0.86)] transition-[transform,filter,opacity,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] sm:rounded-[14px] ${
-                        isFocused
-                          ? "z-20 border-white/20 brightness-100 saturate-100 md:scale-[1.055] md:border-white/35 md:brightness-110 md:saturate-110"
-                          : isDimmed
-                            ? "border-white/10 brightness-100 saturate-100 md:scale-[0.985] md:border-white/[0.04] md:brightness-[0.3] md:saturate-[0.4] md:opacity-70"
-                            : "border-white/10 brightness-100 saturate-100 hover:border-white/25"
-                      }`}
-                      style={
-                        isFocused
-                          ? {
-                              boxShadow: `0 28px 90px rgba(0,0,0,0.95), 0 0 42px ${film.palette.accent}36`,
-                            }
-                          : undefined
-                      }
-                    >
-                      <Image
-                        src={film.posterImage}
-                        alt={film.title}
-                        fill
-                        sizes="(max-width: 640px) 23vw, 18vw"
-                        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.07]"
-                      />
-                    </Link>
-                  </div>
-                );
-              })}
+                    return (
+                      <div
+                        key={film.slug}
+                        className="scroll-story-poster-card scroll-story-fixed-card"
+                      >
+                        <Link
+                          href={`/films/${film.slug}`}
+                          aria-label={`Explore ${film.title}`}
+                          onMouseEnter={() => startFilmPreview(previewKey)}
+                          onMouseLeave={() => stopFilmPreview(previewKey)}
+                          onFocus={() => startFilmPreview(previewKey)}
+                          onBlur={() => stopFilmPreview(previewKey)}
+                          className={`group relative block h-full w-full overflow-hidden border bg-[#090909] shadow-[0_20px_55px_rgba(0,0,0,0.86)] transition-[transform,filter,opacity,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                            isFocused
+                              ? "z-20 border-transparent brightness-100 saturate-100 md:scale-[1.025] md:brightness-110 md:saturate-110"
+                              : isDimmed
+                                ? "border-white/[0.04] brightness-100 saturate-100 md:brightness-[0.34] md:saturate-[0.45] md:opacity-70"
+                                : "border-white/10 brightness-100 saturate-100 hover:border-white/25"
+                          }`}
+                          style={
+                            isFocused
+                              ? {
+                                  boxShadow: `0 28px 90px rgba(0,0,0,0.95), 0 0 42px ${film.palette.accent}36`,
+                                }
+                              : undefined
+                          }
+                        >
+                          <Image
+                            src={film.landscapeImage ?? film.posterImage}
+                            alt={film.title}
+                            fill
+                            sizes="(max-width: 639px) 48vw, (max-width: 1023px) 46vw, 32vw"
+                            className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.045]"
+                          />
+                          {film.highlightVideo ? (
+                            <video
+                              ref={(preview) => {
+                                previewRefs.current[previewKey] = preview;
+                              }}
+                              muted
+                              loop
+                              playsInline
+                              preload="none"
+                              poster={
+                                film.landscapeImage ?? film.posterImage
+                              }
+                              aria-hidden="true"
+                              className={`pointer-events-none absolute inset-0 hidden h-full w-full object-cover transition-opacity duration-500 md:block ${
+                                isFocused ? "opacity-100" : "opacity-0"
+                              }`}
+                            >
+                              <source
+                                src={film.highlightVideo}
+                                type="video/mp4"
+                              />
+                            </video>
+                          ) : null}
+                        </Link>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
             </div>
 
-            <div className="scroll-story-poster-footer mt-4 flex w-full max-w-4xl items-center justify-center sm:mt-5">
+            <div className="scroll-story-poster-footer mt-5 flex w-full max-w-4xl items-center justify-center sm:mt-7">
               <Link
                 href="/films"
                 className="group inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/[0.04] px-5 py-2.5 font-heading font-ethnocentric text-[7px] uppercase tracking-[0.15em] text-white transition-all duration-300 hover:scale-105 hover:border-white/45 hover:bg-white hover:text-black sm:text-[8px] lg:px-6 lg:py-3 lg:text-[9px]"
@@ -397,7 +471,6 @@ export default function ScrollStory() {
               </Link>
             </div>
           </div>
-        </div>
       </div>
     </section>
   );

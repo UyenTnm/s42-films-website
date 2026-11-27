@@ -18,6 +18,8 @@ export interface Film {
   logline: string;
   pitch?: string;
   posterImage: string;
+  landscapeImage?: string;
+  highlightVideo?: string;
   heroImage: string;
   palette: { accent: string; bg: string };
   details?: {
@@ -46,6 +48,8 @@ export const films: Film[] = [
     logline:
       "In 2048, Dr. Alexander Monroe arrives at Hazama, a maximum-security psychiatric institution on an isolated island off the coast of Tokyo, to examine Hana — an Artificially Intelligent Robot accused of murdering a human. As her unpredictable behaviour challenges everything he understands about consciousness and insanity, Monroe uncovers disturbing secrets within the asylum, where patients may know more than their doctors, reality becomes increasingly difficult to trust, and the line between investigator and subject begins to disappear.",
     posterImage: "/images/insane-aisylum/poster-v2.jpg",
+    landscapeImage: "/images/film-landscape/insane-aisylum.png",
+    highlightVideo: "/video/film-highlights/insane-aisylum.mp4",
     heroImage: "/images/insane-aisylum/hero.jpg",
     palette: { accent: "#e50914", bg: "#060709" },
     details: {
@@ -101,6 +105,8 @@ export const films: Film[] = [
     logline:
       "Following a deadly emergency at a Tokyo railway station, Daniel Mercer, his wife Sarah, and their 10-year-old son, Jordan, mistakenly board a train bound for the Forty-Two Crossing — a secret ritual in which selected passengers willingly travel to their deaths. With the train racing toward an abandoned railway ending above an ocean graveyard of previous Crossings, the family must find a way to stop a machine designed to be unstoppable, while confronting passengers who believe their salvation depends on keeping everyone aboard.",
     posterImage: "/images/suicide-train/poster-v2.jpg",
+    landscapeImage: "/images/film-landscape/suicide-train.png",
+    highlightVideo: "/video/film-highlights/suicide-train.mp4",
     heroImage: "/images/suicide-train/hero.jpg",
     palette: { accent: "#e52222", bg: "#080606" },
     details: {
@@ -157,6 +163,8 @@ export const films: Film[] = [
     logline:
       "Following their mother's death, Marcus, Elena, Sophie, and Ruth Bell return to their childhood home at 42 Crossroads Crescent to prepare it for sale. Their reunion begins identically in all four films, until the camera follows a different sibling into a distinct adult life filled with its own relationships, conflicts, and defining choices. Their paths continue to intersect, but the world remains unchanged — even when the meaning of a familiar moment looks entirely different from another perspective.",
     posterImage: "/images/life-is/poster-v2.jpg",
+    landscapeImage: "/images/film-landscape/life-is.png",
+    highlightVideo: "/video/film-highlights/life-is.mp4",
     heroImage: "/images/life-is/hero.jpg",
     palette: { accent: "#f5a623", bg: "#090807" },
     details: {
@@ -226,6 +234,8 @@ export const films: Film[] = [
     logline:
       "Living alone in condominium L.42.06, freelance manga artist Ren Mikage discovers an impossible doorway leading into an almost identical apartment, where an unsuspecting woman named Hanna is involved in an increasingly intense sexual relationship with a mysterious masked man. Unable to resist watching, Ren becomes consumed by their private lives until a shocking act of violence transforms his secret obsession into a desperate investigation. With no physical evidence and no way to identify the apartment, Ren must unravel a mystery that threatens to blur the boundaries between desire, reality, and his own increasingly dangerous behaviour.",
     posterImage: "/images/l-42-06/poster-v2.jpg",
+    landscapeImage: "/images/film-landscape/l-42-06.png",
+    highlightVideo: "/video/film-highlights/l-42-06.mp4",
     heroImage: "/images/l-42-06/hero.jpg",
     palette: { accent: "#c0392b", bg: "#070505" },
     details: {
@@ -281,6 +291,8 @@ export const films: Film[] = [
     logline:
       "After a terrifying dream of dying aboard a submarine reveals historical details he could not possibly know, 42-year-old professor Jonathan Hale begins uncovering memories of lives spanning centuries, cultures, and identities. As he discovers that this is his 42nd and final incarnation, Jonathan must confront the disturbing truth that he has lived as both victim and oppressor, hero and coward, loving parent and selfish stranger — and that the choices he makes in this final life may matter more than he ever imagined.",
     posterImage: "/images/the-sum-of-me/poster-v2.jpg",
+    landscapeImage: "/images/film-landscape/the-sum-of-me.png",
+    highlightVideo: "/video/film-highlights/the-sum-of-me.mp4",
     heroImage: "/images/the-sum-of-me/hero.jpg",
     palette: { accent: "#c9a84c", bg: "#080706" },
     details: {
@@ -339,6 +351,8 @@ export const films: Film[] = [
     logline:
       "When groundbreaking technology transforms human memory into the world's most personal and valuable commodity, an entirely new society emerges in which the wealthy can purchase extraordinary experiences, the desperate can sell their most treasured moments, and the past can become someone else's future. Through interconnected stories of love, sacrifice, ambition, betrayal, crime, and redemption, MEMORIES I AM explores a world where our most intimate experiences can change hands — with consequences no one could have imagined.",
     posterImage: "/images/memories-i-am/poster-v2.jpg",
+    landscapeImage: "/images/film-landscape/memories-i-am.png",
+    highlightVideo: "/video/film-highlights/memories-i-am.mp4",
     heroImage: "/images/memories-i-am/hero.jpg",
     palette: { accent: "#4a9eda", bg: "#050810" },
     details: {
@@ -395,6 +409,8 @@ export const films: Film[] = [
     logline:
       "Overworked, overwhelmed, and thoroughly fed up with life, corporate claims manager Marcus survives a fatal accident in Mexico, only to discover that the authorities have mistakenly identified another man's body as his. With the help of his best friend Marco, Marcus secretly returns to America, where he finds himself legally dead, unexpectedly free, and increasingly fascinated by the lives of the people mourning him. But as his temporary escape becomes a secret existence, he must confront an uncomfortable question: is the freedom he's discovered worth everything — and everyone — he's leaving behind?",
     posterImage: "/images/everyone-thinks-im-dead/poster-v2.jpg",
+    landscapeImage: "/images/film-landscape/everyone-thinks-im-dead.png",
+    highlightVideo: "/video/film-highlights/everyone-thinks-im-dead.mp4",
     heroImage: "/images/everyone-thinks-im-dead/hero.jpg",
     palette: { accent: "#e8c44a", bg: "#080807" },
     details: {

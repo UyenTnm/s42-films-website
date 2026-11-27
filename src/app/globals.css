@@ -189,3 +189,49 @@ html.s42-film-shield body > *:not(script) {
     display: none !important;
   }
 }
+
+/* Fixed 2–3–2 cinema wall inspired by large editorial project indexes. The
+   section flows vertically so the landscape artwork stays cinematic. */
+.scroll-story-film-grid {
+  --poster-gap: clamp(8px, 1.15vw, 20px);
+  display: flex;
+  width: min(100%, 1600px);
+  flex-direction: column;
+  align-items: center;
+  gap: var(--poster-gap);
+}
+
+.scroll-story-film-row {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: var(--poster-gap);
+}
+
+.scroll-story-fixed-card {
+  flex: none;
+  aspect-ratio: 16 / 9;
+}
+
+.scroll-story-film-row.is-two .scroll-story-fixed-card {
+  width: calc((100% - var(--poster-gap)) / 2);
+}
+
+.scroll-story-film-row.is-three .scroll-story-fixed-card {
+  width: calc((100% - (var(--poster-gap) * 2)) / 3);
+}
+
+@media (max-width: 639px) {
+  .scroll-story-film-grid {
+    --poster-gap: 10px;
+  }
+
+  .scroll-story-film-row {
+    display: contents;
+  }
+
+  .scroll-story-film-row.is-two .scroll-story-fixed-card,
+  .scroll-story-film-row.is-three .scroll-story-fixed-card {
+    width: 100%;
+  }
+}
